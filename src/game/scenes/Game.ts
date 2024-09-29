@@ -1,35 +1,66 @@
 import { EventBus } from "../EventBus";
 import { Scene } from "phaser";
-
+import { RenderLevel } from "../../utils/renderLevel"; // Import the RenderLevel class
+import {
+    GRID_WIDTH,
+    GRID_HEIGHT,
+    TILE_SIZE,
+    CEL_GAP,
+    BASE_MAP,
+} from "../../utils/constants";
 export class Game extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
     gameText: Phaser.GameObjects.Text;
     field: Phaser.GameObjects.Grid;
+    renderLevel: RenderLevel; // Declare a property to hold the RenderLevel instance
 
     constructor() {
         super("Game");
     }
 
+    preload() {
+        //  Load the assets for the game - Replace with your own assets
+        this.load.spritesheet("wall", "assets/wall.png", {
+            frameWidth: 48,
+            frameHeight: 48,
+        });
+        this.load.spritesheet("explosion", "assets/explosion.png", {
+            frameWidth: 32,
+            frameHeight: 32,
+        });
+    }
+
     create() {
         this.camera = this.cameras.main;
-        this.camera.setBackgroundColor(0x000000);
+        this.camera.setBackgroundColor(0x5c5756);
 
+        // Define the grid, accounting for the cell gap
         this.field = this.add.grid(
-            512,
-            384,
-            1024,
-            768,
-            32,
-            32,
-            0xf9faf9,
-            0.5,
-            0x000000,
-            0.5
+            512, // x position of the grid
+            384, // y position of the grid
+            GRID_WIDTH, // total grid width
+            GRID_HEIGHT, // total grid height
+            TILE_SIZE + CEL_GAP, // cell width (tileSize + gap)
+            TILE_SIZE + CEL_GAP, // cell height (tileSize + gap)
+            0x000000, // line color
+            0.5, // fill alpha
+            0x000000, // fill color
+            0.5 // fill alpha
         );
 
-        // this.background = this.add.image(512, 384, 'background');
-        // this.background.setAlpha(0.5);
+        this.anims.create({
+            key: "explode",
+            frames: this.anims.generateFrameNumbers("explosion"),
+            frameRate: 20,
+            repeat: 0,
+            hideOnComplete: true,
+        });
+
+        // Instantiate RenderLevel and pass the current scene (this)
+        this.renderLevel = new RenderLevel(this); // Pass the scene itself
+        this.renderLevel.createExternalWalls(); // Create the walls around the grid
+        this.renderLevel.createInternalWalls(BASE_MAP); // Create the internal walls of the grid
 
         EventBus.emit("current-scene-ready", this);
     }
