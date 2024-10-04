@@ -10,7 +10,8 @@ export class MainMenu extends Scene {
     logoTween: Phaser.Tweens.Tween | null;
 
     constructor() {
-        super("MainMenu");
+        //TODO = "Return MainMenu name";
+        super("Game");
     }
 
     create() {

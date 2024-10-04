@@ -16,7 +16,8 @@ export class Game extends Scene {
     renderLevel: RenderLevel; // Declare a property to hold the RenderLevel instance
 
     constructor() {
-        super("Game");
+        //TODO = "Return Game name";
+        super("MainMenu");
     }
 
     preload() {
