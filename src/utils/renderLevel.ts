@@ -47,13 +47,8 @@ export class RenderLevel {
     }
 
     createInternalWalls(MAP: number[][]) {
-        const cols = Math.floor(GRID_WIDTH / TILE_SIZE);
-        console.log("cols:", cols);
-        const rows = Math.floor(GRID_HEIGHT / TILE_SIZE);
-        console.log("rows:", rows);
         for (let i = 1; i < MAP.length - 1; i++) {
             for (let j = 1; j < MAP[i].length - 1; j++) {
-                console.log(MAP[i][j]);
                 if (MAP[i][j] === 1) {
                     this.scene.add
                         .image(
@@ -62,6 +57,15 @@ export class RenderLevel {
                             "wall"
                         )
                         .setDisplaySize(TILE_SIZE, TILE_SIZE);
+                }
+                if (MAP[i][j] === 2) {
+                    this.scene.add
+                        .image(
+                            i * TILE_SIZE + TILE_SIZE / 2,
+                            j * TILE_SIZE + TILE_SIZE / 2,
+                            "bomb"
+                        )
+                        .setDisplaySize(TILE_SIZE, TILE_SIZE - 2);
                 }
             }
         }

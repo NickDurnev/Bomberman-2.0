@@ -26,9 +26,13 @@ export class Game extends Scene {
             frameWidth: 48,
             frameHeight: 48,
         });
+        this.load.spritesheet("bomb", "assets/bomb.png", {
+            frameWidth: 48,
+            frameHeight: 48,
+        });
         this.load.spritesheet("explosion", "assets/explosion.png", {
-            frameWidth: 32,
-            frameHeight: 32,
+            frameWidth: 48,
+            frameHeight: 48,
         });
     }
 
@@ -44,9 +48,8 @@ export class Game extends Scene {
             GRID_HEIGHT, // total grid height
             TILE_SIZE + CEL_GAP, // cell width (tileSize + gap)
             TILE_SIZE + CEL_GAP, // cell height (tileSize + gap)
-            0x000000, // line color
-            0.5, // fill alpha
-            0x000000, // fill color
+            0x292828, // line color
+            0x292828, // line color
             0.5 // fill alpha
         );
 
