@@ -17,7 +17,7 @@ export class Game extends Scene {
 
     constructor() {
         //TODO = "Return Game name";
-        super("MainMenu");
+        super("Game");
     }
 
     preload() {

@@ -12,11 +12,11 @@ interface GameData {
     // Define other properties of game data here if necessary
 }
 
-class Menu extends Phaser.Scene {
+class MainMenu extends Phaser.Scene {
     private slotsWithGame: GameSlots | null = null;
 
     constructor() {
-        super({ key: "Menu" });
+        super("MainMenu");
     }
 
     init(): void {
@@ -33,9 +33,25 @@ class Menu extends Phaser.Scene {
         const background = this.add.image(
             this.scale.width / 2,
             this.scale.height / 2,
-            "main_menu"
+            "main_menu_bg"
         );
         background.setOrigin(0.5);
+
+        new Text({
+            scene: this,
+            x: this.scale.width / 2,
+            y: this.scale.height / 2 - 300,
+            text: "Bomberman 2.0",
+            style: {
+                fontFamily: "Arial Black",
+                fontSize: 60,
+                fontStyle: "bold",
+                color: "#ffffff",
+                stroke: "#000000",
+                strokeThickness: 8,
+                align: "center",
+            },
+        } as TextConstructorParams);
 
         new Text({
             scene: this,
@@ -43,10 +59,12 @@ class Menu extends Phaser.Scene {
             y: this.scale.height / 2 - 215,
             text: "Main Menu",
             style: {
-                font: "35px Arial",
-                fill: "#9ec0ba",
-                stroke: "#7f9995",
-                strokeThickness: 3,
+                fontFamily: "Arial Black",
+                fontSize: 38,
+                color: "#ffffff",
+                stroke: "#000000",
+                strokeThickness: 8,
+                align: "center",
             },
         } as TextConstructorParams);
 
@@ -110,5 +128,5 @@ class Menu extends Phaser.Scene {
     }
 }
 
-export default Menu;
+export default MainMenu;
 

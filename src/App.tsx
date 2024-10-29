@@ -59,14 +59,9 @@ function App() {
     //     }
     // };
 
-    // Event emitted from the PhaserGame component
-    // const currentScene = (scene: Phaser.Scene) => {
-    //     setCanMoveSprite(scene.scene.key !== "MainMenu");
-    // };
-
     return (
         <div id="app">
-            <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
+            <PhaserGame ref={phaserRef} />
         </div>
     );
 }
