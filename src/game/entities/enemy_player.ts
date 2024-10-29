@@ -1,29 +1,18 @@
 import Phaser from "phaser";
 import { TILE_SIZE, PING } from "../../utils/constants";
 import { Text } from "../../helpers/elements";
-
-interface Spawn {
-    x: number;
-    y: number;
-}
-
-interface EnemyPlayerConfig {
-    game: Phaser.Scene;
-    id: number;
-    spawn: Spawn;
-    skin: string;
-}
+import { Spawn, PlayerConfig } from "../../utils/types";
 
 export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
     private game: Phaser.Scene;
     private id: number;
     private currentPosition: Spawn;
-    private lastMoveAt: number;
+    lastMoveAt: number;
 
-    constructor({ game, id, spawn, skin }: EnemyPlayerConfig) {
-        super(game, spawn.x, spawn.y, "bomberman_" + skin);
+    constructor({ scene, id, spawn, skin }: PlayerConfig) {
+        super(scene, spawn.x, spawn.y, "bomberman_" + skin);
 
-        this.game = game;
+        this.game = scene;
         this.id = id;
         this.currentPosition = spawn;
         this.lastMoveAt = 0;
@@ -123,7 +112,7 @@ export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
 
         // Construct playerText using type assertion to allow 'game'
         const playerText = new Text({
-            game: this.game, // Type assertion to avoid TypeScript error
+            scene: this.game, // Type assertion to avoid TypeScript error
             x: this.x + TILE_SIZE / 2,
             y: this.y - 10,
             text: name,

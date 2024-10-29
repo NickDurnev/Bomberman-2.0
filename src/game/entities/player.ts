@@ -13,17 +13,10 @@ import {
     POWER,
     DELAY,
 } from "../../utils/constants";
-import { ISpoilType } from "../../utils/types";
+import { ISpoilType, PlayerConfig } from "../../utils/types";
 
 import Info from "./info";
 import { SpoilNotification, Text } from "../../helpers/elements";
-
-interface PlayerConfig {
-    scene: Phaser.Scene;
-    id: number;
-    spawn: { x: number; y: number };
-    skin: string;
-}
 
 export default class Player extends Phaser.GameObjects.Container {
     game: Phaser.Scene;
@@ -291,6 +284,7 @@ export default class Player extends Phaser.GameObjects.Container {
             text: `\u272E ${name} \u272E`,
             style: {
                 font: "15px Arial",
+                color: "#FFFFFF",
                 // fill: "#FFFFFF",
                 stroke: "#000000",
                 strokeThickness: 3,

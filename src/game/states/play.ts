@@ -1,15 +1,39 @@
-import { findFrom, findAndDestroyFrom } from "../utils/utils";
+import { findFrom, findAndDestroyFrom } from "../../utils/utils";
 import { TILESET, LAYER } from "../../utils/constants";
-
 import Player from "../entities/player";
 import EnemyPlayer from "../entities/enemy_player";
 import Bomb from "../entities/bomb";
-import Spoil from "../entities/spoil.еs";
+import Spoil from "../entities/spoil";
 import FireBlast from "../entities/fire_blast";
 import Bone from "../entities/bone";
+import { PlayerConfig, ISpoilType } from "../../utils/types";
 
-class Play extends Phaser.State {
-    init(game) {
+interface PlayerData {
+    id: number;
+    spawn: { x: number; y: number };
+    skin: string;
+}
+
+interface ClientSocket {
+    id: number;
+    emit(event: string, data?: any): void;
+    on(event: string, callback: (...args: any[]) => void): void;
+}
+
+declare const clientSocket: ClientSocket; // Assuming clientSocket is globally defined
+
+class Play extends Phaser.Scene {
+    private currentGame: any; // Define the type according to your game object structure
+    private player!: Player;
+    private bones!: Phaser.GameObjects.Group;
+    private bombs!: Phaser.GameObjects.Group;
+    private spoils!: Phaser.GameObjects.Group;
+    private blasts!: Phaser.GameObjects.Group;
+    private enemies!: Phaser.GameObjects.Group;
+    private blockLayer!: Phaser.Tilemaps.TilemapLayer;
+    private map!: Phaser.Tilemaps.Tilemap;
+
+    init(game: any) {
         this.currentGame = game;
     }
 
@@ -18,54 +42,67 @@ class Play extends Phaser.State {
         this.createPlayers();
         this.setEventHandlers();
 
-        this.game.time.events.loop(400, this.stopAnimationLoop.bind(this));
+        this.time.addEvent({
+            delay: 400,
+            callback: this.stopAnimationLoop,
+            callbackScope: this,
+            loop: true,
+        });
     }
 
     update() {
-        this.game.physics.arcade.collide(this.player, this.blockLayer);
-        this.game.physics.arcade.collide(this.player, this.enemies);
-        this.game.physics.arcade.collide(this.player, this.bombs);
+        this.physics.collide(this.player, this.blockLayer);
+        this.physics.collide(this.player, this.enemies);
+        this.physics.collide(this.player, this.bombs);
 
-        this.game.physics.arcade.overlap(
+        this.physics.overlap(
             this.player,
             this.spoils,
-            this.onPlayerVsSpoil,
-            null,
+            (obj1: any, obj2: any) => {
+                if (obj1 instanceof Player && obj2 instanceof Spoil) {
+                    this.onPlayerVsSpoil(obj1, obj2);
+                }
+            },
+            undefined,
             this
         );
-        this.game.physics.arcade.overlap(
+
+        this.physics.overlap(
             this.player,
             this.blasts,
-            this.onPlayerVsBlast,
-            null,
+            (obj1: any, obj2: any) => {
+                if (obj1 instanceof Player && obj2 instanceof FireBlast) {
+                    this.onPlayerVsBlast(obj1, obj2);
+                }
+            },
+            undefined,
             this
         );
     }
 
     createMap() {
-        this.map = this.add.tilemap(this.currentGame.map_name);
+        this.map = this.make.tilemap({ key: this.currentGame.map_name });
+        const tileset = this.map.addTilesetImage(TILESET);
 
-        this.map.addTilesetImage(TILESET);
+        this.blockLayer = this.map.createLayer(LAYER, tileset!)!;
 
-        this.blockLayer = this.map.createLayer(LAYER);
-        this.blockLayer.resizeWorld();
+        this.map.setCollisionByProperty({ collides: true }); // Use the property defined in your tileset
 
-        this.map.setCollision(this.blockLayer.layer.properties.collisionTiles);
+        this.bones = this.add.group();
+        this.bombs = this.add.group();
+        this.spoils = this.add.group();
+        this.blasts = this.add.group();
+        this.enemies = this.add.group();
 
-        this.player = null;
-        this.bones = this.game.add.group();
-        this.bombs = this.game.add.group();
-        this.spoils = this.game.add.group();
-        this.blasts = this.game.add.group();
-        this.enemies = this.game.add.group();
-
-        this.game.physics.arcade.enable(this.blockLayer);
+        this.physics.world.enable(this.blockLayer); // Changed to use the correct method for enabling physics
     }
 
-    createPlayers() {
-        for (let player of Object.values(this.currentGame.players)) {
-            let setup = {
-                game: this.game,
+    private createPlayers() {
+        for (const player of Object.values(
+            this.currentGame.players
+        ) as PlayerData[]) {
+            const setup: PlayerConfig = {
+                scene: this,
                 id: player.id,
                 spawn: player.spawn,
                 skin: player.skin,
@@ -79,7 +116,7 @@ class Play extends Phaser.State {
         }
     }
 
-    setEventHandlers() {
+    private setEventHandlers() {
         clientSocket.on("move player", this.onMovePlayer.bind(this));
         clientSocket.on("player win", this.onPlayerWin.bind(this));
         clientSocket.on("show bomb", this.onShowBomb.bind(this));
@@ -92,13 +129,14 @@ class Play extends Phaser.State {
         );
     }
 
-    onPlayerVsSpoil(player, spoil) {
+    private onPlayerVsSpoil(player: Player, spoil: Spoil) {
         clientSocket.emit("pick up spoil", { spoil_id: spoil.id });
-        spoil.kill();
+        spoil.destroy();
     }
 
-    onPlayerVsBlast(player, blast) {
-        if (player.alive) {
+    private onPlayerVsBlast(player: Player, blast: FireBlast) {
+        console.log(blast);
+        if (player.active) {
             clientSocket.emit("player died", {
                 col: player.currentCol(),
                 row: player.currentRow(),
@@ -107,64 +145,95 @@ class Play extends Phaser.State {
         }
     }
 
-    onMovePlayer({ player_id, x, y }) {
-        let enemy = findFrom(player_id, this.enemies);
+    private onMovePlayer({
+        player_id,
+        x,
+        y,
+    }: {
+        player_id: number;
+        x: number;
+        y: number;
+    }) {
+        const enemy = findFrom(player_id, this.enemies);
         if (!enemy) {
             return;
         }
 
-        enemy.goTo({ x: x, y: y });
+        enemy.goTo({ x, y });
     }
 
-    stopAnimationLoop() {
-        for (let enemy of this.enemies.children) {
-            if (enemy.lastMoveAt < this.game.time.now - 200) {
-                enemy.animations.stop();
+    private stopAnimationLoop() {
+        for (const enemy of this.enemies.getChildren()) {
+            const enemyPlayer = enemy as EnemyPlayer;
+            if (enemyPlayer.lastMoveAt < this.time.now - 200) {
+                enemyPlayer.anims.stop();
             }
         }
     }
 
-    onShowBomb({ bomb_id, col, row }) {
-        this.bombs.add(new Bomb(this.game, bomb_id, col, row));
+    private onShowBomb({
+        bomb_id,
+        col,
+        row,
+    }: {
+        bomb_id: number;
+        col: number;
+        row: number;
+    }) {
+        this.bombs.add(new Bomb(this, bomb_id, col, row));
     }
 
-    onDetonateBomb({ bomb_id, blastedCells }) {
+    private onDetonateBomb({
+        bomb_id,
+        blastedCells,
+    }: {
+        bomb_id: number;
+        blastedCells: any[];
+    }) {
         // Remove Bomb:
         findAndDestroyFrom(bomb_id, this.bombs);
 
         // Render Blast:
-        for (let cell of blastedCells) {
-            this.blasts.add(new FireBlast(this.game, cell));
+        for (const cell of blastedCells) {
+            this.blasts.add(new FireBlast(this, cell));
         }
 
         // Destroy Tiles:
-        for (let cell of blastedCells) {
+        for (const cell of blastedCells) {
             if (!cell.destroyed) {
                 continue;
             }
 
-            this.map.putTile(
-                this.blockLayer.layer.properties.empty,
-                cell.col,
-                cell.row,
-                this.blockLayer
+            // Set the tile at (col, row) to an "empty" tile with ID 0 (or the correct ID for an empty tile)
+            const emptyTileId = 0; // Replace with the appropriate tile ID for an empty tile
+            this.map.putTileAt(
+                emptyTileId, // Tile ID for an "empty" tile
+                cell.col, // X-coordinate (column) in the tilemap
+                cell.row, // Y-coordinate (row) in the tilemap
+                true, // Optional: Recalculate faces after placement (set to true or false as needed)
+                this.blockLayer // Specify the layer to place the tile in
             );
         }
 
         // Add Spoils:
-        for (let cell of blastedCells) {
-            if (!cell.destroyed) {
-                continue;
-            }
-            if (!cell.spoil) {
+        for (const cell of blastedCells) {
+            if (!cell.destroyed || !cell.spoil) {
                 continue;
             }
 
-            this.spoils.add(new Spoil(this.game, cell.spoil));
+            this.spoils.add(new Spoil(this, cell.spoil));
         }
     }
 
-    onSpoilWasPicked({ player_id, spoil_id, spoil_type }) {
+    private onSpoilWasPicked({
+        player_id,
+        spoil_id,
+        spoil_type,
+    }: {
+        player_id: number;
+        spoil_id: number;
+        spoil_type: ISpoilType;
+    }) {
         if (player_id === this.player.id) {
             this.player.pickSpoil(spoil_type);
         }
@@ -172,25 +241,29 @@ class Play extends Phaser.State {
         findAndDestroyFrom(spoil_id, this.spoils);
     }
 
-    onShowBones({ player_id, col, row }) {
-        this.bones.add(new Bone(this.game, col, row));
-
+    private onShowBones({
+        player_id,
+        col,
+        row,
+    }: {
+        player_id: number;
+        col: number;
+        row: number;
+    }) {
+        this.bones.add(new Bone(this, col, row));
         findAndDestroyFrom(player_id, this.enemies);
     }
 
-    onPlayerWin(winner_skin) {
+    private onPlayerWin(winner_skin?: string) {
         clientSocket.emit("leave game");
-
-        this.state.start("Win", true, false, winner_skin);
+        this.scene.start("Win", { winner_skin });
     }
 
-    onPlayerDisconnect({ player_id }) {
+    private onPlayerDisconnect({ player_id }: { player_id: number }) {
         findAndDestroyFrom(player_id, this.enemies);
-
-        if (this.enemies.children.length >= 1) {
+        if (this.enemies.getChildren().length >= 1) {
             return;
         }
-
         this.onPlayerWin();
     }
 }

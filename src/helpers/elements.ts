@@ -1,32 +1,18 @@
 import Phaser from "phaser";
-
-interface TextConstructorParams {
-    scene: Phaser.Scene;
-    x: number;
-    y: number;
-    text: string;
-    style: Phaser.Types.GameObjects.Text.TextStyle;
-}
-
+import {
+    TextConstructorParams,
+    ButtonConstructorParams,
+    TextButtonConstructorParams,
+    GameSlotsConstructorParams,
+    PlayerSlotsConstructorParams,
+    SpoilNotificationConstructorParams,
+} from "../../src/utils/types";
 export class Text extends Phaser.GameObjects.Text {
     constructor({ scene, x, y, text, style }: TextConstructorParams) {
         super(scene, x, y, text, style);
         this.setOrigin(0.5);
         scene.add.existing(this);
     }
-}
-
-interface ButtonConstructorParams {
-    scene: Phaser.Scene;
-    x: number;
-    y: number;
-    asset: string;
-    callback: () => void;
-    callbackContext: unknown;
-    overFrame: string | number;
-    outFrame: string | number;
-    downFrame: string | number;
-    upFrame: string | number;
 }
 
 export class Button extends Phaser.GameObjects.Sprite {
@@ -68,11 +54,6 @@ export class Button extends Phaser.GameObjects.Sprite {
         this.disableInteractive();
         this.setAlpha(0.5); // Optionally, make it semi-transparent
     }
-}
-
-interface TextButtonConstructorParams extends ButtonConstructorParams {
-    label: string;
-    style: Phaser.Types.GameObjects.Text.TextStyle;
 }
 
 export class TextButton extends Phaser.GameObjects.Container {
@@ -127,16 +108,6 @@ export class TextButton extends Phaser.GameObjects.Container {
     enable() {
         this.button.enable();
     }
-}
-
-interface GameSlotsConstructorParams {
-    scene: Phaser.Scene;
-    availableGames: { id: number; name: string }[];
-    callback: (params: { game_id: number }) => void;
-    callbackContext?: unknown;
-    x: number;
-    y: number;
-    style: Phaser.Types.GameObjects.Text.TextStyle;
 }
 
 export class GameSlots extends Phaser.GameObjects.Group {
@@ -209,17 +180,6 @@ export class GameSlots extends Phaser.GameObjects.Group {
     destroy() {
         this.clear(true); // Phaser 3 uses `clear` instead of `kill`
     }
-}
-
-interface PlayerSlotsConstructorParams {
-    scene: Phaser.Scene;
-    max_players: number;
-    players: { skin: string }[];
-    x: number;
-    y: number;
-    asset_empty: string;
-    asset_player: string;
-    style: Phaser.Types.GameObjects.Text.TextStyle;
 }
 
 export class PlayerSlots extends Phaser.GameObjects.Group {
@@ -295,13 +255,6 @@ export class PlayerSlots extends Phaser.GameObjects.Group {
     destroy() {
         this.clear(true); // Clear all elements in the group
     }
-}
-
-interface SpoilNotificationConstructorParams {
-    scene: Phaser.Scene;
-    asset: string;
-    x: number;
-    y: number;
 }
 
 export class SpoilNotification extends Phaser.GameObjects.Group {
