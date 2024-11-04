@@ -29,6 +29,15 @@ class MainMenu extends Phaser.Scene {
         // );
     }
 
+    preload() {
+        this.load.setPath("assets");
+
+        this.load.spritesheet("buttons", "assets/images/menu/buttons.png", {
+            frameWidth: 48,
+            frameHeight: 48,
+        });
+    }
+
     create(): void {
         const background = this.add.image(
             this.scale.width / 2,

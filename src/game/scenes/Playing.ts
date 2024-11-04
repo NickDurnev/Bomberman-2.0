@@ -22,7 +22,7 @@ interface ClientSocket {
 
 declare const clientSocket: ClientSocket; // Assuming clientSocket is globally defined
 
-class Play extends Phaser.Scene {
+class Playing extends Phaser.Scene {
     private currentGame: any; // Define the type according to your game object structure
     private player!: Player;
     private bones!: Phaser.GameObjects.Group;
@@ -32,6 +32,10 @@ class Play extends Phaser.Scene {
     private enemies!: Phaser.GameObjects.Group;
     private blockLayer!: Phaser.Tilemaps.TilemapLayer;
     private map!: Phaser.Tilemaps.Tilemap;
+
+    constructor() {
+        super("Playing");
+    }
 
     init(game: any) {
         this.currentGame = game;
@@ -81,7 +85,9 @@ class Play extends Phaser.Scene {
     }
 
     createMap() {
-        this.map = this.make.tilemap({ key: this.currentGame.map_name });
+        this.map = this.make.tilemap({
+            key: this.currentGame.map_name ?? "hot_map",
+        });
         const tileset = this.map.addTilesetImage(TILESET);
 
         this.blockLayer = this.map.createLayer(LAYER, tileset!)!;
@@ -99,7 +105,9 @@ class Play extends Phaser.Scene {
 
     private createPlayers() {
         for (const player of Object.values(
-            this.currentGame.players
+            this.currentGame.players ?? [
+                { id: 0, spawn: { x: 50, y: 300 }, skin: "head_Raviel" },
+            ]
         ) as PlayerData[]) {
             const setup: PlayerConfig = {
                 scene: this,
@@ -108,39 +116,40 @@ class Play extends Phaser.Scene {
                 skin: player.skin,
             };
 
-            if (player.id === clientSocket.id) {
-                this.player = new Player(setup);
-            } else {
-                this.enemies.add(new EnemyPlayer(setup));
-            }
+            // if (player.id === clientSocket.id) {
+            this.player = new Player(setup);
+            // } else {
+            //     this.enemies.add(new EnemyPlayer(setup));
+            // }
         }
     }
 
     private setEventHandlers() {
-        clientSocket.on("move player", this.onMovePlayer.bind(this));
-        clientSocket.on("player win", this.onPlayerWin.bind(this));
-        clientSocket.on("show bomb", this.onShowBomb.bind(this));
-        clientSocket.on("detonate bomb", this.onDetonateBomb.bind(this));
-        clientSocket.on("spoil was picked", this.onSpoilWasPicked.bind(this));
-        clientSocket.on("show bones", this.onShowBones.bind(this));
-        clientSocket.on(
-            "player disconnect",
-            this.onPlayerDisconnect.bind(this)
-        );
+        this.onMovePlayer.bind(this);
+        // clientSocket.on("move player", this.onMovePlayer.bind(this));
+        // clientSocket.on("player win", this.onPlayerWin.bind(this));
+        // clientSocket.on("show bomb", this.onShowBomb.bind(this));
+        // clientSocket.on("detonate bomb", this.onDetonateBomb.bind(this));
+        // clientSocket.on("spoil was picked", this.onSpoilWasPicked.bind(this));
+        // clientSocket.on("show bones", this.onShowBones.bind(this));
+        // clientSocket.on(
+        //     "player disconnect",
+        //     this.onPlayerDisconnect.bind(this)
+        // );
     }
 
     private onPlayerVsSpoil(player: Player, spoil: Spoil) {
-        clientSocket.emit("pick up spoil", { spoil_id: spoil.id });
+        // clientSocket.emit("pick up spoil", { spoil_id: spoil.id });
         spoil.destroy();
     }
 
     private onPlayerVsBlast(player: Player, blast: FireBlast) {
         console.log(blast);
         if (player.active) {
-            clientSocket.emit("player died", {
-                col: player.currentCol(),
-                row: player.currentRow(),
-            });
+            // clientSocket.emit("player died", {
+            //     col: player.currentCol(),
+            //     row: player.currentRow(),
+            // });
             player.becomesDead();
         }
     }
@@ -255,7 +264,7 @@ class Play extends Phaser.Scene {
     }
 
     private onPlayerWin(winner_skin?: string) {
-        clientSocket.emit("leave game");
+        // clientSocket.emit("leave game");
         this.scene.start("Win", { winner_skin });
     }
 
@@ -268,5 +277,5 @@ class Play extends Phaser.Scene {
     }
 }
 
-export default Play;
+export default Playing;
 

@@ -1,51 +1,113 @@
 export default class Info {
+    private game: Phaser.Scene;
+    private player: { speed: number; power: number; delay: number };
+    private style: Phaser.Types.GameObjects.Text.TextStyle;
+    private redStyle: Phaser.Types.GameObjects.Text.TextStyle;
+    private speedText: Phaser.GameObjects.Text;
+    private powerText: Phaser.GameObjects.Text;
+    private delayText: Phaser.GameObjects.Text;
+    private deadText: Phaser.GameObjects.Text;
 
-  constructor({ game, player }) {
-    this.game = game;
-    this.player = player;
+    constructor({
+        game,
+        player,
+    }: {
+        game: Phaser.Scene;
+        player: { speed: number; power: number; delay: number };
+    }) {
+        this.game = game;
+        this.player = player;
 
-    this.style    = { font: '14px Arial', fill: '#ffffff', align: 'left' }
-    this.redStyle = { font: '30px Arial', fill: '#ff0044', align: 'center' };
+        this.style = {
+            font: "14px Arial",
+            fill: "#f3f3f3",
+            align: "left",
+        } as Phaser.Types.GameObjects.Text.TextStyle;
+        this.redStyle = {
+            font: "30px Arial",
+            fill: "#ff0044",
+            align: "center",
+        } as Phaser.Types.GameObjects.Text.TextStyle;
 
-    let bootsIcon  = new Phaser.Image(this.game, 5, 2, 'placeholder_speed');
-    this.speedText = new Phaser.Text(this.game, 35, 7, this.speedLabel(), this.style);
-    bootsIcon.addChild(this.speedText)
-    this.game.add.existing(bootsIcon);
+        // Creating speed icon and text
+        const bootsIcon = new Phaser.GameObjects.Image(
+            this.game,
+            5,
+            2,
+            "placeholder_speed"
+        );
+        this.speedText = new Phaser.GameObjects.Text(
+            this.game,
+            35,
+            7,
+            this.speedLabel(),
+            this.style
+        );
+        this.game.add.container(0, 0, [bootsIcon, this.speedText]);
 
-    let powerIcon  = new Phaser.Image(this.game, 110, 2, 'placeholder_power');
-    this.powerText = new Phaser.Text(this.game, 35, 7, this.powerLabel(), this.style);
-    powerIcon.addChild(this.powerText)
-    this.game.add.existing(powerIcon);
+        // Creating power icon and text
+        const powerIcon = new Phaser.GameObjects.Image(
+            this.game,
+            110,
+            2,
+            "placeholder_power"
+        );
+        this.powerText = new Phaser.GameObjects.Text(
+            this.game,
+            35,
+            7,
+            this.powerLabel(),
+            this.style
+        );
+        this.game.add.container(0, 0, [powerIcon, this.powerText]);
 
-    let delayIcon  = new Phaser.Image(this.game, 215, 2, 'placeholder_time');
-    this.delayText = new Phaser.Text(this.game, 35, 7, this.delayLabel(), this.style);
-    delayIcon.addChild(this.delayText)
-    this.game.add.existing(delayIcon);
+        // Creating delay icon and text
+        const delayIcon = new Phaser.GameObjects.Image(
+            this.game,
+            215,
+            2,
+            "placeholder_time"
+        );
+        this.delayText = new Phaser.GameObjects.Text(
+            this.game,
+            35,
+            7,
+            this.delayLabel(),
+            this.style
+        );
+        this.game.add.container(0, 0, [delayIcon, this.delayText]);
 
-    this.deadText = this.game.add.text(this.game.world.centerX, this.game.world.height - 30, 'You died :(', this.redStyle);
-    this.deadText.anchor.set(0.5);
-    this.deadText.visible = false
-  }
+        // Adding dead text
+        this.deadText = this.game.add.text(
+            this.game.cameras.main.centerX,
+            this.game.scale.height - 30,
+            "You died :(",
+            this.redStyle
+        );
+        this.deadText.setOrigin(0.5);
+        this.deadText.setVisible(false);
+    }
 
-  refreshStatistic() {
-    this.speedText.text = this.speedLabel();
-    this.powerText.text = this.powerLabel();
-    this.delayText.text = this.delayLabel();
-  }
+    refreshStatistic(): void {
+        this.speedText.text = this.speedLabel();
+        this.powerText.text = this.powerLabel();
+        this.delayText.text = this.delayLabel();
+    }
 
-  showDeadInfo() {
-    this.deadText.visible = true
-  }
+    showDeadInfo(): void {
+        this.deadText.setVisible(true);
+    }
 
-  speedLabel() {
-    return this.player.speed
-  }
+    private speedLabel(): string {
+        return `${this.player.speed}`;
+    }
 
-  powerLabel() {
-    return `x ${this.player.power}`
-  }
+    private powerLabel(): string {
+        return `x ${this.player.power}`;
+    }
 
-  delayLabel() {
-    return `${this.player.delay / 1000} sec.`
-  }
+    private delayLabel(): string {
+        return `${this.player.delay / 1000} sec.`;
+    }
 }
+

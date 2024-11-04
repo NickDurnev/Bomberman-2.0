@@ -155,6 +155,7 @@ export default class Player extends Phaser.GameObjects.Container {
         const animationsArray: string[] = [];
 
         if (this.leftKey.isDown) {
+            console.log("left");
             (this.body as Phaser.Physics.Arcade.Body).velocity.x = -this.speed;
             animationsArray.push("left");
         } else if (this.rightKey.isDown) {

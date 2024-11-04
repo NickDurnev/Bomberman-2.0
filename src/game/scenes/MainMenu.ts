@@ -13,7 +13,7 @@ interface GameData {
     // Define other properties of game data here if necessary
 }
 
-export class MainMenu extends Scene {
+class MainMenu extends Scene {
     background: GameObjects.Image;
     logo: GameObjects.Image;
     title: GameObjects.Text;
@@ -37,6 +37,12 @@ export class MainMenu extends Scene {
         // );
     }
 
+    preload() {
+        this.load.setPath("assets");
+
+        this.load.image("button", "images/menu/button.png");
+    }
+
     create() {
         const background = this.add.image(
             this.scale.width / 2,
@@ -54,22 +60,7 @@ export class MainMenu extends Scene {
                 fontFamily: "Arial Black",
                 fontSize: 60,
                 fontStyle: "bold",
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 8,
-                align: "center",
-            },
-        } as TextConstructorParams);
-
-        new Text({
-            scene: this,
-            x: this.scale.width / 2,
-            y: this.scale.height / 2 - 215,
-            text: "Main Menu",
-            style: {
-                fontFamily: "Arial Black",
-                fontSize: 38,
-                color: "#ffffff",
+                color: "#f3f3f3",
                 stroke: "#000000",
                 strokeThickness: 8,
                 align: "center",
@@ -80,7 +71,7 @@ export class MainMenu extends Scene {
             scene: this,
             x: this.scale.width / 2,
             y: this.scale.height / 2 + 195,
-            asset: "buttons",
+            asset: "button",
             callback: this.hostGameAction.bind(this),
             callbackContext: this,
             overFrame: 1,
@@ -89,26 +80,10 @@ export class MainMenu extends Scene {
             upFrame: 0,
             label: "New Game",
             style: {
-                font: "20px Arial",
-                fill: "#000000",
+                font: "16px Arial Black semibold",
+                fill: "#f3f3f3",
             },
         } as TextButtonConstructorParams);
-
-        // this.button = this.add
-        //     .text(512, 500, "Start", {
-        //         fontFamily: "Arial Black",
-        //         fontSize: 38,
-        //         color: "#ffffff",
-        //         stroke: "#000000",
-        //         strokeThickness: 8,
-        //         align: "center",
-        //     })
-        //     .setOrigin(0.5)
-        //     .setDepth(100)
-        //     .setInteractive()
-        //     .on("pointerdown", () => {
-        //         this.changeScene();
-        //     });
 
         EventBus.emit("current-scene-ready", this);
     }
@@ -155,3 +130,4 @@ export class MainMenu extends Scene {
     // }
 }
 
+export default MainMenu;
