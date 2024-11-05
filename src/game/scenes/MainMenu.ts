@@ -6,6 +6,7 @@ import {
     TextButtonConstructorParams,
     GameSlotsConstructorParams,
 } from "../../utils/types";
+import clientSocket from "../../utils/socket";
 
 interface GameData {
     id: number;
@@ -23,18 +24,16 @@ class MainMenu extends Scene {
     private slotsWithGame: GameSlots | null = null;
 
     constructor() {
-        //TODO = "Return MainMenu name";
         super("MainMenu");
     }
 
     init(): void {
         this.slotsWithGame = null;
 
-        // Uncomment when clientSocket is available
-        // clientSocket.on(
-        //     "display pending games",
-        //     this.displayPendingGames.bind(this)
-        // );
+        clientSocket.on(
+            "display pending games",
+            this.displayPendingGames.bind(this)
+        );
     }
 
     preload() {
@@ -93,8 +92,7 @@ class MainMenu extends Scene {
     }
 
     private hostGameAction(): void {
-        // Uncomment when clientSocket is available
-        // clientSocket.emit("leave lobby");
+        clientSocket.emit("leave lobby");
         this.scene.start("SelectMap");
     }
 
@@ -120,14 +118,10 @@ class MainMenu extends Scene {
     }
 
     joinGameAction({ game_id }: { game_id: number }) {
-        // Uncomment when clientSocket is available
-        // clientSocket.emit("leave lobby");
+        clientSocket.emit("leave lobby");
         this.scene.start("PendingGame", { game_id });
     }
-
-    // changeScene() {
-    //     this.scene.start("Game");
-    // }
 }
 
 export default MainMenu;
+

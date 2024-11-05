@@ -1,10 +1,11 @@
 import Phaser from "phaser";
-import { Text, TextButton, GameSlots } from "../../helpers/elements";
+import { Text, TextButton, GameSlots } from "@helpers/elements";
+import clientSocket from "@utils/socket";
 import {
     TextConstructorParams,
     TextButtonConstructorParams,
     GameSlotsConstructorParams,
-} from "../../utils/types";
+} from "@utils/types";
 
 interface GameData {
     id: number;
@@ -22,11 +23,10 @@ class MainMenu extends Phaser.Scene {
     init(): void {
         this.slotsWithGame = null;
 
-        // Uncomment when clientSocket is available
-        // clientSocket.on(
-        //     "display pending games",
-        //     this.displayPendingGames.bind(this)
-        // );
+        clientSocket.on(
+            "display pending games",
+            this.displayPendingGames.bind(this)
+        );
     }
 
     preload() {
@@ -95,8 +95,7 @@ class MainMenu extends Phaser.Scene {
             },
         } as TextButtonConstructorParams);
 
-        // Uncomment when clientSocket is available
-        // clientSocket.emit("enter lobby", this.displayPendingGames.bind(this));
+        clientSocket.emit("enter lobby", this.displayPendingGames.bind(this));
     }
 
     update(): void {
@@ -104,8 +103,7 @@ class MainMenu extends Phaser.Scene {
     }
 
     private hostGameAction(): void {
-        // Uncomment when clientSocket is available
-        // clientSocket.emit("leave lobby");
+        clientSocket.emit("leave lobby");
         this.scene.start("SelectMap");
     }
 
@@ -131,8 +129,7 @@ class MainMenu extends Phaser.Scene {
     }
 
     joinGameAction({ game_id }: { game_id: number }) {
-        // Uncomment when clientSocket is available
-        // clientSocket.emit("leave lobby");
+        clientSocket.emit("leave lobby");
         this.scene.start("PendingGame", { game_id });
     }
 }

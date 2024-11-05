@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { AVAILABLE_MAPS } from "../../utils/constants";
+import clientSocket from "../../utils/socket";
 import { Text, Button } from "../../helpers/elements";
 
 class SelectMap extends Phaser.Scene {
@@ -57,11 +58,11 @@ class SelectMap extends Phaser.Scene {
         console.log("mapName:", mapName);
         this.scene.start("PendingGame", { gameId: 1 });
         // Use mapName in your logic
-        // clientSocket.emit(
-        //     "create game",
-        //     mapName,
-        //     this.joinToNewGame.bind(this)
-        // );
+        clientSocket.emit(
+            "create game",
+            mapName,
+            this.joinToNewGame.bind(this)
+        );
     }
 
     private joinToNewGame(gameId: number) {

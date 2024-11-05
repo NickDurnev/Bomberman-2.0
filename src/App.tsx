@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { IRefPhaserGame, PhaserGame } from "./game/PhaserGame";
 import { MainMenu } from "./game/scenes/MainMenu";
+import Socket from "./Socket";
 
 function App() {
     // The sprite can only be moved in the MainMenu Scene
@@ -61,7 +62,9 @@ function App() {
 
     return (
         <div id="app">
-            <PhaserGame ref={phaserRef} />
+            <Socket>
+                <PhaserGame ref={phaserRef} />
+            </Socket>
         </div>
     );
 }

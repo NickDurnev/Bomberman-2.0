@@ -1,12 +1,13 @@
-import { findFrom, findAndDestroyFrom } from "../../utils/utils";
-import { TILESET, LAYER } from "../../utils/constants";
 import Player from "../entities/player";
 import EnemyPlayer from "../entities/enemy_player";
 import Bomb from "../entities/bomb";
 import Spoil from "../entities/spoil";
 import FireBlast from "../entities/fire_blast";
 import Bone from "../entities/bone";
+import { findFrom, findAndDestroyFrom } from "../../utils/utils";
+import { TILESET, LAYER } from "../../utils/constants";
 import { PlayerConfig, ISpoilType } from "../../utils/types";
+import clientSocket from "../../utils/socket";
 
 interface PlayerData {
     id: number;
@@ -14,13 +15,13 @@ interface PlayerData {
     skin: string;
 }
 
-interface ClientSocket {
-    id: number;
-    emit(event: string, data?: any): void;
-    on(event: string, callback: (...args: any[]) => void): void;
-}
+// interface ISocket  {
+//     id: number;
+//     emit(event: string, data?: any): void;
+//     on(event: string, callback: (...args: any[]) => void): void;
+// }
 
-declare const clientSocket: ClientSocket; // Assuming clientSocket is globally defined
+// declare const socket: ClientSocket; // Assuming clientSocket is globally defined
 
 class Playing extends Phaser.Scene {
     private currentGame: any; // Define the type according to your game object structure
@@ -44,6 +45,7 @@ class Playing extends Phaser.Scene {
     create() {
         this.createMap();
         this.createPlayers();
+        this.physics.add.collider(this.player, this.blockLayer);
         this.setEventHandlers();
 
         this.time.addEvent({
@@ -58,6 +60,8 @@ class Playing extends Phaser.Scene {
         this.physics.collide(this.player, this.blockLayer);
         this.physics.collide(this.player, this.enemies);
         this.physics.collide(this.player, this.bombs);
+
+        this.player.update();
 
         this.physics.overlap(
             this.player,
@@ -92,7 +96,8 @@ class Playing extends Phaser.Scene {
 
         this.blockLayer = this.map.createLayer(LAYER, tileset!)!;
 
-        this.map.setCollisionByProperty({ collides: true }); // Use the property defined in your tileset
+        // this.map.setCollisionByProperty({ collides: true }); // Use the property defined in your tileset
+        this.map.setCollision([1, 2, 3, 4, 5]);
 
         this.bones = this.add.group();
         this.bombs = this.add.group();
@@ -100,13 +105,13 @@ class Playing extends Phaser.Scene {
         this.blasts = this.add.group();
         this.enemies = this.add.group();
 
-        this.physics.world.enable(this.blockLayer); // Changed to use the correct method for enabling physics
+        // this.physics.world.enable(this.blockLayer); // Changed to use the correct method for enabling physics
     }
 
     private createPlayers() {
         for (const player of Object.values(
             this.currentGame.players ?? [
-                { id: 0, spawn: { x: 50, y: 300 }, skin: "head_Raviel" },
+                { id: 5, spawn: { x: 200, y: 300 }, skin: "head_Raviel" },
             ]
         ) as PlayerData[]) {
             const setup: PlayerConfig = {
@@ -126,30 +131,30 @@ class Playing extends Phaser.Scene {
 
     private setEventHandlers() {
         this.onMovePlayer.bind(this);
-        // clientSocket.on("move player", this.onMovePlayer.bind(this));
-        // clientSocket.on("player win", this.onPlayerWin.bind(this));
-        // clientSocket.on("show bomb", this.onShowBomb.bind(this));
-        // clientSocket.on("detonate bomb", this.onDetonateBomb.bind(this));
-        // clientSocket.on("spoil was picked", this.onSpoilWasPicked.bind(this));
-        // clientSocket.on("show bones", this.onShowBones.bind(this));
-        // clientSocket.on(
-        //     "player disconnect",
-        //     this.onPlayerDisconnect.bind(this)
-        // );
+        clientSocket.on("move player", this.onMovePlayer.bind(this));
+        clientSocket.on("player win", this.onPlayerWin.bind(this));
+        clientSocket.on("show bomb", this.onShowBomb.bind(this));
+        clientSocket.on("detonate bomb", this.onDetonateBomb.bind(this));
+        clientSocket.on("spoil was picked", this.onSpoilWasPicked.bind(this));
+        clientSocket.on("show bones", this.onShowBones.bind(this));
+        clientSocket.on(
+            "player disconnect",
+            this.onPlayerDisconnect.bind(this)
+        );
     }
 
     private onPlayerVsSpoil(player: Player, spoil: Spoil) {
-        // clientSocket.emit("pick up spoil", { spoil_id: spoil.id });
+        clientSocket.emit("pick up spoil", { spoil_id: spoil.id });
         spoil.destroy();
     }
 
     private onPlayerVsBlast(player: Player, blast: FireBlast) {
         console.log(blast);
         if (player.active) {
-            // clientSocket.emit("player died", {
-            //     col: player.currentCol(),
-            //     row: player.currentRow(),
-            // });
+            clientSocket.emit("player died", {
+                col: player.currentCol(),
+                row: player.currentRow(),
+            });
             player.becomesDead();
         }
     }
@@ -264,7 +269,7 @@ class Playing extends Phaser.Scene {
     }
 
     private onPlayerWin(winner_skin?: string) {
-        // clientSocket.emit("leave game");
+        clientSocket.emit("leave game");
         this.scene.start("Win", { winner_skin });
     }
 

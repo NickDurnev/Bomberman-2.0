@@ -14,9 +14,10 @@
         "isolatedModules": true,
         "noEmit": true,
         "jsx": "react-jsx",
-        "baseUrl": ".",
+        "baseUrl": "./",
         "paths": {
-            "@utils/*": ["./src/utils/*"]
+            "@utils/*": ["./src/utils/*"],
+            "@helpers/*": ["./src/helpers/*"]
         },
 
         /* Linting */

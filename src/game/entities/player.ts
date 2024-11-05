@@ -1,3 +1,4 @@
+import { Physics } from "phaser";
 import {
     PING,
     TILE_SIZE,
@@ -12,13 +13,13 @@ import {
     SPEED,
     POWER,
     DELAY,
-} from "../../utils/constants";
-import { ISpoilType, PlayerConfig } from "../../utils/types";
-
+} from "../../utils//constants";
+import { ISpoilType, PlayerConfig } from "../../utils//types";
+import clientSocket from "../../utils/socket";
 import Info from "./info";
-import { SpoilNotification, Text } from "../../helpers/elements";
+import { SpoilNotification } from "../../helpers/elements";
 
-export default class Player extends Phaser.GameObjects.Container {
+export default class Player extends Physics.Arcade.Sprite {
     game: Phaser.Scene;
     id: number;
     prevPosition: { x: number; y: number };
@@ -35,7 +36,7 @@ export default class Player extends Phaser.GameObjects.Container {
     sprite: Phaser.GameObjects.Sprite;
 
     constructor({ scene, id, spawn, skin }: PlayerConfig) {
-        super(scene, spawn.x, spawn.y);
+        super(scene, spawn.x, spawn.y, skin);
 
         this.game = scene;
         this.id = id;
@@ -45,20 +46,16 @@ export default class Player extends Phaser.GameObjects.Container {
         this.speed = INITIAL_SPEED;
         this._lastBombTime = 0;
 
-        // Create the player sprite and add to the container
         this.sprite = new Phaser.GameObjects.Sprite(
             scene,
             0,
             0,
             `bomberman_${skin}`
         );
-        this.add(this.sprite);
+        // this.add(this.sprite);
 
         this.game.add.existing(this);
         this.game.physics.add.existing(this);
-
-        // Update setSize with valid arguments
-        (this.body as Phaser.Physics.Arcade.Body).setSize(20, 20);
 
         this.game.time.addEvent({
             delay: PING,
@@ -67,62 +64,14 @@ export default class Player extends Phaser.GameObjects.Container {
             loop: true,
         });
 
-        this.sprite.anims.create({
-            key: "up",
-            frames: this.sprite.anims.generateFrameNumbers(
-                `bomberman_${skin}`,
-                {
-                    start: 9,
-                    end: 11,
-                }
-            ),
-            frameRate: 15,
-            repeat: -1,
-        });
-
-        this.sprite.anims.create({
-            key: "down",
-            frames: this.sprite.anims.generateFrameNumbers(
-                `bomberman_${skin}`,
-                {
-                    start: 0,
-                    end: 2,
-                }
-            ),
-            frameRate: 15,
-            repeat: -1,
-        });
-
-        this.sprite.anims.create({
-            key: "right",
-            frames: this.sprite.anims.generateFrameNumbers(
-                `bomberman_${skin}`,
-                {
-                    start: 6,
-                    end: 8,
-                }
-            ),
-            frameRate: 15,
-            repeat: -1,
-        });
-
-        this.sprite.anims.create({
-            key: "left",
-            frames: this.sprite.anims.generateFrameNumbers(
-                `bomberman_${skin}`,
-                {
-                    start: 3,
-                    end: 5,
-                }
-            ),
-            frameRate: 15,
-            repeat: -1,
-        });
-
         this.info = new Info({ game: this.game, player: this });
 
+        // PHYSICS
+        // this.getBody().setSize(35, 35);
+        // this.getBody().setOffset(-1, -1);
+
         this.defineKeyboard();
-        this.defineSelf(skin);
+        // this.defineSelf(skin);
     }
 
     update() {
@@ -130,6 +79,10 @@ export default class Player extends Phaser.GameObjects.Container {
             this.handleMoves();
             this.handleBombs();
         }
+    }
+
+    protected getBody(): Physics.Arcade.Body {
+        return this.body as Physics.Arcade.Body;
     }
 
     defineKeyboard() {
@@ -151,33 +104,19 @@ export default class Player extends Phaser.GameObjects.Container {
     }
 
     handleMoves() {
-        (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);
-        const animationsArray: string[] = [];
-
-        if (this.leftKey.isDown) {
-            console.log("left");
-            (this.body as Phaser.Physics.Arcade.Body).velocity.x = -this.speed;
-            animationsArray.push("left");
-        } else if (this.rightKey.isDown) {
-            (this.body as Phaser.Physics.Arcade.Body).velocity.x = this.speed;
-            animationsArray.push("right");
+        this.getBody().setVelocity(0);
+        if (this.upKey?.isDown) {
+            this.body!.velocity.y = -110;
         }
-
-        if (this.upKey.isDown) {
-            (this.body as Phaser.Physics.Arcade.Body).velocity.y = -this.speed;
-            animationsArray.push("up");
-        } else if (this.downKey.isDown) {
-            (this.body as Phaser.Physics.Arcade.Body).velocity.y = this.speed;
-            animationsArray.push("down");
+        if (this.leftKey?.isDown) {
+            this.body!.velocity.x = -110;
         }
-
-        const currentAnimation = animationsArray[0];
-        if (currentAnimation) {
-            this.sprite.anims.play(currentAnimation, true);
-            return;
+        if (this.downKey?.isDown) {
+            this.body!.velocity.y = 110;
         }
-
-        this.sprite.anims.stop();
+        if (this.rightKey?.isDown) {
+            this.body!.velocity.x = 110;
+        }
     }
 
     handleBombs() {
@@ -187,10 +126,10 @@ export default class Player extends Phaser.GameObjects.Container {
             if (now > this._lastBombTime) {
                 this._lastBombTime = now + this.delay;
 
-                // clientSocket.emit("create bomb", {
-                //     col: this.currentCol(),
-                //     row: this.currentRow(),
-                // });
+                clientSocket.emit("create bomb", {
+                    col: this.currentCol(),
+                    row: this.currentRow(),
+                });
             }
         }
     }
@@ -210,7 +149,7 @@ export default class Player extends Phaser.GameObjects.Container {
             this.prevPosition.x !== newPosition.x ||
             this.prevPosition.y !== newPosition.y
         ) {
-            // clientSocket.emit("update player position", newPosition);
+            clientSocket.emit("update player position", newPosition);
             this.prevPosition = newPosition;
         }
     }
@@ -277,22 +216,22 @@ export default class Player extends Phaser.GameObjects.Container {
         });
     }
 
-    defineSelf(name: string) {
-        const playerText = new Text({
-            scene: this.game,
-            x: TILE_SIZE / 2,
-            y: -10,
-            text: `\u272E ${name} \u272E`,
-            style: {
-                font: "15px Arial",
-                color: "#FFFFFF",
-                // fill: "#FFFFFF",
-                stroke: "#000000",
-                strokeThickness: 3,
-            },
-        });
+    // defineSelf(name: string) {
+    //     const playerText = new Text({
+    //         scene: this.game,
+    //         x: TILE_SIZE / 2,
+    //         y: -10,
+    //         text: `\u272E ${name} \u272E`,
+    //         style: {
+    //             font: "15px Arial",
+    //             color: "#FFFFFF",
+    //             // fill: "#FFFFFF",
+    //             stroke: "#000000",
+    //             strokeThickness: 3,
+    //         },
+    //     });
 
-        this.add(playerText);
-    }
+    //     this.add(playerText);
+    // }
 }
 

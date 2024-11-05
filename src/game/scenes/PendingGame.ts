@@ -4,6 +4,7 @@ import {
     TextButtonConstructorParams,
     PlayerSlotsConstructorParams,
 } from "../../utils/types";
+import clientSocket from "../../utils/socket";
 
 interface GameInfo {
     name: string;
@@ -32,10 +33,10 @@ class PendingGame extends Phaser.Scene {
     init({ game_id }: InitData): void {
         this.game_id = game_id;
 
-        // clientSocket.on("update game", this.displayGameInfo.bind(this));
-        // clientSocket.on("launch game", this.launchGame.bind(this));
+        clientSocket.on("update game", this.displayGameInfo.bind(this));
+        clientSocket.on("launch game", this.launchGame.bind(this));
 
-        // clientSocket.emit("enter pending game", { game_id: this.game_id });
+        clientSocket.emit("enter pending game", { game_id: this.game_id });
     }
 
     preload() {
@@ -137,14 +138,13 @@ class PendingGame extends Phaser.Scene {
     }
 
     leaveGameAction(): void {
-        // clientSocket.emit("leave pending game");
+        clientSocket.emit("leave pending game");
         this.scene.start("Menu");
     }
 
     startGameAction(): void {
-        console.log(123);
         this.scene.start("Playing", this);
-        // clientSocket.emit("start game");
+        clientSocket.emit("start game");
     }
 
     launchGame(game: any): void {
