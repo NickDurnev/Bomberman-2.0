@@ -45,7 +45,6 @@ class Playing extends Phaser.Scene {
     create() {
         this.createMap();
         this.createPlayers();
-        this.physics.add.collider(this.player, this.blockLayer);
         this.setEventHandlers();
 
         this.time.addEvent({
@@ -111,7 +110,7 @@ class Playing extends Phaser.Scene {
     private createPlayers() {
         for (const player of Object.values(
             this.currentGame.players ?? [
-                { id: 5, spawn: { x: 200, y: 300 }, skin: "head_Raviel" },
+                { id: 5, spawn: { x: 200, y: 300 }, skin: "batman" },
             ]
         ) as PlayerData[]) {
             const setup: PlayerConfig = {

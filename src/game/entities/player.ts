@@ -46,12 +46,7 @@ export default class Player extends Physics.Arcade.Sprite {
         this.speed = INITIAL_SPEED;
         this._lastBombTime = 0;
 
-        this.sprite = new Phaser.GameObjects.Sprite(
-            scene,
-            0,
-            0,
-            `bomberman_${skin}`
-        );
+        // this.sprite = new Phaser.GameObjects.Sprite(scene, 0, 0, "wall");
         // this.add(this.sprite);
 
         this.game.add.existing(this);
@@ -67,8 +62,8 @@ export default class Player extends Physics.Arcade.Sprite {
         this.info = new Info({ game: this.game, player: this });
 
         // PHYSICS
-        // this.getBody().setSize(35, 35);
-        // this.getBody().setOffset(-1, -1);
+        this.getBody().setSize(35, 35);
+        this.getBody().setOffset(-1, -1);
 
         this.defineKeyboard();
         // this.defineSelf(skin);
@@ -215,23 +210,5 @@ export default class Player extends Physics.Arcade.Sprite {
             y: this.y,
         });
     }
-
-    // defineSelf(name: string) {
-    //     const playerText = new Text({
-    //         scene: this.game,
-    //         x: TILE_SIZE / 2,
-    //         y: -10,
-    //         text: `\u272E ${name} \u272E`,
-    //         style: {
-    //             font: "15px Arial",
-    //             color: "#FFFFFF",
-    //             // fill: "#FFFFFF",
-    //             stroke: "#000000",
-    //             strokeThickness: 3,
-    //         },
-    //     });
-
-    //     this.add(playerText);
-    // }
 }
 

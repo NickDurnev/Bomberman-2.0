@@ -23,21 +23,12 @@ export class Button extends Phaser.GameObjects.Sprite {
         asset,
         callback,
         callbackContext,
-        upFrame,
-        overFrame,
-        outFrame,
-        downFrame,
     }: ButtonConstructorParams) {
         super(scene, x, y, asset);
 
-        this.setInteractive({ useHandCursor: true })
-            .on("pointerover", () => this.setFrame(overFrame))
-            .on("pointerout", () => this.setFrame(outFrame))
-            .on("pointerdown", () => this.setFrame(downFrame))
-            .on("pointerup", () => {
-                this.setFrame(upFrame);
-                callback.call(callbackContext);
-            });
+        this.setInteractive({ useHandCursor: true }).on("pointerup", () => {
+            callback.call(callbackContext);
+        });
 
         // Add the button to the scene
         scene.add.existing(this);
@@ -67,10 +58,6 @@ export class TextButton extends Phaser.GameObjects.Container {
         asset,
         callback,
         callbackContext,
-        overFrame,
-        outFrame,
-        downFrame,
-        upFrame,
         label,
         style,
     }: TextButtonConstructorParams) {
@@ -85,10 +72,6 @@ export class TextButton extends Phaser.GameObjects.Container {
             asset,
             callback,
             callbackContext,
-            overFrame,
-            outFrame,
-            downFrame,
-            upFrame,
         });
         this.add(this.button); // Add the button to the container
 
@@ -113,67 +96,65 @@ export class TextButton extends Phaser.GameObjects.Container {
 export class GameSlots extends Phaser.GameObjects.Group {
     constructor({
         scene,
-        availableGames,
+        data,
         callback,
         callbackContext,
-        x,
-        y,
-        style,
     }: GameSlotsConstructorParams) {
         super(scene);
 
-        const gameSlotAsset = "slot_backdrop";
-        const gameEnterAsset = "list_icon";
+        new Text({
+            scene: scene,
+            x: scene.scale.width / 2,
+            y: scene.scale.height / 2 - 100,
+            text: "Available Games",
+            style: {
+                font: "25px Arial Black semibold",
+                color: "#f3f3f3",
+                stroke: "#000000",
+                strokeThickness: 3,
+            },
+        });
 
-        let yOffset = y;
+        const mapList = scene.add.rectangle(
+            0, // Relative to the container center
+            120,
+            400, // Adjust width
+            350, // Adjust height
+            0x000000,
+            0
+        );
 
-        availableGames.forEach((availableGame) => {
-            // Create a container for the game slot
-            const gameBoxContainer = new Phaser.GameObjects.Container(
+        const container = scene.add.container(
+            scene.scale.width / 2,
+            scene.scale.height / 2
+        );
+        container.add(mapList);
+
+        // Add map buttons to the container
+        data.forEach((availableGame, index) => {
+            if (!availableGame) {
+                return;
+            }
+            const button = new TextButton({
                 scene,
-                x,
-                yOffset
-            );
-
-            // Create the background image for the slot
-            const gameBoxImage = new Phaser.GameObjects.Image(
-                scene,
-                0, // Position relative to the container
-                0,
-                gameSlotAsset
-            );
-
-            // Create the button sprite
-            const button = new Phaser.GameObjects.Sprite(
-                scene,
-                gameBoxImage.width / 2 - 100, // Adjust position relative to the image
-                12,
-                gameEnterAsset
-            )
-                .setInteractive()
-                .on("pointerup", () =>
+                x: 0,
+                y: 0 + index * 100,
+                asset: "button",
+                callback: () =>
                     callback.call(callbackContext, {
-                        game_id: availableGame.id,
-                    })
-                );
-
-            // Create the text for the game slot
-            const text = new Phaser.GameObjects.Text(
-                scene,
-                -gameBoxImage.width / 2 + 30, // Adjust position relative to the image
-                25,
-                `Join Game: ${availableGame.name}`,
-                style
-            );
-
-            // Add image, button, and text to the container
-            gameBoxContainer.add([gameBoxImage, button, text]);
-
-            // Add the container to the group
-            this.add(gameBoxContainer);
-
-            // Increment yOffset for the next game slot
-            yOffset += 105;
+                        game_id: availableGame?.id,
+                    }),
+                callbackContext: scene,
+                label: `Game ${index + 1}`,
+                style: {
+                    font: "16px Arial Black semibold",
+                    fill: "#f3f3f3",
+                },
+            } as TextButtonConstructorParams);
+            container.add(button);
+            if (!availableGame.id) {
+                button.disable();
+            }
         });
     }
 
@@ -187,25 +168,42 @@ export class PlayerSlots extends Phaser.GameObjects.Group {
         scene,
         max_players,
         players,
-        x,
-        y,
         asset_empty,
         asset_player,
         style,
     }: PlayerSlotsConstructorParams) {
         super(scene);
 
-        let xOffset = x;
+        new Text({
+            scene: scene,
+            x: scene.scale.width / 2,
+            y: scene.scale.height / 2 - 100,
+            text: "Players",
+            style: {
+                font: "25px Arial Black semibold",
+                color: "#f3f3f3",
+                stroke: "#000000",
+                strokeThickness: 3,
+            },
+        });
+
+        const mapList = scene.add.rectangle(
+            0, // Relative to the container center
+            120,
+            400, // Adjust width
+            350, // Adjust height
+            0x000000,
+            0
+        );
+
+        const container = scene.add.container(
+            scene.scale.width / 2,
+            scene.scale.height / 2
+        );
+        container.add(mapList);
 
         for (let i = 0; i < max_players; i++) {
             const _player = players[i];
-
-            // Create a container to hold the slot box and name
-            const slotContainer = new Phaser.GameObjects.Container(
-                scene,
-                xOffset,
-                y
-            );
 
             let slotBox: Phaser.GameObjects.Image;
             let slotName: Phaser.GameObjects.Text | null = null;
@@ -239,18 +237,14 @@ export class PlayerSlots extends Phaser.GameObjects.Group {
             }
 
             // Add the slotBox (and optionally the slotName) to the container
-            slotContainer.add(slotBox);
+            container.add(slotBox);
             if (slotName) {
-                slotContainer.add(slotName);
+                container.add(slotName);
             }
-
-            // Add the container to the group
-            this.add(slotContainer);
-
-            // Move xOffset for the next slot
-            xOffset += 170;
         }
     }
+
+    update() {}
 
     destroy() {
         this.clear(true); // Clear all elements in the group

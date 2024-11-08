@@ -17,11 +17,11 @@ interface GameData {
 }
 
 interface InitData {
-    game_id: number;
+    game_id: string;
 }
 
 class PendingGame extends Phaser.Scene {
-    private game_id: number;
+    private game_id: string;
     private gameTitle: Text;
     private startGameButton: TextButton;
     private slotsWithPlayer: PlayerSlots | null = null;
@@ -73,10 +73,6 @@ class PendingGame extends Phaser.Scene {
             asset: "button",
             callback: this.startGameAction.bind(this),
             callbackContext: this,
-            overFrame: 1,
-            outFrame: 0,
-            downFrame: 2,
-            upFrame: 0,
             label: "Start Game",
             style: {
                 font: "16px Arial Black semibold",
@@ -93,10 +89,6 @@ class PendingGame extends Phaser.Scene {
             asset: "button",
             callback: this.leaveGameAction.bind(this),
             callbackContext: this,
-            overFrame: 1,
-            outFrame: 0,
-            downFrame: 2,
-            upFrame: 0,
             label: "Leave Game",
             style: {
                 font: "16px Arial Black semibold",
@@ -118,8 +110,6 @@ class PendingGame extends Phaser.Scene {
             scene: this,
             max_players: current_game.max_players,
             players: players,
-            x: this.scale.width / 2 - 245,
-            y: this.scale.height / 2 - 200,
             asset_empty: "bomberman_head_blank",
             asset_player: "bomberman_head_",
             style: {

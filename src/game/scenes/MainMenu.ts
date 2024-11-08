@@ -5,14 +5,9 @@ import {
     TextConstructorParams,
     TextButtonConstructorParams,
     GameSlotsConstructorParams,
+    GameData,
 } from "../../utils/types";
 import clientSocket from "../../utils/socket";
-
-interface GameData {
-    id: number;
-    name: string;
-    // Define other properties of game data here if necessary
-}
 
 class MainMenu extends Scene {
     background: GameObjects.Image;
@@ -21,14 +16,14 @@ class MainMenu extends Scene {
     button: GameObjects.Text;
     logoTween: Phaser.Tweens.Tween | null;
 
-    private slotsWithGame: GameSlots | null = null;
+    private slotsWithGame: GameData[] | [] = [];
 
     constructor() {
         super("MainMenu");
     }
 
     init(): void {
-        this.slotsWithGame = null;
+        this.slotsWithGame = [];
 
         clientSocket.on(
             "display pending games",
@@ -69,20 +64,18 @@ class MainMenu extends Scene {
         new TextButton({
             scene: this,
             x: this.scale.width / 2,
-            y: this.scale.height / 2 + 195,
+            y: this.scale.height / 2 - 200,
             asset: "button",
             callback: this.hostGameAction.bind(this),
             callbackContext: this,
-            overFrame: 1,
-            outFrame: 0,
-            downFrame: 2,
-            upFrame: 0,
             label: "New Game",
             style: {
                 font: "16px Arial Black semibold",
                 fill: "#f3f3f3",
             },
         } as TextButtonConstructorParams);
+
+        clientSocket.emit("enter lobby", this.displayPendingGames.bind(this));
 
         EventBus.emit("current-scene-ready", this);
     }
@@ -98,26 +91,21 @@ class MainMenu extends Scene {
 
     private displayPendingGames(availableGames: GameData[]): void {
         if (this.slotsWithGame) {
-            this.slotsWithGame.destroy();
+            this.slotsWithGame = [
+                ...this.slotsWithGame,
+                availableGames[availableGames.length - 1],
+            ];
         }
 
-        this.slotsWithGame = new GameSlots({
+        new GameSlots({
             scene: this,
-            availableGames,
+            data: this.slotsWithGame,
             callback: this.joinGameAction.bind(this),
             callbackContext: this,
-            x: this.scale.width / 2 - 220,
-            y: 160,
-            style: {
-                font: "35px Arial",
-                fill: "#efefef",
-                stroke: "#ae743a",
-                strokeThickness: 3,
-            },
         } as GameSlotsConstructorParams);
     }
 
-    joinGameAction({ game_id }: { game_id: number }) {
+    joinGameAction({ game_id }: { game_id: string }) {
         clientSocket.emit("leave lobby");
         this.scene.start("PendingGame", { game_id });
     }

@@ -58,3 +58,5 @@ export const MIN_DELAY = 500;
 export const INITIAL_POWER = 1;
 export const STEP_POWER = 1;
 
+export const LOBBY_ID = "lobby_room";
+

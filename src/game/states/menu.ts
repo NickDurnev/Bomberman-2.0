@@ -84,10 +84,6 @@ class MainMenu extends Phaser.Scene {
             asset: "buttons",
             callback: this.hostGameAction.bind(this),
             callbackContext: this,
-            overFrame: 1,
-            outFrame: 0,
-            downFrame: 2,
-            upFrame: 0,
             label: "New Game",
             style: {
                 font: "20px Arial",
