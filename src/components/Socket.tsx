@@ -1,14 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 // import { v4 as uuidv4 } from "uuid";
-import socket from "./utils/socket";
+import socket from "../utils/socket";
 // import { addToLocalStorage } from "./utils/local_storage";
 
 type Props = {
     children: React.ReactNode;
 };
 
-const Socket = ({ children }: Props) => {
+export const Socket = ({ children }: Props) => {
     const [, setIsConnected] = useState(false);
     const [, setTransport] = useState("N/A");
     // const [socketId, setSocketId] = useState<string | null>(null);
@@ -42,6 +42,4 @@ const Socket = ({ children }: Props) => {
 
     return <>{children}</>;
 };
-
-export default Socket;
 
