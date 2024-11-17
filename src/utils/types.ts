@@ -1,3 +1,11 @@
+export interface IUser {
+    email: string;
+    locale: string;
+    name: string;
+    picture: string;
+    _id?: string;
+}
+
 export type ISpoilType = 0 | 1 | 2;
 
 export interface Spawn {
