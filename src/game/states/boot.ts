@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { Text } from "../../helpers/elements";
+import { Text } from "@helpers/elements";
 
 class Boot extends Phaser.Scene {
     constructor() {

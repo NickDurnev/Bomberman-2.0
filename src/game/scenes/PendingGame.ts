@@ -1,10 +1,10 @@
 import Phaser from "phaser";
-import { Text, TextButton, PlayerSlots } from "../../helpers/elements";
+import { Text, TextButton, PlayerSlots } from "@helpers/elements";
 import {
     TextButtonConstructorParams,
     PlayerSlotsConstructorParams,
-} from "../../utils/types";
-import clientSocket from "../../utils/socket";
+} from "@utils/types";
+import clientSocket from "@utils/socket";
 
 interface GameInfo {
     name: string;

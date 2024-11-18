@@ -13,11 +13,11 @@ import {
     SPEED,
     POWER,
     DELAY,
-} from "../../utils//constants";
-import { ISpoilType, PlayerConfig } from "../../utils//types";
-import clientSocket from "../../utils/socket";
+} from "@utils/constants";
+import { ISpoilType, PlayerConfig } from "@utils/types";
+import clientSocket from "@utils/socket";
 import Info from "./info";
-import { SpoilNotification } from "../../helpers/elements";
+import { SpoilNotification } from "@helpers/elements";
 
 export default class Player extends Physics.Arcade.Sprite {
     game: Phaser.Scene;

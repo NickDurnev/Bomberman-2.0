@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { CiLogout } from "react-icons/ci";
-import { Socket, PaddingContainer, Button } from "../../components";
+import { Socket, PaddingContainer, Button } from "@components/index";
 import { addUser } from "../../services/auth";
 
 function Menu() {
@@ -18,7 +18,7 @@ function Menu() {
                 email: user.email || "",
                 name: user.name || "",
                 picture: user.picture || "",
-                locale: user.locale || "",
+                locale: user.locale || "en-US",
             });
             console.log("res:", res);
         }

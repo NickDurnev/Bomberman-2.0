@@ -1,7 +1,7 @@
 import Phaser from "phaser";
-import { TILE_SIZE, PING } from "../../utils/constants";
-import { Text } from "../../helpers/elements";
-import { Spawn, PlayerConfig } from "../../utils/types";
+import { TILE_SIZE, PING } from "@utils/constants";
+import { Spawn, PlayerConfig } from "@utils/types";
+import { Text } from "@helpers/elements";
 
 export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
     private game: Phaser.Scene;

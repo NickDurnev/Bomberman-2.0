@@ -1,7 +1,7 @@
 import Phaser from "phaser";
-import { AVAILABLE_MAPS } from "../../utils/constants";
-import clientSocket from "../../utils/socket";
-import { Text, Button } from "../../helpers/elements";
+import { AVAILABLE_MAPS } from "@utils/constants";
+import clientSocket from "@utils/socket";
+import { Text, Button } from "@helpers/elements";
 
 class SelectMap extends Phaser.Scene {
     constructor() {

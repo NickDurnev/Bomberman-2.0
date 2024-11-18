@@ -1,13 +1,13 @@
 import { GameObjects, Scene } from "phaser";
 import { EventBus } from "../EventBus";
-import { Text, TextButton, GameSlots } from "../../helpers/elements";
+import { Text, TextButton, GameSlots } from "@helpers/elements";
 import {
     TextConstructorParams,
     TextButtonConstructorParams,
     GameSlotsConstructorParams,
     GameData,
-} from "../../utils/types";
-import clientSocket from "../../utils/socket";
+} from "@utils/types";
+import clientSocket from "@utils/socket";
 
 class MainMenu extends Scene {
     background: GameObjects.Image;
