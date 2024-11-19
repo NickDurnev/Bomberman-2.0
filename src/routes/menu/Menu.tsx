@@ -1,16 +1,59 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useNavigate } from "react-router-dom";
 import { CiLogout } from "react-icons/ci";
-import { Socket, PaddingContainer, Button } from "@components/index";
+import { Button, GameSlots } from "@components/index";
 import { addUser } from "../../services/auth";
+import { GameData } from "@utils/types";
+import clientSocket from "@utils/socket";
 
-function Menu() {
+const Menu = () => {
     const { loginWithRedirect, logout, user, isAuthenticated, isLoading } =
         useAuth0();
+    const [slotsWithGame, setSlotsWithGame] = useState<GameData[]>([]);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Handle WebSocket events
+        clientSocket.on("display pending games", handleDisplayPendingGames);
+
+        // Emit enter lobby event
+        clientSocket.emit("enter lobby", handleDisplayPendingGames);
+
+        // Notify other components of scene readiness
+        // EventBus.emit("current-scene-ready");
+
+        // Clean up WebSocket listeners on unmount
+        return () => {
+            clientSocket.off(
+                "display pending games",
+                handleDisplayPendingGames
+            );
+        };
+    }, []);
 
     useEffect(() => {
         addUserToDB();
     }, [user]);
+
+    const handleDisplayPendingGames = (availableGames: GameData[]) => {
+        setSlotsWithGame((prev) => [
+            ...prev,
+            availableGames[availableGames.length - 1],
+        ]);
+    };
+
+    const handleHostGame = () => {
+        clientSocket.emit("leave lobby");
+        console.log("Navigating to SelectMap...");
+        navigate("/map");
+    };
+
+    const handleJoinGame = (gameId: string) => {
+        clientSocket.emit("leave lobby");
+        // Navigate to "PendingGame" with gameId
+        console.log("Navigating to PendingGame with game_id:", gameId);
+    };
 
     const addUserToDB = async () => {
         if (user) {
@@ -26,77 +69,77 @@ function Menu() {
 
     return (
         <div id="app">
-            <Socket>
-                <PaddingContainer>
-                    <div
-                        className="w-full h-screen mx-auto bg-scroll bg-center bg-cover"
-                        style={{
-                            backgroundImage: "url(/assets/main_menu_bg.jpg)",
-                        }}
-                    >
-                        <div className="flex items-center gap-8 justify-end p-6">
-                            {user ? (
-                                <>
-                                    <Button
-                                        imageUrl={user.picture}
-                                        onClick={() =>
-                                            console.log("user:", user)
-                                        }
-                                        className="rounded-full p-2"
-                                    />
-                                    <Button
-                                        icon={<CiLogout size={30} />}
-                                        onClick={() =>
-                                            logout({
-                                                logoutParams: {
-                                                    returnTo:
-                                                        window.location.origin,
-                                                },
-                                            })
-                                        }
-                                        className="rounded-full p-2"
-                                    />
-                                </>
-                            ) : (
-                                <>
-                                    <Button
-                                        imageUrl="/assets/google.png"
-                                        imageAlt="Star icon"
-                                        onClick={() =>
-                                            loginWithRedirect({
-                                                authorizationParams: {
-                                                    connection: "google-oauth2",
-                                                },
-                                            })
-                                        }
-                                        className="rounded-full p-2"
-                                    />
-                                    <Button
-                                        imageUrl="/assets/github.svg"
-                                        imageAlt="Star icon"
-                                        onClick={() =>
-                                            loginWithRedirect({
-                                                authorizationParams: {
-                                                    connection: "github",
-                                                },
-                                            })
-                                        }
-                                        className="rounded-full p-2"
-                                    />
-                                </>
-                            )}
-                        </div>
-                        <div className="pt-20">
-                            <h1 className="text-8xl font-extrabold tracking-wider text-center motion-preset-float motion-loop-once">
-                                Bomberman 2.0
-                            </h1>
-                        </div>
-                    </div>
-                </PaddingContainer>
-            </Socket>
+            <div
+                className="w-full h-screen mx-auto bg-scroll bg-center bg-cover"
+                style={{
+                    backgroundImage: "url(/assets/main_menu_bg.jpg)",
+                }}
+            >
+                <div className="flex items-center gap-8 justify-end p-6">
+                    {user ? (
+                        <>
+                            <Button
+                                imageUrl={user.picture}
+                                onClick={() => console.log("user:", user)}
+                                className="rounded-full p-2"
+                            />
+                            <Button
+                                icon={<CiLogout size={30} />}
+                                onClick={() =>
+                                    logout({
+                                        logoutParams: {
+                                            returnTo: window.location.origin,
+                                        },
+                                    })
+                                }
+                                className="rounded-full p-2"
+                            />
+                        </>
+                    ) : (
+                        <>
+                            <Button
+                                imageUrl="/assets/google.png"
+                                imageAlt="Star icon"
+                                onClick={() =>
+                                    loginWithRedirect({
+                                        authorizationParams: {
+                                            connection: "google-oauth2",
+                                        },
+                                    })
+                                }
+                                className="rounded-full p-2"
+                            />
+                            <Button
+                                imageUrl="/assets/github.svg"
+                                imageAlt="Star icon"
+                                onClick={() =>
+                                    loginWithRedirect({
+                                        authorizationParams: {
+                                            connection: "github",
+                                        },
+                                    })
+                                }
+                                className="rounded-full p-2"
+                            />
+                        </>
+                    )}
+                </div>
+                <div className="pt-20">
+                    <h1 className="text-8xl font-extrabold tracking-wider text-center motion-preset-float motion-loop-once">
+                        Bomberman 2.0
+                    </h1>
+                </div>
+                <div className="mt-20 flex flex-col justify-center items-center mx-auto gap-y-8">
+                    <Button text="New Game" onClick={handleHostGame} />
+                    <GameSlots
+                        data={slotsWithGame}
+                        onJoinGame={handleJoinGame}
+                    />
+                </div>
+            </div>
         </div>
     );
-}
+};
 
 export default Menu;
 

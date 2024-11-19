@@ -86,3 +86,8 @@ export interface GameData {
     spoils: object;
 }
 
+export interface GameSlotsProps {
+    data: GameData[];
+    onJoinGame: (gameId: string) => void;
+}
+
