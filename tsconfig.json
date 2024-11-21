@@ -19,7 +19,8 @@
             "@utils/*": ["./src/utils/*"],
             "@helpers/*": ["./src/helpers/*"],
             "@components/*": ["./src/components/*"],
-            "@game/*": ["./src/game/*"]
+            "@game/*": ["./src/game/*"],
+            "@hooks/*": ["./src/hooks/*"]
         },
 
         /* Linting */

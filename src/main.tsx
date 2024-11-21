@@ -2,10 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Auth0Provider } from "@auth0/auth0-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Socket, PaddingContainer } from "@components/index";
 import ErrorPage from "./error-page";
+
 import Menu from "./routes/menu/Menu";
 import SelectMap from "./routes/map/SelectMap";
+
+import { Socket, PaddingContainer, BackgroundLines } from "@components/index";
+
 import "./index.css";
 
 const router = createBrowserRouter([
@@ -35,7 +38,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         >
             <Socket>
                 <PaddingContainer>
-                    <RouterProvider router={router} />
+                    <BackgroundLines>
+                        <RouterProvider router={router} />
+                    </BackgroundLines>
                 </PaddingContainer>
             </Socket>
         </Auth0Provider>
