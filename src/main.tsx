@@ -6,6 +6,7 @@ import ErrorPage from "./error-page";
 
 import Menu from "./routes/menu/Menu";
 import SelectMap from "./routes/map/SelectMap";
+import Game from "./routes/game/Game";
 
 import { Socket, PaddingContainer, BackgroundLines } from "@components/index";
 
@@ -20,6 +21,11 @@ const router = createBrowserRouter([
     {
         path: "/map",
         element: <SelectMap />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/game/:id",
+        element: <Game />,
         errorElement: <ErrorPage />,
     },
 ]);

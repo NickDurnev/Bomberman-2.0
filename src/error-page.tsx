@@ -4,28 +4,17 @@ export default function ErrorPage() {
     const error: any = useRouteError();
 
     return (
-        <>
-            <div
-                id="error-page"
-                style={{
-                    width: "800px",
-                    height: "500px",
-                    textAlign: "center",
-                    backgroundImage: "url(/assets/main_menu_bg.jpg)",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    margin: "100px auto",
-                    marginBottom: "50px",
-                }}
-            />
-            <div style={{ textAlign: "center" }}>
-                <h1>Oops!</h1>
-                <p>Sorry, an unexpected error has occurred.</p>
-                <p>
-                    <i>{error.statusText || error.message}</i>
-                </p>
-            </div>
-        </>
+        <div className="h-screen flex flex-col items-center justify-center gap-y-5">
+            <h3 className="text-4xl font-extrabold tracking-wider text-center motion-preset-float motion-loop-once">
+                Oops!
+            </h3>
+            <h3 className="text-4xl font-extrabold tracking-wider text-center motion-preset-float motion-loop-once">
+                Sorry, an unexpected error has occurred.
+            </h3>
+            <h3 className="text-5xl font-bold tracking-wider text-center motion-preset-float motion-loop-once">
+                <i>{error.statusText || error.message}</i>
+            </h3>
+        </div>
     );
 }
 

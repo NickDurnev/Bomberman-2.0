@@ -3,8 +3,8 @@ import { Boot } from "./scenes/Boot";
 import { GameOver } from "./scenes/GameOver";
 // import { Game as MainGame } from "./scenes/Game";
 import Playing from "./scenes/Playing";
-import MainMenu from "./scenes/MainMenu";
-import SelectMap from "./scenes/SelectMap";
+// import MainMenu from "./scenes/MainMenu";
+// import SelectMap from "./scenes/SelectMap";
 import PendingGame from "./scenes/PendingGame";
 import Preloader from "./scenes/Preloader";
 
@@ -19,8 +19,8 @@ const config: Phaser.Types.Core.GameConfig = {
     scene: [
         Boot,
         Preloader,
-        MainMenu,
-        SelectMap,
+        // MainMenu,
+        // SelectMap,
         PendingGame,
         Playing,
         // MainGame,

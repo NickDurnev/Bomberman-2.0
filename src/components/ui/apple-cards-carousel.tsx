@@ -6,16 +6,17 @@ import React, {
     createContext,
     useContext,
 } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
     IconArrowNarrowLeft,
     IconArrowNarrowRight,
     IconX,
 } from "@tabler/icons-react";
-import { cn } from "src/lib/utils";
-import { AnimatePresence, motion } from "framer-motion";
-// import Image, { ImageProps } from "next/image";
-
 import { useOutsideClick } from "@hooks/use-outside-click";
+import { cn } from "src/lib/utils";
+import { getRandomColor } from "@utils/utils";
+import { Button } from "@components/index";
+import { colors } from "@utils/constants";
 
 interface CarouselProps {
     items: JSX.Element[];
@@ -23,11 +24,19 @@ interface CarouselProps {
 }
 
 type Card = {
-    src: string;
     title: string;
-    category: string;
-    content: React.ReactNode;
+    src?: string;
 };
+
+type CardProps = {
+    card: Card;
+    index: number;
+    mapName: string;
+    onSelect: (mapName: string) => void;
+    layout?: boolean;
+};
+
+const COLOR = getRandomColor(colors);
 
 export const CarouselContext = createContext<{
     onCardClose: (index: number) => void;
@@ -158,12 +167,10 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
 export const Card = ({
     card,
     index,
+    mapName,
+    onSelect,
     layout = false,
-}: {
-    card: Card;
-    index: number;
-    layout?: boolean;
-}) => {
+}: CardProps) => {
     const [open, setOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const { onCardClose, currentIndex } = useContext(CarouselContext);
@@ -223,23 +230,50 @@ export const Card = ({
                             </button>
                             <motion.p
                                 layoutId={
-                                    layout
-                                        ? `category-${card.title}`
-                                        : undefined
-                                }
-                                className="text-base font-medium text-black dark:text-white"
-                            >
-                                {card.category}
-                            </motion.p>
-                            <motion.p
-                                layoutId={
                                     layout ? `title-${card.title}` : undefined
                                 }
                                 className="text-2xl md:text-5xl font-semibold text-neutral-700 mt-4 dark:text-white"
                             >
                                 {card.title}
                             </motion.p>
-                            <div className="py-10">{card.content}</div>
+                            <div className="py-10">
+                                <div className="flex flex-col items-center justify-center bg-[#F5F5F7] dark:bg-neutral-800 p-8 md:p-14 rounded-3xl mb-4">
+                                    <p className="text-neutral-600 dark:text-neutral-400 text-base md:text-2xl font-sans max-w-3xl mx-auto">
+                                        <span className="font-bold text-neutral-700 dark:text-neutral-200">
+                                            Lorem ipsum dolor sit amet
+                                            consectetur adipisicing elit. Sit
+                                            deleniti sapiente excepturi ad esse.
+                                            Vitae debitis id repudiandae, fuga
+                                            error amet accusantium at odit hic
+                                            quisquam magni, facilis, veritatis
+                                            numquam?
+                                        </span>{" "}
+                                        Lorem ipsum dolor sit amet consectetur
+                                        adipisicing elit. Neque praesentium, ea
+                                        id labore quam consequuntur, voluptas
+                                        porro cum aspernatur amet modi rerum
+                                        perspiciatis mollitia vitae! Ipsa odio
+                                        est error minima! Nam sapiente aliquid
+                                        corporis impedit adipisci, eligendi
+                                        voluptatem saepe similique maiores quis
+                                        fugit, cum reprehenderit nisi facilis?
+                                        Totam modi recusandae laudantium facere
+                                        sunt excepturi corporis quis asperiores
+                                        tenetur a? At. Corporis totam ex alias
+                                        similique asperiores eveniet iure
+                                        dolores dolorem numquam, illum possimus
+                                        distinctio quod! Commodi optio soluta
+                                        obcaecati, nostrum architecto animi,
+                                        ducimus saepe atque numquam molestiae
+                                        aspernatur delectus eius!
+                                    </p>
+                                    <Button
+                                        text="Play"
+                                        className="mt-4 px-6 py-2 rounded-lg ml-auto mr-[32px]"
+                                        onClick={() => onSelect(mapName)}
+                                    />
+                                </div>
+                            </div>
                         </motion.div>
                     </div>
                 )}
@@ -252,26 +286,27 @@ export const Card = ({
                 <div className="absolute h-full top-0 inset-x-0 bg-gradient-to-b from-black/50 via-transparent to-transparent z-30 pointer-events-none" />
                 <div className="relative z-40 p-8">
                     <motion.p
-                        layoutId={
-                            layout ? `category-${card.category}` : undefined
-                        }
-                        className="text-white text-sm md:text-base font-medium font-sans text-left"
-                    >
-                        {card.category}
-                    </motion.p>
-                    <motion.p
                         layoutId={layout ? `title-${card.title}` : undefined}
                         className="text-white text-xl md:text-3xl font-semibold max-w-xs text-left [text-wrap:balance] font-sans mt-2"
                     >
                         {card.title}
                     </motion.p>
                 </div>
-                <BlurImage
-                    src={card.src}
-                    alt={card.title}
-                    fill
-                    className="object-cover absolute z-10 inset-0 h-full"
-                />
+                {card.src ? (
+                    <BlurImage
+                        src={card.src}
+                        alt={card.title}
+                        fill
+                        className="object-cover absolute z-10 inset-0 h-full"
+                    />
+                ) : (
+                    <div
+                        className={"absolute inset-0 z-10 h-full opacity-60"}
+                        style={{
+                            background: COLOR,
+                        }}
+                    />
+                )}
             </motion.button>
         </>
     );
