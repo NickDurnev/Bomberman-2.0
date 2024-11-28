@@ -1,22 +1,24 @@
 "use client";
 import { useEffect, useState } from "react";
-// import { v4 as uuidv4 } from "uuid";
+import { useAuth0 } from "@auth0/auth0-react";
+import { v4 as uuidv4 } from "uuid";
 import socket from "../utils/socket";
-// import { addToLocalStorage } from "./utils/local_storage";
+import { addToLocalStorage } from "@utils/local_storage";
 
 type Props = {
     children: React.ReactNode;
 };
 
 export const Socket = ({ children }: Props) => {
-    const [, setIsConnected] = useState(false);
-    const [, setTransport] = useState("N/A");
-    // const [socketId, setSocketId] = useState<string | null>(null);
+    const { user } = useAuth0();
+    console.log("user:", user);
+    const [isConnected, setIsConnected] = useState(false);
+    const [transport, setTransport] = useState("N/A");
+    const [socketId, setSocketId] = useState<string | null>(null);
 
     useEffect(() => {
         if (socket.connected) {
             onConnect();
-            console.log("CONNECTED");
         }
         function onConnect() {
             setIsConnected(true);
@@ -24,9 +26,17 @@ export const Socket = ({ children }: Props) => {
             socket.io.engine.on("upgrade", (transport: any) => {
                 setTransport(transport.name);
             });
-            // const socketId = uuidv4();
-            // setSocketId(socketId);
-            // addToLocalStorage({ key: "socket_id", value: socketId });
+            const socketId = uuidv4();
+            setSocketId(socketId);
+            socket.emit(
+                "updateUserSocketId",
+                { email: user?.email, socket_id: socketId },
+                (response: any) => {
+                    console.log("Response from server:", response);
+                    // Handle response from server here
+                }
+            );
+            addToLocalStorage({ key: "socket_id", value: socketId });
         }
         function onDisconnect() {
             setIsConnected(false);

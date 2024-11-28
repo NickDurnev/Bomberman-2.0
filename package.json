@@ -40,7 +40,8 @@
         "socket.io-client": "^4.8.1",
         "tailwind-merge": "^2.5.4",
         "tailwindcss-animate": "^1.0.7",
-        "tailwindcss-motion": "^0.4.1-beta"
+        "tailwindcss-motion": "^0.4.1-beta",
+        "uuid": "^11.0.3"
     },
     "devDependencies": {
         "@types/react": "^18.3.3",

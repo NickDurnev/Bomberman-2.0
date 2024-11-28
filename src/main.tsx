@@ -7,6 +7,7 @@ import ErrorPage from "./error-page";
 import Menu from "./routes/menu/Menu";
 import SelectMap from "./routes/map/SelectMap";
 import Game from "./routes/game/Game";
+import Pending from "./routes/pending/Pending";
 
 import { Socket, PaddingContainer, BackgroundLines } from "@components/index";
 
@@ -24,7 +25,12 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
     },
     {
-        path: "/game/:id",
+        path: "/pending/:gameId",
+        element: <Pending />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/game/:gameId",
         element: <Game />,
         errorElement: <ErrorPage />,
     },

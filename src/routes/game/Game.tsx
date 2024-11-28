@@ -4,8 +4,8 @@ import { IRefPhaserGame, PhaserGame } from "@game/PhaserGame";
 import { Socket } from "@components/index";
 
 function Game() {
-    const { id } = useParams();
-    console.log("id:", id);
+    const { gameId } = useParams();
+    console.log("gameId:", gameId);
     const phaserRef = useRef<IRefPhaserGame | null>(null);
 
     return (

@@ -122,12 +122,16 @@ const Menu = () => {
                 )}
             </div>
             <div className="pt-20">
-                <h1 className="text-8xl font-extrabold tracking-wider text-center motion-preset-float motion-loop-once">
+                <h1 className="text-8xl font-extrabold tracking-wider text-center motion-preset-expand motion-loop-once">
                     Bomberman 2.0
                 </h1>
             </div>
             <div className="mt-20 flex flex-col justify-center items-center mx-auto gap-y-8">
-                <Button text="New Game" onClick={handleHostGame} />
+                <Button
+                    text="New Game"
+                    onClick={handleHostGame}
+                    disabled={!isAuthenticated}
+                />
                 <GameSlots data={slotsWithGame} onJoinGame={handleJoinGame} />
             </div>
         </div>

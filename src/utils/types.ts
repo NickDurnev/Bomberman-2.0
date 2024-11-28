@@ -91,3 +91,10 @@ export interface GameSlotsProps {
     onJoinGame: (gameId: string) => void;
 }
 
+export interface PlayerSlotsProps {
+    max_players: number;
+    players: { skin: string }[];
+    asset_empty: string;
+    asset_player: string;
+}
+
