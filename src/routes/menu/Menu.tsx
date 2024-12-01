@@ -5,6 +5,7 @@ import { CiLogout } from "react-icons/ci";
 
 import { GameData } from "@utils/types";
 import clientSocket from "@utils/socket";
+import { getDataFromLocalStorage } from "@utils/local_storage";
 import { addUser } from "../../services/auth";
 import { Button, GameSlots } from "@components/index";
 import DarkModeComponent from "@components/themeBtn";
@@ -64,6 +65,7 @@ const Menu = () => {
                 name: user.name ?? "",
                 picture: user.picture ?? "",
                 locale: user.locale ?? "en-US",
+                socketID: getDataFromLocalStorage("socket_id"),
             });
             console.log("res:", res);
         }

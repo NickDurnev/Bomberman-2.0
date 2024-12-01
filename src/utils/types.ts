@@ -3,6 +3,7 @@ export interface IUser {
     locale: string;
     name: string;
     picture: string;
+    socketID: string;
     _id?: string;
 }
 
@@ -91,10 +92,24 @@ export interface GameSlotsProps {
     onJoinGame: (gameId: string) => void;
 }
 
+export interface Player {
+    id: string;
+    skin: string;
+    name: string;
+    spawn: {
+        x: number;
+        y: number;
+    };
+    spawnOnGrid: {
+        col: number;
+        row: number;
+    };
+    isAlive: boolean;
+    power: number;
+}
+
 export interface PlayerSlotsProps {
     max_players: number;
-    players: { skin: string }[];
-    asset_empty: string;
-    asset_player: string;
+    players: Player[];
 }
 

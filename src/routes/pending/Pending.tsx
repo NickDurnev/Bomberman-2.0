@@ -72,8 +72,6 @@ const PendingGame = () => {
                 <PlayersSlots
                     max_players={gameInfo.max_players}
                     players={players}
-                    asset_empty="bomberman_head_blank"
-                    asset_player="bomberman_head_"
                 />
             )}
         </div>

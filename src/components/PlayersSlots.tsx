@@ -1,13 +1,8 @@
+import { FaUser } from "react-icons/fa";
 import { PlayerSlotsProps } from "@utils/types";
 
-export const PlayersSlots = ({
-    max_players,
-    players,
-    asset_empty,
-    asset_player,
-}: PlayerSlotsProps) => (
+export const PlayersSlots = ({ max_players, players }: PlayerSlotsProps) => (
     <div className="player-slots text-center">
-        {/* Title */}
         <div className="text-2xl font-black text-gray-200 drop-shadow-md mb-4">
             Players
         </div>
@@ -23,24 +18,26 @@ export const PlayersSlots = ({
                         key={index}
                         className="flex flex-col items-center space-y-2"
                     >
-                        {/* Slot Image */}
-                        <img
-                            src={
-                                isEmpty
-                                    ? asset_empty
-                                    : `${asset_player}${player.skin}`
-                            }
-                            alt={
-                                isEmpty ? "Empty Slot" : `Player ${player.skin}`
-                            }
-                            className="w-20 h-20 object-contain"
-                        />
-
-                        {/* Player Name */}
-                        {!isEmpty && (
-                            <div className="text-lg font-semibold text-gray-200">
-                                {player.skin}
-                            </div>
+                        {!isEmpty ? (
+                            <>
+                                <img
+                                    src={player.skin}
+                                    alt={player.name}
+                                    className="w-20 h-20 object-contain rounded-full"
+                                />
+                                <div className="text-lg font-semibold text-gray-200">
+                                    {player.name}
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <div className="w-20 h-20 flex items-center justify-center bg-slate-500 rounded-full">
+                                    <FaUser className="w-14 h-14 text-gray-200" />
+                                </div>
+                                <div className="text-lg font-semibold text-gray-200">
+                                    Empty Slot
+                                </div>
+                            </>
                         )}
                     </div>
                 );

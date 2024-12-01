@@ -11,7 +11,6 @@ type Props = {
 
 export const Socket = ({ children }: Props) => {
     const { user } = useAuth0();
-    console.log("user:", user);
     const [isConnected, setIsConnected] = useState(false);
     const [transport, setTransport] = useState("N/A");
     const [socketId, setSocketId] = useState<string | null>(null);
@@ -48,7 +47,7 @@ export const Socket = ({ children }: Props) => {
             socket.off("connect", onConnect);
             socket.off("disconnect", onDisconnect);
         };
-    }, []);
+    }, [user]);
 
     return <>{children}</>;
 };
