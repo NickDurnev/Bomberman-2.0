@@ -17,6 +17,7 @@
         "baseUrl": ".",
         "paths": {
             "@utils/*": ["./src/utils/*"],
+            "@lib/*": ["./src/lib/*"],
             "@helpers/*": ["./src/helpers/*"],
             "@components/*": ["./src/components/*"],
             "@game/*": ["./src/game/*"],

@@ -54,7 +54,7 @@ const PendingGame = () => {
     const canStartGame = players.length > 1;
 
     return (
-        <div className="w-full h-full py-20">
+        <div className="w-full h-full py-20 flex flex-col gap-y-10">
             <div>
                 <h1 className="text-5xl font-extrabold tracking-wider text-center motion-preset-expand motion-loop-once">
                     {gameInfo?.name ?? "Game"}

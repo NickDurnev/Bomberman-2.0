@@ -34,7 +34,7 @@ body {
         --destructive-foreground: 210 20% 98%;
         --border: 220 13% 91%;
         --input: 220 13% 91%;
-        --ring: 224 71.4% 4.1%;
+        --ring: 276, 35%, 50%;
         --radius: 0.5rem;
         --chart-1: 12 76% 61%;
         --chart-2: 173 58% 39%;
@@ -62,7 +62,7 @@ body {
         --destructive-foreground: 210 20% 98%;
         --border: 215 27.9% 16.9%;
         --input: 215 27.9% 16.9%;
-        --ring: 216 12.2% 83.9%;
+        --ring: 276, 35%, 50%;
         --chart-1: 220 70% 50%;
         --chart-2: 160 60% 45%;
         --chart-3: 30 80% 55%;

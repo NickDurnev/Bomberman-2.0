@@ -7,7 +7,7 @@ import { GameData } from "@utils/types";
 import clientSocket from "@utils/socket";
 import { getDataFromLocalStorage } from "@utils/local_storage";
 import { addUser } from "../../services/auth";
-import { Button, GameSlots } from "@components/index";
+import { Button, GameSlots, Input } from "@components/index";
 import DarkModeComponent from "@components/themeBtn";
 
 const Menu = () => {
@@ -129,6 +129,9 @@ const Menu = () => {
                 </h1>
             </div>
             <div className="mt-20 flex flex-col justify-center items-center mx-auto gap-y-8">
+                <div className="text-4xl font-extrabold tracking-wider text-center motion-preset-expand motion-loop-once">
+                    <Input placeholder="Game Name" type="text" maxLength={30} />
+                </div>
                 <Button
                     text="New Game"
                     onClick={handleHostGame}

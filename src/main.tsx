@@ -16,7 +16,11 @@ import "./index.css";
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <Menu />,
+        element: (
+            <BackgroundLines>
+                <Menu />
+            </BackgroundLines>
+        ),
         errorElement: <ErrorPage />,
     },
     {
@@ -50,9 +54,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         >
             <Socket>
                 <PaddingContainer>
-                    <BackgroundLines>
-                        <RouterProvider router={router} />
-                    </BackgroundLines>
+                    <RouterProvider router={router} />
                 </PaddingContainer>
             </Socket>
         </Auth0Provider>
