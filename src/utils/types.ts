@@ -113,3 +113,10 @@ export interface PlayerSlotsProps {
     players: Player[];
 }
 
+//Stores
+
+export interface GameStore {
+    gameName: string;
+    changeGameName: (name: string) => void;
+}
+

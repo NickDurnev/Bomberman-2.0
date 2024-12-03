@@ -41,7 +41,8 @@
         "tailwind-merge": "^2.5.4",
         "tailwindcss-animate": "^1.0.7",
         "tailwindcss-motion": "^0.4.1-beta",
-        "uuid": "^11.0.3"
+        "uuid": "^11.0.3",
+        "zustand": "^5.0.1"
     },
     "devDependencies": {
         "@types/react": "^18.3.3",

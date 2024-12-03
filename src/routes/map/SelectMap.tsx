@@ -1,6 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+
 import clientSocket from "@utils/socket";
+import { GameStore } from "@utils/types";
+import { useGameStore } from "@hooks/stores";
 import { AVAILABLE_MAPS } from "@utils/constants";
 import { Carousel, Card } from "@components/index";
 
@@ -43,10 +46,10 @@ const data = [
 
 const SelectMap: React.FC = () => {
     const navigate = useNavigate();
+    const gameName = useGameStore((state: GameStore) => state.gameName);
 
     const confirmStageSelection = (mapName: string) => {
-        console.log("mapName:", mapName);
-        clientSocket.emit("create game", mapName, joinToNewGame);
+        clientSocket.emit("create game", { mapName, gameName }, joinToNewGame);
     };
 
     const joinToNewGame = ({ game_id }: { game_id: string }) => {
