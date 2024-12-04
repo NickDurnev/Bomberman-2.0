@@ -1,4 +1,5 @@
 import React from "react";
+import { Toaster } from "sonner";
 import ReactDOM from "react-dom/client";
 import { Auth0Provider } from "@auth0/auth0-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -58,6 +59,15 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                 </PaddingContainer>
             </Socket>
         </Auth0Provider>
+        <Toaster
+            position="top-center"
+            toastOptions={{
+                classNames: {
+                    toast: "bg-popover",
+                    title: "text-foreground",
+                },
+            }}
+        />
     </React.StrictMode>
 );
 

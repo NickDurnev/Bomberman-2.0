@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import { CiLogout } from "react-icons/ci";
+import { toast } from "sonner";
 
 import { GameData } from "@utils/types";
 import clientSocket from "@utils/socket";
@@ -18,6 +19,7 @@ const Menu = () => {
     const navigate = useNavigate();
 
     const [slotsWithGame, setSlotsWithGame] = useState<GameData[]>([]);
+    console.log("slotsWithGame:", slotsWithGame);
     const [isBtnDisabled, setIsBtnDisabled] = useState(true);
 
     useEffect(() => {
@@ -139,6 +141,10 @@ const Menu = () => {
                     onClick={handleHostGame}
                     disabled={isBtnDisabled || !isAuthenticated}
                 />
+                <Button text="Toast" onClick={() => toast("Hello World")} />
+                <h2 className="max-w-7xl pl-4 mx-auto text-xl md:text-2xl font-bold font-sans">
+                    Available Games
+                </h2>
                 <GameSlots data={slotsWithGame} onJoinGame={handleJoinGame} />
             </div>
         </div>
