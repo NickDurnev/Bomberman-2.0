@@ -17,7 +17,7 @@ const Menu = () => {
     const { loginWithRedirect, logout, user, isAuthenticated, isLoading } =
         useAuth0();
     const navigate = useNavigate();
-
+    //TODO Sort games, disable dublicates
     const [slotsWithGame, setSlotsWithGame] = useState<GameData[]>([]);
     console.log("slotsWithGame:", slotsWithGame);
     const [isBtnDisabled, setIsBtnDisabled] = useState(true);
@@ -139,12 +139,11 @@ const Menu = () => {
                 <Button
                     text="New Game"
                     onClick={handleHostGame}
+                    animated
+                    animatedIcon={"🎮"}
                     disabled={isBtnDisabled || !isAuthenticated}
                 />
                 <Button text="Toast" onClick={() => toast("Hello World")} />
-                <h2 className="max-w-7xl pl-4 mx-auto text-xl md:text-2xl font-bold font-sans">
-                    Available Games
-                </h2>
                 <GameSlots data={slotsWithGame} onJoinGame={handleJoinGame} />
             </div>
         </div>

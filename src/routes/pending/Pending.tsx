@@ -64,7 +64,7 @@ const PendingGame = () => {
                 <Button
                     text="Start Game"
                     onClick={startGameAction}
-                    disabled={!canStartGame}
+                    // disabled={!canStartGame}
                 />
                 <Button text="Leave Game" onClick={leaveGameAction} />
             </div>
