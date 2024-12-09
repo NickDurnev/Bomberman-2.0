@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
-import { CiLogout } from "react-icons/ci";
 import { toast } from "sonner";
 
 import { GameData } from "@utils/types";
@@ -9,17 +8,13 @@ import clientSocket from "@utils/socket";
 import { getDataFromLocalStorage } from "@utils/local_storage";
 import { addUser } from "../../services/auth";
 
-import { Button, GameSlots } from "@components/index";
-import DarkModeComponent from "@components/themeBtn";
+import { Button, GameSlots, UserBar } from "@components/index";
 import NameInput from "./components/NameInput";
 
 const Menu = () => {
-    const { loginWithRedirect, logout, user, isAuthenticated, isLoading } =
-        useAuth0();
+    const { user, isAuthenticated } = useAuth0();
     const navigate = useNavigate();
-    //TODO Sort games, disable dublicates
     const [slotsWithGame, setSlotsWithGame] = useState<GameData[]>([]);
-    console.log("slotsWithGame:", slotsWithGame);
     const [isBtnDisabled, setIsBtnDisabled] = useState(true);
 
     useEffect(() => {
@@ -47,7 +42,9 @@ const Menu = () => {
 
     const handleDisplayPendingGames = (availableGames: GameData[]) => {
         setSlotsWithGame((prev) => [
-            ...prev,
+            ...prev.filter((game) => {
+                return !availableGames.some((g) => g.id === game.id);
+            }),
             availableGames[availableGames.length - 1],
         ]);
     };
@@ -78,57 +75,8 @@ const Menu = () => {
     };
 
     return (
-        <div id="app" className="w-full h-screen mx-auto ">
-            <div className="flex items-center gap-8 justify-end p-6">
-                <DarkModeComponent />
-                {user ? (
-                    <>
-                        <Button
-                            imageUrl={user.picture}
-                            onClick={() => console.log("user:", user)}
-                            className="rounded-full p-2"
-                        />
-                        <Button
-                            icon={<CiLogout size={30} />}
-                            onClick={() =>
-                                logout({
-                                    logoutParams: {
-                                        returnTo: window.location.origin,
-                                    },
-                                })
-                            }
-                            className="rounded-full p-2"
-                        />
-                    </>
-                ) : (
-                    <>
-                        <Button
-                            imageUrl="/assets/google.png"
-                            imageAlt="Star icon"
-                            onClick={() =>
-                                loginWithRedirect({
-                                    authorizationParams: {
-                                        connection: "google-oauth2",
-                                    },
-                                })
-                            }
-                            className="rounded-full p-2"
-                        />
-                        <Button
-                            imageUrl="/assets/github.svg"
-                            imageAlt="Star icon"
-                            onClick={() =>
-                                loginWithRedirect({
-                                    authorizationParams: {
-                                        connection: "github",
-                                    },
-                                })
-                            }
-                            className="rounded-full p-2"
-                        />
-                    </>
-                )}
-            </div>
+        <div id="app" className="w-full h-screen mx-auto">
+            <UserBar />
             <div className="pt-20">
                 <h1 className="text-8xl font-extrabold tracking-wider text-center motion-preset-expand motion-loop-once">
                     Bomberman 2.0

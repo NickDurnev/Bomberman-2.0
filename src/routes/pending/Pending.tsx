@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import clientSocket from "@utils/socket";
-import { Button, PlayersSlots } from "@components/index";
+import { Button, PlayersSlots, UserBar } from "@components/index";
 
 interface GameInfo {
     name: string;
@@ -54,27 +54,30 @@ const PendingGame = () => {
     const canStartGame = players.length > 1;
 
     return (
-        <div className="w-full h-full py-20 flex flex-col gap-y-10">
-            <div>
-                <h1 className="text-5xl font-extrabold tracking-wider text-center motion-preset-expand motion-loop-once">
-                    {gameInfo?.name ?? "Game"}
-                </h1>
+        <>
+            <UserBar />
+            <div className="w-full h-full py-20 flex flex-col gap-y-10">
+                <div>
+                    <h1 className="text-5xl font-extrabold tracking-wider text-center motion-preset-expand motion-loop-once">
+                        {gameInfo?.name ?? "Game"}
+                    </h1>
+                </div>
+                <div className="mt-20 flex flex-col justify-center items-center mx-auto gap-y-8">
+                    <Button
+                        text="Start Game"
+                        onClick={startGameAction}
+                        // disabled={!canStartGame}
+                    />
+                    <Button text="Leave Game" onClick={leaveGameAction} />
+                </div>
+                {gameInfo && (
+                    <PlayersSlots
+                        max_players={gameInfo.max_players}
+                        players={players}
+                    />
+                )}
             </div>
-            <div className="mt-20 flex flex-col justify-center items-center mx-auto gap-y-8">
-                <Button
-                    text="Start Game"
-                    onClick={startGameAction}
-                    // disabled={!canStartGame}
-                />
-                <Button text="Leave Game" onClick={leaveGameAction} />
-            </div>
-            {gameInfo && (
-                <PlayersSlots
-                    max_players={gameInfo.max_players}
-                    players={players}
-                />
-            )}
-        </div>
+        </>
     );
 };
 

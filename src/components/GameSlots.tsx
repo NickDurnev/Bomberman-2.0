@@ -1,10 +1,12 @@
+import { useAuth0 } from "@auth0/auth0-react";
 import { GameSlotsProps } from "@utils/types";
-import { Button } from "@components/index";
 import { colors } from "@utils/constants";
 import { getRandomColor } from "@utils/utils";
 import { motion } from "framer-motion";
 
 export function GameSlots({ data, onJoinGame }: GameSlotsProps) {
+    const { isAuthenticated } = useAuth0();
+
     return (
         <div className="flex flex-col items-center justify-center">
             <h4 className="text-lg md:text-2xl text-neutral-600 dark:text-neutral-100 font-bold text-center mb-8">
@@ -14,45 +16,51 @@ export function GameSlots({ data, onJoinGame }: GameSlotsProps) {
                 </span>{" "}
                 now! 💣
             </h4>
-            <div className="flex justify-center items-center">
-                {data?.map((game) => {
-                    if (!game) return null;
+            {isAuthenticated ? (
+                <div className="flex justify-center items-center">
+                    {data?.map((game) => {
+                        if (!game) return null;
 
-                    const COLOR = getRandomColor(colors);
+                        const COLOR = getRandomColor(colors);
 
-                    return (
-                        <motion.div
-                            key={game?.id}
-                            style={{
-                                rotate: Math.random() * 20 - 10,
-                            }}
-                            whileHover={{
-                                scale: 1.1,
-                                rotate: 0,
-                                zIndex: 100,
-                            }}
-                            whileTap={{
-                                scale: 1.1,
-                                rotate: 0,
-                                zIndex: 100,
-                            }}
-                            className="rounded-xl -mr-4 mt-4 p-1 bg-white dark:bg-neutral-800 dark:border-neutral-700 border border-neutral-100 flex-shrink-0 overflow-hidden"
-                        >
-                            <button
-                                onClick={() => onJoinGame(game.id)}
-                                className="rounded-lg h-20 w-20 md:h-32 md:w-32 object-cover flex-shrink-0 opacity-60"
+                        return (
+                            <motion.div
+                                key={game?.id}
                                 style={{
-                                    background: COLOR,
+                                    rotate: Math.random() * 20 - 10,
                                 }}
+                                whileHover={{
+                                    scale: 1.1,
+                                    rotate: 0,
+                                    zIndex: 100,
+                                }}
+                                whileTap={{
+                                    scale: 1.1,
+                                    rotate: 0,
+                                    zIndex: 100,
+                                }}
+                                className="rounded-xl -mr-4 mt-4 p-1 bg-white dark:bg-neutral-800 dark:border-neutral-700 border border-neutral-100 flex-shrink-0 overflow-hidden"
                             >
-                                <p className="font-medium text-lg letter-spacing-1 text-center">
-                                    {game.name}
-                                </p>
-                            </button>
-                        </motion.div>
-                    );
-                })}
-            </div>
+                                <button
+                                    onClick={() => onJoinGame(game.id)}
+                                    className="rounded-lg h-20 w-20 md:h-32 md:w-32 object-cover flex-shrink-0 opacity-60"
+                                    style={{
+                                        background: COLOR,
+                                    }}
+                                >
+                                    <p className="font-medium text-lg letter-spacing-1 text-center">
+                                        {game.name}
+                                    </p>
+                                </button>
+                            </motion.div>
+                        );
+                    })}
+                </div>
+            ) : (
+                <h4 className="text-lg md:text-2xl text-neutral-600 dark:text-neutral-100 font-bold text-center mb-8">
+                    But first you need to log in
+                </h4>
+            )}
         </div>
     );
 }

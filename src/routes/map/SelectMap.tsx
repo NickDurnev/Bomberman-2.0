@@ -5,7 +5,7 @@ import clientSocket from "@utils/socket";
 import { GameStore } from "@utils/types";
 import { useGameStore } from "@hooks/stores";
 import { AVAILABLE_MAPS } from "@utils/constants";
-import { Carousel, Card } from "@components/index";
+import { Carousel, Card, UserBar } from "@components/index";
 
 // interface MapButtonProps {
 //     mapName: string;
@@ -69,25 +69,15 @@ const SelectMap: React.FC = () => {
     ));
 
     return (
-        <div className="w-full h-full py-20">
-            <h2 className="max-w-7xl pl-4 mx-auto text-xl md:text-5xl font-bold text-neutral-800 dark:text-neutral-200 font-sans">
-                Select map
-            </h2>
-            <Carousel items={cards} />
-        </div>
-        // <div
-        //     style={{
-        //         backgroundImage: "url(/assets/images/menu/main_menu_bg.png)",
-        //         backgroundSize: "cover",
-        //         height: "100vh",
-        //         display: "flex",
-        //         flexDirection: "column",
-        //         alignItems: "center",
-        //         justifyContent: "center",
-        //         color: "#f3f3f3",
-        //     }}
-        // >
-        // </div>
+        <>
+            <UserBar />
+            <div className="w-full h-full py-20">
+                <h2 className="max-w-7xl pl-14 mx-auto text-xl md:text-5xl font-bold text-neutral-800 dark:text-neutral-200 font-sans">
+                    Select map
+                </h2>
+                <Carousel items={cards} />
+            </div>
+        </>
     );
 };
 

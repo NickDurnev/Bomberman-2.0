@@ -8,7 +8,7 @@ export const PlayersSlots = ({ max_players, players }: PlayerSlotsProps) => {
             ? { name: player.name, image: player.skin, id: index + 1 }
             : {
                   name: "Empty Slot",
-                  image: "/assets/default_avatar.webp",
+                  image: "/assets/default_avatar.png",
                   id: index + 1,
               };
     });
