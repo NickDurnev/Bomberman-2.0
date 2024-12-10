@@ -206,7 +206,7 @@ class Preloader extends Phaser.Scene {
 
     create() {
         // Transition to the main menu scene
-        this.scene.start("MainMenu");
+        this.scene.start("Playing");
     }
 }
 

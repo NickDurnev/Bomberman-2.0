@@ -38,8 +38,10 @@ class Playing extends Phaser.Scene {
         super("Playing");
     }
 
-    init(game: any) {
-        this.currentGame = game;
+    init(data: { gameId?: string }) {
+        // this.gameId = data.gameId;
+        console.log("Game ID:", data.gameId);
+        // this.currentGame = game;
     }
 
     create() {

@@ -5,7 +5,7 @@ import { GameOver } from "./scenes/GameOver";
 import Playing from "./scenes/Playing";
 // import MainMenu from "./scenes/MainMenu";
 // import SelectMap from "./scenes/SelectMap";
-import PendingGame from "./scenes/PendingGame";
+// import PendingGame from "./scenes/PendingGame";
 import Preloader from "./scenes/Preloader";
 
 //  Find out more information about the Game Config at:
@@ -21,7 +21,7 @@ const config: Phaser.Types.Core.GameConfig = {
         Preloader,
         // MainMenu,
         // SelectMap,
-        PendingGame,
+        // PendingGame,
         Playing,
         // MainGame,
         GameOver,
@@ -35,8 +35,12 @@ const config: Phaser.Types.Core.GameConfig = {
     },
 };
 
-const StartGame = (parent: string) => {
-    return new Game({ ...config, parent });
+const StartGame = (parent: string, gameId?: string) => {
+    const game = new Phaser.Game(config);
+
+    game.scene.start("Playing", { gameId });
+
+    return game;
 };
 
 export default StartGame;

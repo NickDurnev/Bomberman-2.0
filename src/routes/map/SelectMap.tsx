@@ -71,7 +71,7 @@ const SelectMap: React.FC = () => {
     return (
         <>
             <UserBar />
-            <div className="w-full h-full py-20">
+            <div className="w-full h-full py-4">
                 <h2 className="max-w-7xl pl-14 mx-auto text-xl md:text-5xl font-bold text-neutral-800 dark:text-neutral-200 font-sans">
                     Select map
                 </h2>
