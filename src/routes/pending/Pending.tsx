@@ -17,13 +17,12 @@ const PendingGame = () => {
     const { gameId } = useParams();
     const navigate = useNavigate();
     const [gameInfo, setGameInfo] = useState<GameInfo | null>(null);
-    console.log("gameInfo:", gameInfo);
 
     useEffect(() => {
         clientSocket.on("update game", handleUpdateGame);
         clientSocket.on("launch game", handleLaunchGame);
 
-        clientSocket.emit("enter pending game", { game_id: gameId });
+        clientSocket.emit("enter pending game", gameId);
 
         return () => {
             clientSocket.off("update game", handleUpdateGame);
@@ -36,7 +35,6 @@ const PendingGame = () => {
     };
 
     const handleLaunchGame = (game?: any) => {
-        console.log("game:", game);
         navigate("/game/" + gameId);
     };
 
@@ -46,7 +44,7 @@ const PendingGame = () => {
     };
 
     const startGameAction = () => {
-        clientSocket.emit("start game");
+        clientSocket.emit("start game", gameId);
         handleLaunchGame(); // Trigger the game launch
     };
 

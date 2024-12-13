@@ -7,6 +7,7 @@ import Playing from "./scenes/Playing";
 // import SelectMap from "./scenes/SelectMap";
 // import PendingGame from "./scenes/PendingGame";
 import Preloader from "./scenes/Preloader";
+import clientSocket from "../utils/socket";
 
 //  Find out more information about the Game Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -17,8 +18,8 @@ const config: Phaser.Types.Core.GameConfig = {
     parent: "game-container",
     backgroundColor: "#028af8",
     scene: [
-        Boot,
-        Preloader,
+        // Boot,
+        // Preloader,
         // MainMenu,
         // SelectMap,
         // PendingGame,
@@ -36,11 +37,17 @@ const config: Phaser.Types.Core.GameConfig = {
 };
 
 const StartGame = (parent: string, gameId?: string) => {
-    const game = new Phaser.Game(config);
+    clientSocket.emit("get current game", gameId, (gameData: any) => {
+        if (gameData) {
+            const game = new Phaser.Game(config);
 
-    game.scene.start("Playing", { gameId });
-
-    return game;
+            console.log(gameData);
+            game.scene.start("Playing", gameData); // Start the scene here
+            return game;
+        } else {
+            console.error("Failed to retrieve game data!");
+        }
+    });
 };
 
 export default StartGame;

@@ -38,10 +38,131 @@ class Playing extends Phaser.Scene {
         super("Playing");
     }
 
-    init(data: { gameId?: string }) {
-        // this.gameId = data.gameId;
-        console.log("Game ID:", data.gameId);
-        // this.currentGame = game;
+    preload() {
+        // Set the base path for loading assets
+        this.load.baseURL = "/";
+
+        // Load menu images and spritesheets
+        this.load.image("main_menu", "assets/images/menu/main_menu.png");
+        this.load.spritesheet("check_icon", "assets/images/menu/accepts.png", {
+            frameWidth: 75,
+            frameHeight: 75,
+        });
+
+        // Load map assets
+        this.load.image("tiles", "assets/maps/tileset.png");
+        this.load.tilemapTiledJSON("hot_map", "assets/maps/hot_map.json");
+        this.load.tilemapTiledJSON("cold_map", "assets/maps/cold_map.json");
+
+        // Load game spritesheets
+        this.load.spritesheet(
+            "explosion_center",
+            "assets/images/game/explosion_center.png",
+            { frameWidth: 35, frameHeight: 35 }
+        );
+        this.load.spritesheet(
+            "explosion_horizontal",
+            "assets/images/game/explosion_horizontal.png",
+            { frameWidth: 35, frameHeight: 35 }
+        );
+        this.load.spritesheet(
+            "explosion_vertical",
+            "assets/images/game/explosion_vertical.png",
+            { frameWidth: 35, frameHeight: 35 }
+        );
+        this.load.spritesheet(
+            "explosion_up",
+            "assets/images/game/explosion_up.png",
+            {
+                frameWidth: 35,
+                frameHeight: 35,
+            }
+        );
+        this.load.spritesheet(
+            "explosion_right",
+            "assets/images/game/explosion_right.png",
+            { frameWidth: 35, frameHeight: 35 }
+        );
+        this.load.spritesheet(
+            "explosion_down",
+            "assets/images/game/explosion_down.png",
+            { frameWidth: 35, frameHeight: 35 }
+        );
+        this.load.spritesheet(
+            "explosion_left",
+            "assets/images/game/explosion_left.png",
+            { frameWidth: 35, frameHeight: 35 }
+        );
+        this.load.spritesheet(
+            "spoil_tileset",
+            "assets/images/game/spoil_tileset.png",
+            { frameWidth: 35, frameHeight: 35 }
+        );
+        this.load.spritesheet(
+            "bone_tileset",
+            "assets/images/game/bone_tileset.png",
+            {
+                frameWidth: 35,
+                frameHeight: 35,
+            }
+        );
+        this.load.spritesheet("bomb_tileset", "assets/images/game/bombs.png", {
+            frameWidth: 35,
+            frameHeight: 35,
+        });
+
+        // Load game bonuses and placeholders
+        this.load.image(
+            "speed_up_bonus",
+            "assets/images/game/speed_up_bonus.png"
+        );
+        this.load.image(
+            "speed_up_no_bonus",
+            "assets/images/game/speed_up_no_bonus.png"
+        );
+        this.load.image(
+            "delay_up_bonus",
+            "assets/images/game/delay_up_bonus.png"
+        );
+        this.load.image(
+            "delay_up_no_bonus",
+            "assets/images/game/delay_up_no_bonus.png"
+        );
+        this.load.image(
+            "power_up_bonus",
+            "assets/images/game/power_up_bonus.png"
+        );
+        this.load.image(
+            "placeholder_power",
+            "assets/images/game/placeholder_power.png"
+        );
+        this.load.image(
+            "placeholder_speed",
+            "assets/images/game/placeholder_speed.png"
+        );
+        this.load.image(
+            "placeholder_time",
+            "assets/images/game/placeholder_time.png"
+        );
+
+        this.load.image("batman", "assets/images/game/avatars/batman.png");
+    }
+
+    init(game: any) {
+        // Draw a simple progress bar outline
+        const progressBarOutline = this.add.rectangle(512, 384, 468, 32);
+        progressBarOutline.setStrokeStyle(2, 0xffffff);
+
+        // Create the loading bar that fills as assets are loaded
+        const progressBar = this.add.rectangle(512 - 230, 384, 4, 28, 0xffffff);
+
+        // Update the progress bar width based on the load progress
+        this.load.on("progress", (progress: number) => {
+            progressBar.width = 4 + 460 * progress;
+        });
+
+        console.log("game:", game);
+        this.currentGame = game;
     }
 
     create() {
@@ -89,9 +210,14 @@ class Playing extends Phaser.Scene {
         );
     }
 
+    // onGetGame(game: any) {
+    //     console.log("game:", game);
+    //     this.currentGame = game;
+    // }
+
     createMap() {
         this.map = this.make.tilemap({
-            key: this.currentGame.map_name ?? "hot_map",
+            key: this.currentGame.mapName ?? "hot_map",
         });
         const tileset = this.map.addTilesetImage(TILESET);
 
