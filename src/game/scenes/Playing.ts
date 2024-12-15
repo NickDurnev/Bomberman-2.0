@@ -4,10 +4,11 @@ import Bomb from "../entities/bomb";
 import Spoil from "../entities/spoil";
 import FireBlast from "../entities/fire_blast";
 import Bone from "../entities/bone";
-import { findFrom, findAndDestroyFrom } from "../../utils/utils";
-import { TILESET, LAYER } from "../../utils/constants";
-import { PlayerConfig, ISpoilType } from "../../utils/types";
-import clientSocket from "../../utils/socket";
+import { TILESET, LAYER } from "@utils/constants";
+import { PlayerConfig, pickedSpoilSocketData } from "@utils/types";
+import clientSocket from "@utils/socket";
+import { findFrom, findAndDestroyFrom } from "@utils/utils";
+import { getDataFromLocalStorage } from "@utils/local_storage";
 
 interface PlayerData {
     id: number;
@@ -144,8 +145,6 @@ class Playing extends Phaser.Scene {
             "placeholder_time",
             "assets/images/game/placeholder_time.png"
         );
-
-        this.load.image("batman", "assets/images/game/avatars/batman.png");
     }
 
     init(game: any) {
@@ -156,12 +155,49 @@ class Playing extends Phaser.Scene {
         // Create the loading bar that fills as assets are loaded
         const progressBar = this.add.rectangle(512 - 230, 384, 4, 28, 0xffffff);
 
+        const loadQueue: Array<{ id: string; skin: string }> = [];
+        let activeRequests = 0;
+        const MAX_CONCURRENT_REQUESTS = 1;
+
+        const processQueue = (scene: Phaser.Scene) => {
+            if (
+                activeRequests >= MAX_CONCURRENT_REQUESTS ||
+                loadQueue.length === 0
+            ) {
+                return;
+            }
+
+            const nextItem = loadQueue.shift();
+
+            // Ensure nextItem is defined before accessing its properties
+            if (nextItem && !activeRequests) {
+                const { id, skin } = nextItem;
+
+                activeRequests++;
+
+                scene.load.image(id, skin);
+                scene.load.once("complete", () => {
+                    activeRequests--;
+                    processQueue(scene); // Process the next item in the queue
+                });
+                scene.load.start();
+            }
+        };
+
+        // Add players to the load queue
+        game.players.forEach((player: any) => {
+            loadQueue.push({ id: player.id, skin: player.skin });
+        });
+
+        // Start processing the queue
+        processQueue(this);
+
         // Update the progress bar width based on the load progress
         this.load.on("progress", (progress: number) => {
             progressBar.width = 4 + 460 * progress;
         });
+        this.load.start();
 
-        console.log("game:", game);
         this.currentGame = game;
     }
 
@@ -236,10 +272,9 @@ class Playing extends Phaser.Scene {
     }
 
     private createPlayers() {
+        console.log("this.currentGame.players:", this.currentGame.players);
         for (const player of Object.values(
-            this.currentGame.players ?? [
-                { id: 5, spawn: { x: 200, y: 300 }, skin: "batman" },
-            ]
+            this.currentGame.players
         ) as PlayerData[]) {
             const setup: PlayerConfig = {
                 scene: this,
@@ -248,11 +283,12 @@ class Playing extends Phaser.Scene {
                 skin: player.skin,
             };
 
-            // if (player.id === clientSocket.id) {
-            this.player = new Player(setup);
-            // } else {
-            //     this.enemies.add(new EnemyPlayer(setup));
-            // }
+            const storedSocketId = getDataFromLocalStorage("socket_id");
+            if (player.id === storedSocketId) {
+                this.player = new Player(setup);
+            } else {
+                this.enemies.add(new EnemyPlayer(setup));
+            }
         }
     }
 
@@ -370,11 +406,7 @@ class Playing extends Phaser.Scene {
         player_id,
         spoil_id,
         spoil_type,
-    }: {
-        player_id: number;
-        spoil_id: number;
-        spoil_type: ISpoilType;
-    }) {
+    }: pickedSpoilSocketData) {
         if (player_id === this.player.id) {
             this.player.pickSpoil(spoil_type);
         }

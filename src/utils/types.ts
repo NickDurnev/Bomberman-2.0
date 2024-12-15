@@ -120,3 +120,9 @@ export interface GameStore {
     changeGameName: (name: string) => void;
 }
 
+export type pickedSpoilSocketData = {
+    player_id: number;
+    spoil_id: number;
+    spoil_type: ISpoilType;
+};
+

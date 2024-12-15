@@ -19,7 +19,7 @@ import clientSocket from "@utils/socket";
 import Info from "./info";
 import { SpoilNotification } from "@helpers/elements";
 
-export default class Player extends Physics.Arcade.Sprite {
+export default class Player extends Physics.Arcade.Image {
     game: Phaser.Scene;
     id: number;
     prevPosition: { x: number; y: number };
@@ -46,9 +46,6 @@ export default class Player extends Physics.Arcade.Sprite {
         this.speed = INITIAL_SPEED;
         this._lastBombTime = 0;
 
-        // this.sprite = new Phaser.GameObjects.Sprite(scene, 0, 0, "wall");
-        // this.add(this.sprite);
-
         this.game.add.existing(this);
         this.game.physics.add.existing(this);
 
@@ -61,12 +58,20 @@ export default class Player extends Physics.Arcade.Sprite {
 
         this.info = new Info({ game: this.game, player: this });
 
-        // PHYSICS
-        this.getBody().setSize(35, 35);
-        this.getBody().setOffset(-1, -1);
+        this.setTexture(`${id}`);
+        this.setDisplaySize(TILE_SIZE, TILE_SIZE);
+        this.getBody().setSize(95, 95);
+        this.getBody().setOffset(0, 0);
+        //DEBUG
+        this.game.physics.world.createDebugGraphic();
+        this.getBody().debugBodyColor = 0xff0000;
+        // this.setCircle(
+        //     this.getBody().halfWidth,
+        //     0,
+        //     this.getBody().halfHeight - this.getBody().halfWidth
+        // );
 
         this.defineKeyboard();
-        // this.defineSelf(skin);
     }
 
     update() {

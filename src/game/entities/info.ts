@@ -1,3 +1,15 @@
+import React from "react";
+
+type PlayerStats = {
+    speed: number;
+    power: number;
+    delay: number;
+};
+
+type InfoProps = {
+    player: PlayerStats;
+    isDead: boolean;
+};
 export default class Info {
     private game: Phaser.Scene;
     private player: { speed: number; power: number; delay: number };

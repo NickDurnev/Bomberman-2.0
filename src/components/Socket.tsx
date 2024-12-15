@@ -3,7 +3,10 @@ import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { v4 as uuidv4 } from "uuid";
 import socket from "../utils/socket";
-import { addToLocalStorage } from "@utils/local_storage";
+import {
+    addToLocalStorage,
+    getDataFromLocalStorage,
+} from "@utils/local_storage";
 
 type Props = {
     children: React.ReactNode;
@@ -25,7 +28,18 @@ export const Socket = ({ children }: Props) => {
             socket.io.engine.on("upgrade", (transport: any) => {
                 setTransport(transport.name);
             });
-            const socketId = uuidv4();
+
+            const storedSocketId = getDataFromLocalStorage("socket_id");
+            let socketId = null;
+            if (storedSocketId) {
+                socketId = storedSocketId;
+            } else {
+                socketId = uuidv4();
+                addToLocalStorage({
+                    key: "socket_id",
+                    value: socketId,
+                });
+            }
             setSocketId(socketId);
             socket.emit(
                 "updateUserSocketId",
@@ -35,7 +49,6 @@ export const Socket = ({ children }: Props) => {
                     // Handle response from server here
                 }
             );
-            addToLocalStorage({ key: "socket_id", value: socketId });
         }
         function onDisconnect() {
             setIsConnected(false);
