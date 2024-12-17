@@ -145,6 +145,24 @@ class Playing extends Phaser.Scene {
             "placeholder_time",
             "assets/images/game/placeholder_time.png"
         );
+
+        //Default avatars
+        this.load.image("avatar-1", "assets/images/avatars/avatar-1.png");
+        this.load.image("avatar-2", "assets/images/avatars/avatar-2.png");
+        this.load.image("avatar-3", "assets/images/avatars/avatar-3.png");
+        this.load.image("avatar-4", "assets/images/avatars/avatar-4.png");
+        this.load.image("avatar-5", "assets/images/avatars/avatar-5.png");
+        this.load.image("avatar-6", "assets/images/avatars/avatar-6.png");
+        this.load.image("avatar-7", "assets/images/avatars/avatar-7.png");
+        this.load.image("avatar-8", "assets/images/avatars/avatar-8.png");
+        this.load.image("avatar-9", "assets/images/avatars/avatar-9.png");
+        this.load.image("avatar-10", "assets/images/avatars/avatar-10.png");
+        this.load.image("avatar-11", "assets/images/avatars/avatar-11.png");
+        this.load.image("avatar-12", "assets/images/avatars/avatar-12.png");
+        this.load.image("avatar-13", "assets/images/avatars/avatar-13.png");
+        this.load.image("avatar-14", "assets/images/avatars/avatar-14.png");
+        this.load.image("avatar-15", "assets/images/avatars/avatar-15.png");
+        this.load.image("avatar-16", "assets/images/avatars/avatar-16.png");
     }
 
     init(game: any) {

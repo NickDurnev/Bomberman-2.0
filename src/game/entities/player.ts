@@ -16,7 +16,6 @@ import {
 } from "@utils/constants";
 import { ISpoilType, PlayerConfig } from "@utils/types";
 import clientSocket from "@utils/socket";
-import Info from "./info";
 import { SpoilNotification } from "@helpers/elements";
 
 export default class Player extends Physics.Arcade.Image {
@@ -27,7 +26,6 @@ export default class Player extends Physics.Arcade.Image {
     power: number;
     speed: number;
     private _lastBombTime: number;
-    info: Info;
     upKey: Phaser.Input.Keyboard.Key;
     downKey: Phaser.Input.Keyboard.Key;
     leftKey: Phaser.Input.Keyboard.Key;
@@ -56,12 +54,16 @@ export default class Player extends Physics.Arcade.Image {
             loop: true,
         });
 
-        this.info = new Info({ game: this.game, player: this });
+        if (this.game.textures.exists(`${id}`)) {
+            this.setTexture(`${id}`);
+        } else {
+            const randomNumber = Math.floor(Math.random() * 12) + 1;
+            this.setTexture(`avatar-${randomNumber}`);
+        }
 
-        this.setTexture(`${id}`);
         this.setDisplaySize(TILE_SIZE, TILE_SIZE);
-        this.getBody().setSize(95, 95);
-        this.getBody().setOffset(0, 0);
+        this.getBody().setSize(TILE_SIZE * 4, TILE_SIZE * 4);
+        // this.getBody().setOffset(0, 0);
         //DEBUG
         this.game.physics.world.createDebugGraphic();
         this.getBody().debugBodyColor = 0xff0000;
@@ -155,7 +157,6 @@ export default class Player extends Physics.Arcade.Image {
     }
 
     becomesDead() {
-        this.info.showDeadInfo();
         this.setActive(false);
         this.setVisible(false);
     }
@@ -175,7 +176,6 @@ export default class Player extends Physics.Arcade.Image {
 
         if (this.speed < MAX_SPEED) {
             this.speed += STEP_SPEED;
-            this.info.refreshStatistic();
             asset = "speed_up_bonus";
         }
 
@@ -192,7 +192,6 @@ export default class Player extends Physics.Arcade.Image {
 
         if (this.delay > MIN_DELAY) {
             this.delay -= STEP_DELAY;
-            this.info.refreshStatistic();
             asset = "delay_up_bonus";
         }
 
@@ -206,7 +205,6 @@ export default class Player extends Physics.Arcade.Image {
 
     increasePower() {
         this.power += STEP_POWER;
-        this.info.refreshStatistic();
 
         new SpoilNotification({
             scene: this.game,

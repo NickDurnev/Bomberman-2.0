@@ -47,7 +47,8 @@ export const PING = 100;
 
 export const SPEED = 0;
 export const POWER = 1;
-export const DELAY = 2;
+export const BOMBS = 2;
+export const DELAY = 3;
 
 export const INITIAL_SPEED = 150;
 export const STEP_SPEED = 50;

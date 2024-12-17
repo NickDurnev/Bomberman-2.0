@@ -1,4 +1,4 @@
-import { SPEED, POWER, DELAY, TILE_SIZE } from "../../utils/constants";
+import { SPEED, POWER, DELAY, BOMBS, TILE_SIZE } from "../../utils/constants";
 import { ISpoilType } from "../../utils/types";
 interface SpoilData {
     id: number;
@@ -12,14 +12,19 @@ export default class Spoil extends Phaser.GameObjects.Sprite {
 
     constructor(scene: Phaser.Scene, spoil: SpoilData) {
         // Determine the spoil type frame based on the type constant
-        const spoil_type =
-            spoil.spoil_type === DELAY
-                ? 0
-                : spoil.spoil_type === POWER
-                ? 1
-                : spoil.spoil_type === SPEED
-                ? 2
-                : 0;
+        let spoil_tile = 0;
+
+        switch (spoil.spoil_type) {
+            case BOMBS:
+                spoil_tile = 0;
+                break;
+            case POWER:
+                spoil_tile = 1;
+                break;
+            case SPEED:
+                spoil_tile = 2;
+                break;
+        }
 
         // Initialize the sprite at the specified position with the chosen frame
         super(
@@ -27,7 +32,7 @@ export default class Spoil extends Phaser.GameObjects.Sprite {
             spoil.col * TILE_SIZE,
             spoil.row * TILE_SIZE,
             "spoil_tileset",
-            spoil_type
+            spoil_tile
         );
 
         this.id = spoil.id;

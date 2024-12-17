@@ -7,7 +7,7 @@ export interface IUser {
     _id?: string;
 }
 
-export type ISpoilType = 0 | 1 | 2;
+export type ISpoilType = 0 | 1 | 2 | 3;
 
 export interface Spawn {
     x: number;
