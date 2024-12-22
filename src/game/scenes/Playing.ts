@@ -14,6 +14,7 @@ interface PlayerData {
     id: number;
     spawn: { x: number; y: number };
     skin: string;
+    name: string;
 }
 
 // interface ISocket  {
@@ -299,6 +300,7 @@ class Playing extends Phaser.Scene {
                 id: player.id,
                 spawn: player.spawn,
                 skin: player.skin,
+                name: player.name,
             };
 
             const storedSocketId = getDataFromLocalStorage("socket_id");

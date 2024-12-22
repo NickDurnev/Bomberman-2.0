@@ -13,8 +13,8 @@ import clientSocket from "../utils/socket";
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
 const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
-    width: 1024,
-    height: 768,
+    width: 1120,
+    height: 735,
     parent: "game-container",
     backgroundColor: "#202121",
     scene: [

@@ -16,12 +16,13 @@ import {
 } from "@utils/constants";
 import { ISpoilType, PlayerConfig } from "@utils/types";
 import clientSocket from "@utils/socket";
-import { SpoilNotification } from "@helpers/elements";
+import { SpoilNotification, Text } from "@helpers/elements";
 
 export default class Player extends Physics.Arcade.Image {
     game: Phaser.Scene;
     id: number;
     prevPosition: { x: number; y: number };
+    playerText: Text;
     delay: number;
     power: number;
     speed: number;
@@ -33,12 +34,13 @@ export default class Player extends Physics.Arcade.Image {
     spaceKey: Phaser.Input.Keyboard.Key;
     sprite: Phaser.GameObjects.Sprite;
 
-    constructor({ scene, id, spawn, skin }: PlayerConfig) {
-        super(scene, spawn.x, spawn.y, skin);
+    constructor({ scene, id, spawn, skin, name }: PlayerConfig) {
+        super(scene, spawn.x, spawn.y, skin, name);
 
         this.game = scene;
         this.id = id;
         this.prevPosition = { x: spawn.x, y: spawn.y };
+        this.playerText;
         this.delay = INITIAL_DELAY;
         this.power = INITIAL_POWER;
         this.speed = INITIAL_SPEED;
@@ -56,13 +58,15 @@ export default class Player extends Physics.Arcade.Image {
 
         if (this.game.textures.exists(`${id}`)) {
             this.setTexture(`${id}`);
+            this.setDisplaySize(TILE_SIZE - 4, TILE_SIZE - 4);
+            this.getBody().setSize((TILE_SIZE - 4) * 4, (TILE_SIZE - 4) * 4);
         } else {
             const randomNumber = Math.floor(Math.random() * 12) + 1;
             this.setTexture(`avatar-${randomNumber}`);
+            this.setDisplaySize(TILE_SIZE, TILE_SIZE);
+            this.getBody().setSize(TILE_SIZE * 4, TILE_SIZE * 4);
         }
 
-        this.setDisplaySize(TILE_SIZE, TILE_SIZE);
-        this.getBody().setSize(TILE_SIZE * 4, TILE_SIZE * 4);
         // this.getBody().setOffset(0, 0);
         //DEBUG
         this.game.physics.world.createDebugGraphic();
@@ -73,6 +77,7 @@ export default class Player extends Physics.Arcade.Image {
         //     this.getBody().halfHeight - this.getBody().halfWidth
         // );
 
+        this.defineText(name);
         this.defineKeyboard();
     }
 
@@ -80,6 +85,14 @@ export default class Player extends Physics.Arcade.Image {
         if (this.active) {
             this.handleMoves();
             this.handleBombs();
+
+            // Update the text position
+            if (this.playerText) {
+                this.playerText.setPosition(
+                    this.x - this.playerText.width / 2,
+                    this.y - TILE_SIZE * 1.2
+                );
+            }
         }
     }
 
@@ -105,19 +118,40 @@ export default class Player extends Physics.Arcade.Image {
         );
     }
 
+    private defineText(name: string) {
+        const style = {
+            font: "14px Arial",
+            fill: "#FFFFFF",
+            stroke: "#000000",
+            strokeThickness: 3,
+        } as Phaser.Types.GameObjects.Text.TextStyle;
+
+        this.playerText = this.game.add.text(
+            this.x,
+            this.y - TILE_SIZE * 1.2,
+            name,
+            style
+        );
+
+        this.playerText.setX(this.x - this.playerText.width / 2);
+        this.playerText.setDepth(10);
+    }
+
     handleMoves() {
         this.getBody().setVelocity(0);
+        const velocity = this.speed;
+
         if (this.upKey?.isDown) {
-            this.body!.velocity.y = -110;
+            this.body!.velocity.y = -velocity;
         }
         if (this.leftKey?.isDown) {
-            this.body!.velocity.x = -110;
+            this.body!.velocity.x = -velocity;
         }
         if (this.downKey?.isDown) {
-            this.body!.velocity.y = 110;
+            this.body!.velocity.y = velocity;
         }
         if (this.rightKey?.isDown) {
-            this.body!.velocity.x = 110;
+            this.body!.velocity.x = velocity;
         }
     }
 

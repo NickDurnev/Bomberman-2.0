@@ -19,6 +19,7 @@ export interface PlayerConfig {
     id: number;
     spawn: { x: number; y: number };
     skin: string;
+    name: string;
 }
 
 export interface TextConstructorParams {

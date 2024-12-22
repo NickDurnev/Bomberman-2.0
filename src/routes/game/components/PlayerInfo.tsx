@@ -54,11 +54,11 @@ const PlayerInfo = () => {
 
     return (
         <div>
-            <ul className="flex gap-x-8 items-center p-4">
+            <ul className="flex gap-x-8 items-center p-2">
                 {info.map(({ title, value }) => (
                     <li
                         key={title}
-                        className="flex items-center justify-center text-xl bg-accent text-white transition motion-preset-pop motion-loop-once rounded-lg px-4 py-2"
+                        className="flex items-center justify-center text-sm bg-accent text-white transition motion-preset-pop motion-loop-once rounded-lg px-4 py-2"
                     >
                         {title}: {value}
                     </li>
