@@ -7,7 +7,7 @@ import { SPEED, POWER, BOMBS } from "@utils/constants";
 const DEFAULT_INFO = [
     { title: "Speed", value: 1 },
     { title: "Power", value: 1 },
-    { title: "Bombs", value: 1 },
+    { title: "Bomb", value: 1 },
 ];
 
 const PlayerInfo = () => {
@@ -45,7 +45,7 @@ const PlayerInfo = () => {
                 case BOMBS:
                     setInfo((prev) => [
                         ...prev,
-                        { title: "Bombs", value: prev[2].value + 1 },
+                        { title: "Bomb", value: prev[2].value + 1 },
                     ]);
                     break;
             }
@@ -53,18 +53,23 @@ const PlayerInfo = () => {
     };
 
     return (
-        <div>
-            <ul className="flex gap-x-8 items-center p-2">
-                {info.map(({ title, value }) => (
-                    <li
-                        key={title}
-                        className="flex items-center justify-center text-sm bg-accent text-white transition motion-preset-pop motion-loop-once rounded-lg px-4 py-2"
-                    >
-                        {title}: {value}
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <ul className="flex gap-x-8 items-center p-2 absolute top-[34px] left-[140px]">
+            {info.map(({ title, value }) => (
+                <li
+                    key={title}
+                    className="flex items-center gap-x-2 bg-black transition motion-preset-pop motion-loop-once rounded-lg px-3 py-1"
+                >
+                    <div className="rounded-full">
+                        <img
+                            src={`/assets/${title.toLowerCase()}_icon.png`}
+                            alt={title}
+                            className="w-[25px] h-[23px] rounded-full object-contain"
+                        />
+                    </div>
+                    <p className="text-white text-sm">x{value}</p>
+                </li>
+            ))}
+        </ul>
     );
 };
 

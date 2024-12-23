@@ -68,14 +68,14 @@ export default class Player extends Physics.Arcade.Image {
         }
 
         // this.getBody().setOffset(0, 0);
-        //DEBUG
-        this.game.physics.world.createDebugGraphic();
-        this.getBody().debugBodyColor = 0xff0000;
         // this.setCircle(
         //     this.getBody().halfWidth,
         //     0,
         //     this.getBody().halfHeight - this.getBody().halfWidth
         // );
+        //DEBUG
+        this.game.physics.world.createDebugGraphic();
+        this.getBody().debugBodyColor = 0xff0000;
 
         this.defineText(name);
         this.defineKeyboard();

@@ -11,8 +11,8 @@ function Game() {
     return (
         <div id="app">
             <Socket>
-                <PlayerInfo />
-                <div className="flex items-center justify-center">
+                <div className="flex items-center justify-center py-10 relative">
+                    <PlayerInfo />
                     <PhaserGame gameId={gameId} ref={phaserRef} />
                 </div>
             </Socket>
