@@ -35,7 +35,7 @@ class Preloader extends Phaser.Scene {
 
         // Load map assets
         this.load.image("tiles", "maps/tileset.png");
-        this.load.tilemapTiledJSON("hot_map", "maps/hot_map.json");
+        this.load.tilemapTiledJSON("default_map", "maps/default_map.json");
         this.load.tilemapTiledJSON("cold_map", "maps/cold_map.json");
 
         // Load game spritesheets

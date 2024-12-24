@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import { Physics } from "phaser";
 import { TILE_SIZE, EXPLOSION_TIME } from "../../utils/constants";
 
 export default class Bomb extends Phaser.GameObjects.Sprite {
@@ -6,8 +6,10 @@ export default class Bomb extends Phaser.GameObjects.Sprite {
     id: number;
 
     constructor(scene: Phaser.Scene, id: number, col: number, row: number) {
-        const centerCol = col * TILE_SIZE + TILE_SIZE / 2;
-        const centerRow = row * TILE_SIZE + TILE_SIZE / 2;
+        const centerCol = col * TILE_SIZE;
+        console.log("centerCol:", centerCol);
+        const centerRow = row * TILE_SIZE;
+        console.log("centerRow:", centerRow);
 
         super(scene, centerCol, centerRow, "bomb_tileset");
 
@@ -18,15 +20,17 @@ export default class Bomb extends Phaser.GameObjects.Sprite {
         this.game.add.existing(this);
 
         // Enable physics
-        this.game.physics.world.enable(this);
+        this.game.physics.add.existing(this);
+        this.getBody().setSize(TILE_SIZE, TILE_SIZE);
+        // this.game.physics.world.enable(this);
 
         // Cast the body to the correct type
         const body = this.body as Phaser.Physics.Arcade.Body;
         body.setImmovable(true);
 
         // Set scale and origin (center)
-        this.setScale(0.7);
-        this.setOrigin(0.5);
+        // this.setScale(0.7);
+        // this.setOrigin(0.5);
 
         // Add tween for scale animation
         this.game.add.tween({
@@ -51,6 +55,10 @@ export default class Bomb extends Phaser.GameObjects.Sprite {
         });
 
         this.play("bomb");
+    }
+
+    protected getBody(): Physics.Arcade.Body {
+        return this.body as Physics.Arcade.Body;
     }
 
     update() {

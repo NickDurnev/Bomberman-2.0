@@ -53,7 +53,10 @@ class Playing extends Phaser.Scene {
 
         // Load map assets
         this.load.image("tiles", "assets/maps/tileset.png");
-        this.load.tilemapTiledJSON("hot_map", "assets/maps/hot_map.json");
+        this.load.tilemapTiledJSON(
+            "default_map",
+            "assets/maps/default_map.json"
+        );
         this.load.tilemapTiledJSON("cold_map", "assets/maps/cold_map.json");
 
         // Load game spritesheets
@@ -272,7 +275,7 @@ class Playing extends Phaser.Scene {
 
     createMap() {
         this.map = this.make.tilemap({
-            key: this.currentGame.mapName ?? "hot_map",
+            key: this.currentGame.mapName ?? "default_map",
         });
         const tileset = this.map.addTilesetImage(TILESET);
 
@@ -387,6 +390,8 @@ class Playing extends Phaser.Scene {
         bomb_id: number;
         blastedCells: any[];
     }) {
+        console.log("bomb_id:", bomb_id);
+        console.log("blastedCells:", blastedCells);
         // Remove Bomb:
         findAndDestroyFrom(bomb_id, this.bombs);
 
