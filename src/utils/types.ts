@@ -127,3 +127,18 @@ export type pickedSpoilSocketData = {
     spoil_type: ISpoilType;
 };
 
+export interface ISpoil {
+    id: number;
+    spoil_type: ISpoilType;
+    col: number;
+    row: number;
+}
+
+export interface ICell {
+    col: number;
+    row: number;
+    type: string;
+    destroyed?: boolean;
+    spoil?: ISpoil | null;
+}
+

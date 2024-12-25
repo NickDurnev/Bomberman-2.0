@@ -1,16 +1,10 @@
 import { SPEED, POWER, DELAY, BOMBS, TILE_SIZE } from "../../utils/constants";
-import { ISpoilType } from "../../utils/types";
-interface SpoilData {
-    id: number;
-    spoil_type: ISpoilType;
-    col: number;
-    row: number;
-}
+import { ISpoil } from "../../utils/types";
 
 export default class Spoil extends Phaser.GameObjects.Sprite {
     id: number;
 
-    constructor(scene: Phaser.Scene, spoil: SpoilData) {
+    constructor(scene: Phaser.Scene, spoil: ISpoil) {
         // Determine the spoil type frame based on the type constant
         let spoil_tile = 0;
 

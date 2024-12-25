@@ -49,10 +49,10 @@
             "visible": true,
             "properties": {
                 "max_players": 3,
-                "collisionTiles": [4, 5],
+                "collisionTiles": [1, 5],
                 "empty": 6,
-                "balk": 5,
-                "wall": 4,
+                "box": 5,
+                "wall": 1,
                 "spawns": [
                     { "col": 6, "row": 4 },
                     { "col": 7, "row": 15 },

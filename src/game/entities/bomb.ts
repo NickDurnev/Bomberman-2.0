@@ -1,15 +1,13 @@
 import { Physics } from "phaser";
-import { TILE_SIZE, EXPLOSION_TIME } from "../../utils/constants";
+import { TILE_SIZE, EXPLOSION_TIME } from "@utils/constants";
 
 export default class Bomb extends Phaser.GameObjects.Sprite {
-    game: Phaser.Scene;
-    id: number;
+    private game: Phaser.Scene;
+    private id: number;
 
     constructor(scene: Phaser.Scene, id: number, col: number, row: number) {
         const centerCol = col * TILE_SIZE;
-        console.log("centerCol:", centerCol);
         const centerRow = row * TILE_SIZE;
-        console.log("centerRow:", centerRow);
 
         super(scene, centerCol, centerRow, "bomb_tileset");
 
@@ -35,8 +33,8 @@ export default class Bomb extends Phaser.GameObjects.Sprite {
         // Add tween for scale animation
         this.game.add.tween({
             targets: this,
-            scaleX: 1.2,
-            scaleY: 1.2,
+            // scaleX: 1.2,
+            // scaleY: 1.2,
             duration: EXPLOSION_TIME,
             ease: Phaser.Math.Easing.Linear,
             yoyo: false,
@@ -59,11 +57,6 @@ export default class Bomb extends Phaser.GameObjects.Sprite {
 
     protected getBody(): Physics.Arcade.Body {
         return this.body as Physics.Arcade.Body;
-    }
-
-    update() {
-        // This would display the debug body, if needed
-        // this.game.debug.body(this);
     }
 }
 

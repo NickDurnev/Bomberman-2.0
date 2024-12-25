@@ -1,18 +1,24 @@
-import { TILE_SIZE } from "../../utils/constants";
-
-interface Cell {
-    col: number;
-    row: number;
-    type: string;
-}
+import { Physics } from "phaser";
+import { TILE_SIZE } from "@utils/constants";
+import { ICell } from "@utils/types";
 
 export default class FireBlast extends Phaser.GameObjects.Sprite {
     private game: Phaser.Scene;
 
-    constructor(game: Phaser.Scene, cell: Cell) {
-        super(game, cell.col * TILE_SIZE, cell.row * TILE_SIZE, cell.type);
+    constructor(scene: Phaser.Scene, cell: ICell) {
+        super(scene, cell.col * TILE_SIZE, cell.row * TILE_SIZE, cell.type);
 
-        this.game = game;
+        this.game = scene;
+
+        // Add the bomb sprite to the scene
+        this.game.add.existing(this);
+
+        // Enable physics
+        this.game.physics.add.existing(this);
+        this.getBody().setSize(TILE_SIZE, TILE_SIZE);
+
+        const body = this.body as Phaser.Physics.Arcade.Body;
+        body.setImmovable(true);
 
         // Add the blast animation
         this.anims.create({
@@ -29,12 +35,21 @@ export default class FireBlast extends Phaser.GameObjects.Sprite {
         // Play the blast animation
         this.play("blast");
 
-        // Enable physics
-        this.scene.physics.add.existing(this);
+        // Listen for the animation complete event
+        this.on("animationcomplete", this.onAnimationComplete, this);
+    }
+
+    protected getBody(): Physics.Arcade.Body {
+        return this.body as Physics.Arcade.Body;
+    }
+
+    private onAnimationComplete(): void {
+        // Remove the physics body
         const body = this.body as Phaser.Physics.Arcade.Body;
-        if (body) {
-            body.setImmovable(true);
-        }
+        body.destroy();
+
+        // Remove the sprite from the scene
+        this.destroy();
     }
 }
 

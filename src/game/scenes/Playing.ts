@@ -5,7 +5,7 @@ import Spoil from "../entities/spoil";
 import FireBlast from "../entities/fire_blast";
 import Bone from "../entities/bone";
 import { TILESET, LAYER } from "@utils/constants";
-import { PlayerConfig, pickedSpoilSocketData } from "@utils/types";
+import { PlayerConfig, pickedSpoilSocketData, ICell } from "@utils/types";
 import clientSocket from "@utils/socket";
 import { findFrom, findAndDestroyFrom } from "@utils/utils";
 import { getDataFromLocalStorage } from "@utils/local_storage";
@@ -401,30 +401,50 @@ class Playing extends Phaser.Scene {
         }
 
         // Destroy Tiles:
-        for (const cell of blastedCells) {
-            if (!cell.destroyed) {
-                continue;
-            }
+        blastedCells.forEach((cell: ICell) => {
+            if (cell.destroyed) {
+                // Set the tile at (col, row) to an "empty" tile with ID 0 (or the correct ID for an empty tile)
+                const emptyTileId = 6; // Replace with the appropriate tile ID for an empty tile
+                this.map.putTileAt(
+                    emptyTileId, // Tile ID for an "empty" tile
+                    cell.col, // X-coordinate (column) in the tilemap
+                    cell.row, // Y-coordinate (row) in the tilemap
+                    true, // Optional: Recalculate faces after placement (set to true or false as needed)
+                    this.blockLayer // Specify the layer to place the tile in
+                );
 
-            // Set the tile at (col, row) to an "empty" tile with ID 0 (or the correct ID for an empty tile)
-            const emptyTileId = 0; // Replace with the appropriate tile ID for an empty tile
-            this.map.putTileAt(
-                emptyTileId, // Tile ID for an "empty" tile
-                cell.col, // X-coordinate (column) in the tilemap
-                cell.row, // Y-coordinate (row) in the tilemap
-                true, // Optional: Recalculate faces after placement (set to true or false as needed)
-                this.blockLayer // Specify the layer to place the tile in
-            );
-        }
+                console.log("this.map:", this.map);
+            }
+        });
+        // for (const cell of blastedCells) {
+        //     if (!cell.destroyed) {
+        //         continue;
+        //     }
+
+        //     // Set the tile at (col, row) to an "empty" tile with ID 0 (or the correct ID for an empty tile)
+        //     const emptyTileId = 6; // Replace with the appropriate tile ID for an empty tile
+        //     this.map.putTileAt(
+        //         emptyTileId, // Tile ID for an "empty" tile
+        //         cell.col, // X-coordinate (column) in the tilemap
+        //         cell.row, // Y-coordinate (row) in the tilemap
+        //         true, // Optional: Recalculate faces after placement (set to true or false as needed)
+        //         this.blockLayer // Specify the layer to place the tile in
+        //     );
+        // }
 
         // Add Spoils:
-        for (const cell of blastedCells) {
-            if (!cell.destroyed || !cell.spoil) {
-                continue;
+        blastedCells.forEach((cell: ICell) => {
+            if (cell.destroyed && cell.spoil) {
+                this.spoils.add(new Spoil(this, cell.spoil));
             }
+        });
+        // for (const cell of blastedCells) {
+        //     if (!cell.destroyed || !cell.spoil) {
+        //         continue;
+        //     }
 
-            this.spoils.add(new Spoil(this, cell.spoil));
-        }
+        //     this.spoils.add(new Spoil(this, cell.spoil));
+        // }
     }
 
     private onSpoilWasPicked({

@@ -171,20 +171,16 @@ export default class Player extends Physics.Arcade.Image {
     }
 
     currentCol() {
-        console.log("bomb.x:", Math.round(this.x / TILE_SIZE));
         return Math.round(this.x / TILE_SIZE);
     }
 
     currentRow() {
-        console.log("bomb.y", Math.round(this.y / TILE_SIZE));
         return Math.round(this.y / TILE_SIZE);
     }
 
     positionUpdaterLoop() {
         const newPosition = { x: this.x, y: this.y };
 
-        console.log("this.y:", this.y);
-        console.log("this.x:", this.x);
         if (
             this.prevPosition.x !== newPosition.x ||
             this.prevPosition.y !== newPosition.y
