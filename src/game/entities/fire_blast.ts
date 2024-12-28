@@ -6,7 +6,11 @@ export default class FireBlast extends Phaser.GameObjects.Sprite {
     private game: Phaser.Scene;
 
     constructor(scene: Phaser.Scene, cell: ICell) {
-        super(scene, cell.col * TILE_SIZE, cell.row * TILE_SIZE, cell.type);
+        // Calculate the center of the cell
+        const centerCol = cell.col * TILE_SIZE + TILE_SIZE / 2;
+        const centerRow = cell.row * TILE_SIZE + TILE_SIZE / 2;
+
+        super(scene, centerCol, centerRow, cell.type);
 
         this.game = scene;
 
@@ -15,10 +19,10 @@ export default class FireBlast extends Phaser.GameObjects.Sprite {
 
         // Enable physics
         this.game.physics.add.existing(this);
-        this.getBody().setSize(TILE_SIZE, TILE_SIZE);
+        this.getBody().setSize(TILE_SIZE - 8, TILE_SIZE - 8);
 
-        const body = this.body as Phaser.Physics.Arcade.Body;
-        body.setImmovable(true);
+        // const body = this.body as Phaser.Physics.Arcade.Body;
+        this.getBody().setImmovable(true);
 
         // Add the blast animation
         this.anims.create({

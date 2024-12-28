@@ -58,13 +58,13 @@ export default class Player extends Physics.Arcade.Image {
 
         if (this.game.textures.exists(`${id}`)) {
             this.setTexture(`${id}`);
-            this.setDisplaySize(TILE_SIZE - 4, TILE_SIZE - 4);
-            this.getBody().setSize((TILE_SIZE - 4) * 4, (TILE_SIZE - 4) * 4);
+            this.setDisplaySize(TILE_SIZE - 7, TILE_SIZE - 7);
+            this.getBody().setSize((TILE_SIZE - 7) * 4, (TILE_SIZE - 7) * 4);
         } else {
             const randomNumber = Math.floor(Math.random() * 12) + 1;
             this.setTexture(`avatar-${randomNumber}`);
-            this.setDisplaySize(TILE_SIZE, TILE_SIZE);
-            this.getBody().setSize(TILE_SIZE * 4, TILE_SIZE * 4);
+            this.setDisplaySize(TILE_SIZE - 3, TILE_SIZE - 3);
+            this.getBody().setSize((TILE_SIZE - 3) * 4, (TILE_SIZE - 3) * 4);
         }
 
         // this.getBody().setOffset(0, 0);

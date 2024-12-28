@@ -1,7 +1,9 @@
+import { Physics } from "phaser";
 import { SPEED, POWER, DELAY, BOMBS, TILE_SIZE } from "../../utils/constants";
 import { ISpoil } from "../../utils/types";
 
 export default class Spoil extends Phaser.GameObjects.Sprite {
+    private game: Phaser.Scene;
     id: number;
 
     constructor(scene: Phaser.Scene, spoil: ISpoil) {
@@ -30,14 +32,18 @@ export default class Spoil extends Phaser.GameObjects.Sprite {
         );
 
         this.id = spoil.id;
-        scene.add.existing(this);
+        this.game = scene;
+        this.game.add.existing(this);
 
-        // Enable physics on the sprite
-        scene.physics.add.existing(this);
-        const body = this.body as Phaser.Physics.Arcade.Body;
-        if (body) {
-            body.setImmovable(true);
-        }
+        // Enable physics
+        this.game.physics.add.existing(this);
+        this.getBody().setSize(TILE_SIZE - 4, TILE_SIZE - 4);
+
+        this.getBody().setImmovable(true);
+    }
+
+    protected getBody(): Physics.Arcade.Body {
+        return this.body as Physics.Arcade.Body;
     }
 }
 

@@ -53,12 +53,7 @@
                 "empty": 6,
                 "box": 5,
                 "wall": 1,
-                "spawns": [
-                    { "col": 6, "row": 4 },
-                    { "col": 7, "row": 15 },
-                    { "col": 22, "row": 3 },
-                    { "col": 23, "row": 13 }
-                ]
+                "spawns": [{ "col": 6, "row": 4 }]
             }
         }
     ],

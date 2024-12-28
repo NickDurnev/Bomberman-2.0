@@ -3,11 +3,14 @@ import { TILE_SIZE, EXPLOSION_TIME } from "@utils/constants";
 
 export default class Bomb extends Phaser.GameObjects.Sprite {
     private game: Phaser.Scene;
-    private id: number;
+    id: number;
 
     constructor(scene: Phaser.Scene, id: number, col: number, row: number) {
-        const centerCol = col * TILE_SIZE;
-        const centerRow = row * TILE_SIZE;
+        // Calculate the center of the cell
+        const centerCol = col * TILE_SIZE + TILE_SIZE / 2;
+        console.log("centerCol:", centerCol);
+        const centerRow = row * TILE_SIZE + TILE_SIZE / 2;
+        console.log("centerRow:", centerRow);
 
         super(scene, centerCol, centerRow, "bomb_tileset");
 
@@ -19,12 +22,9 @@ export default class Bomb extends Phaser.GameObjects.Sprite {
 
         // Enable physics
         this.game.physics.add.existing(this);
-        this.getBody().setSize(TILE_SIZE, TILE_SIZE);
-        // this.game.physics.world.enable(this);
+        this.getBody().setSize(TILE_SIZE - 8, TILE_SIZE - 8);
 
-        // Cast the body to the correct type
-        const body = this.body as Phaser.Physics.Arcade.Body;
-        body.setImmovable(true);
+        this.getBody().setImmovable(true);
 
         // Set scale and origin (center)
         // this.setScale(0.7);
@@ -33,8 +33,8 @@ export default class Bomb extends Phaser.GameObjects.Sprite {
         // Add tween for scale animation
         this.game.add.tween({
             targets: this,
-            // scaleX: 1.2,
-            // scaleY: 1.2,
+            scaleX: 1.2,
+            scaleY: 1.2,
             duration: EXPLOSION_TIME,
             ease: Phaser.Math.Easing.Linear,
             yoyo: false,
