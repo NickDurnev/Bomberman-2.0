@@ -16,7 +16,7 @@ import {
 } from "@utils/constants";
 import { ISpoilType, PlayerConfig } from "@utils/types";
 import clientSocket from "@utils/socket";
-import { SpoilNotification, Text } from "@helpers/elements";
+import { Text } from "@helpers/elements";
 
 export default class Player extends Physics.Arcade.Image {
     game: Phaser.Scene;
@@ -163,6 +163,7 @@ export default class Player extends Physics.Arcade.Image {
                 this._lastBombTime = now + this.delay;
 
                 clientSocket.emit("create bomb", {
+                    playerId: this.id,
                     col: this.currentCol(),
                     row: this.currentRow(),
                 });
@@ -206,46 +207,19 @@ export default class Player extends Physics.Arcade.Image {
     }
 
     increaseSpeed() {
-        let asset = "speed_up_no_bonus";
-
         if (this.speed < MAX_SPEED) {
             this.speed += STEP_SPEED;
-            asset = "speed_up_bonus";
         }
-
-        new SpoilNotification({
-            scene: this.game,
-            asset: asset,
-            x: this.x,
-            y: this.y,
-        });
     }
 
     increaseDelay() {
-        let asset = "delay_up_no_bonus";
-
         if (this.delay > MIN_DELAY) {
             this.delay -= STEP_DELAY;
-            asset = "delay_up_bonus";
         }
-
-        new SpoilNotification({
-            scene: this.game,
-            asset: asset,
-            x: this.x,
-            y: this.y,
-        });
     }
 
     increasePower() {
         this.power += STEP_POWER;
-
-        new SpoilNotification({
-            scene: this.game,
-            asset: "power_up_bonus",
-            x: this.x,
-            y: this.y,
-        });
     }
 }
 

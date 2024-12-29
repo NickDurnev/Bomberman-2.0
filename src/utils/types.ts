@@ -44,29 +44,6 @@ export interface TextButtonConstructorParams extends ButtonConstructorParams {
     style: Phaser.Types.GameObjects.Text.TextStyle;
 }
 
-export interface GameSlotsConstructorParams {
-    scene: Phaser.Scene;
-    data: GameData[];
-    callback: (params: { game_id: string }) => void;
-    callbackContext?: unknown;
-}
-
-export interface PlayerSlotsConstructorParams {
-    scene: Phaser.Scene;
-    max_players: number;
-    players: { skin: string }[];
-    asset_empty: string;
-    asset_player: string;
-    style: Phaser.Types.GameObjects.Text.TextStyle;
-}
-
-export interface SpoilNotificationConstructorParams {
-    scene: Phaser.Scene;
-    asset: string;
-    x: number;
-    y: number;
-}
-
 export interface GameData {
     bombs: object;
     id: string;

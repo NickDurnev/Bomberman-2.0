@@ -1,17 +1,26 @@
 import { useState, useEffect } from "react";
+import clsx from "clsx";
 import clientSocket from "@utils/socket";
 import { pickedSpoilSocketData } from "@utils/types";
 import { getDataFromLocalStorage } from "@utils/local_storage";
 import { SPEED, POWER, BOMBS } from "@utils/constants";
 
 const DEFAULT_INFO = [
-    { title: "Speed", value: 1 },
-    { title: "Power", value: 1 },
-    { title: "Bomb", value: 1 },
+    { title: "Speed", value: 1, color: "#37bf2e" },
+    { title: "Power", value: 1, color: "#f9b727" },
+    { title: "Bomb", value: 1, color: "#c347ee" },
 ];
+
+type Info = {
+    title: string;
+    value: number;
+    color: string;
+};
 
 const PlayerInfo = () => {
     const [info, setInfo] = useState(DEFAULT_INFO);
+    const [lastInfo, setLastInfo] = useState<Info | null>(null);
+    const [hidden, setHidden] = useState(false);
 
     useEffect(() => {
         clientSocket.on("spoil was picked", updateInfo);
@@ -31,25 +40,58 @@ const PlayerInfo = () => {
         if (player_id === storedSocketId) {
             switch (spoil_type) {
                 case SPEED:
-                    setInfo((prev) => [
-                        ...prev,
-                        { title: "Speed", value: prev[0].value + 1 },
-                    ]);
+                    setInfo((prev) =>
+                        prev.map((item) => {
+                            if (item.title === "Speed") {
+                                setLastInfo(item);
+                                triggerHide();
+                                return {
+                                    ...item,
+                                    value: item.value + 1,
+                                };
+                            }
+                            return item;
+                        })
+                    );
                     break;
                 case POWER:
-                    setInfo((prev) => [
-                        ...prev,
-                        { title: "Power", value: prev[1].value + 1 },
-                    ]);
+                    setInfo((prev) =>
+                        prev.map((item) => {
+                            if (item.title === "Power") {
+                                setLastInfo(item);
+                                triggerHide();
+                                return {
+                                    ...item,
+                                    value: item.value + 1,
+                                };
+                            }
+                            return item;
+                        })
+                    );
                     break;
                 case BOMBS:
-                    setInfo((prev) => [
-                        ...prev,
-                        { title: "Bomb", value: prev[2].value + 1 },
-                    ]);
+                    setInfo((prev) =>
+                        prev.map((item) => {
+                            if (item.title === "Bomb") {
+                                setLastInfo(item);
+                                triggerHide();
+                                return {
+                                    ...item,
+                                    value: item.value + 1,
+                                };
+                            }
+                            return item;
+                        })
+                    );
                     break;
             }
         }
+    };
+
+    const triggerHide = () => {
+        setHidden(false); // Reset state to make the element visible
+        setTimeout(() => setHidden(true), 1000); // Start hiding after 1 second
+        setTimeout(() => setLastInfo(null), 1500); // Remove from DOM after transition
     };
 
     return (
@@ -69,6 +111,24 @@ const PlayerInfo = () => {
                     <p className="text-white text-sm">x{value}</p>
                 </li>
             ))}
+            {lastInfo && (
+                <li
+                    key="notification"
+                    className={clsx(
+                        "flex items-center gap-x-2 bg-transparent transition-opacity duration-500 rounded-lg px-3",
+                        hidden ? "opacity-0" : "opacity-100"
+                    )}
+                >
+                    <p
+                        className="text-lg font-bold"
+                        style={{
+                            color: lastInfo.color,
+                        }}
+                    >
+                        +1 {lastInfo.title}
+                    </p>
+                </li>
+            )}
         </ul>
     );
 };

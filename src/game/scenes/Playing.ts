@@ -334,7 +334,10 @@ class Playing extends Phaser.Scene {
     }
 
     private onPlayerVsSpoil(player: Player, spoil: Spoil) {
-        clientSocket.emit("pick up spoil", { spoil_id: spoil.id });
+        clientSocket.emit("pick up spoil", {
+            spoil_id: spoil.id,
+            playerId: player.id,
+        });
         spoil.destroy();
     }
 
@@ -344,6 +347,7 @@ class Playing extends Phaser.Scene {
             clientSocket.emit("player died", {
                 col: player.currentCol(),
                 row: player.currentRow(),
+                playerId: player.id,
             });
             player.becomesDead();
         }
@@ -432,6 +436,10 @@ class Playing extends Phaser.Scene {
         spoil_id,
         spoil_type,
     }: pickedSpoilSocketData) {
+        console.log("spoil_type:", spoil_type);
+        console.log("spoil_id:", spoil_id);
+        console.log("player_id:", player_id);
+        console.log("this.player.id:", this.player.id);
         if (player_id === this.player.id) {
             this.player.pickSpoil(spoil_type);
         }
