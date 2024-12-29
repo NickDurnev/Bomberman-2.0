@@ -8,9 +8,7 @@ export default class Bomb extends Phaser.GameObjects.Sprite {
     constructor(scene: Phaser.Scene, id: number, col: number, row: number) {
         // Calculate the center of the cell
         const centerCol = col * TILE_SIZE + TILE_SIZE / 2;
-        console.log("centerCol:", centerCol);
         const centerRow = row * TILE_SIZE + TILE_SIZE / 2;
-        console.log("centerRow:", centerRow);
 
         super(scene, centerCol, centerRow, "bomb_tileset");
 
@@ -25,10 +23,6 @@ export default class Bomb extends Phaser.GameObjects.Sprite {
         this.getBody().setSize(TILE_SIZE - 8, TILE_SIZE - 8);
 
         this.getBody().setImmovable(true);
-
-        // Set scale and origin (center)
-        // this.setScale(0.7);
-        // this.setOrigin(0.5);
 
         // Add tween for scale animation
         this.game.add.tween({

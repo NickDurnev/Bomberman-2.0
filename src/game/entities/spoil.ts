@@ -22,14 +22,12 @@ export default class Spoil extends Phaser.GameObjects.Sprite {
                 break;
         }
 
+        // Calculate the center of the cell
+        const centerCol = spoil.col * TILE_SIZE + TILE_SIZE / 2;
+        const centerRow = spoil.row * TILE_SIZE + TILE_SIZE / 2;
+
         // Initialize the sprite at the specified position with the chosen frame
-        super(
-            scene,
-            spoil.col * TILE_SIZE,
-            spoil.row * TILE_SIZE,
-            "spoil_tileset",
-            spoil_tile
-        );
+        super(scene, centerCol, centerRow, "spoil_tileset", spoil_tile);
 
         this.id = spoil.id;
         this.game = scene;
@@ -37,7 +35,7 @@ export default class Spoil extends Phaser.GameObjects.Sprite {
 
         // Enable physics
         this.game.physics.add.existing(this);
-        this.getBody().setSize(TILE_SIZE - 4, TILE_SIZE - 4);
+        this.getBody().setSize(TILE_SIZE, TILE_SIZE);
 
         this.getBody().setImmovable(true);
     }

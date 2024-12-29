@@ -7,7 +7,11 @@ import Bone from "../entities/bone";
 import { TILESET, LAYER } from "@utils/constants";
 import { PlayerConfig, pickedSpoilSocketData, ICell } from "@utils/types";
 import clientSocket from "@utils/socket";
-import { findFrom, findAndDestroyFrom } from "@utils/utils";
+import {
+    findById,
+    findAndDestroyByCoordinates,
+    findAndDestroyById,
+} from "@utils/utils";
 import { getDataFromLocalStorage } from "@utils/local_storage";
 
 interface PlayerData {
@@ -354,7 +358,7 @@ class Playing extends Phaser.Scene {
         x: number;
         y: number;
     }) {
-        const enemy = findFrom(player_id, this.enemies);
+        const enemy = findById(player_id, this.enemies);
         if (!enemy) {
             return;
         }
@@ -390,10 +394,8 @@ class Playing extends Phaser.Scene {
         bomb_id: number;
         blastedCells: any[];
     }) {
-        console.log("bomb_id:", bomb_id);
-        console.log("blastedCells:", blastedCells);
         // Remove Bomb:
-        findAndDestroyFrom(bomb_id, this.bombs);
+        findAndDestroyById(bomb_id, this.bombs);
 
         // Render Blast:
         for (const cell of blastedCells) {
@@ -412,39 +414,17 @@ class Playing extends Phaser.Scene {
                     true, // Optional: Recalculate faces after placement (set to true or false as needed)
                     this.blockLayer // Specify the layer to place the tile in
                 );
-
-                console.log("this.map:", this.map);
             }
         });
-        // for (const cell of blastedCells) {
-        //     if (!cell.destroyed) {
-        //         continue;
-        //     }
-
-        //     // Set the tile at (col, row) to an "empty" tile with ID 0 (or the correct ID for an empty tile)
-        //     const emptyTileId = 6; // Replace with the appropriate tile ID for an empty tile
-        //     this.map.putTileAt(
-        //         emptyTileId, // Tile ID for an "empty" tile
-        //         cell.col, // X-coordinate (column) in the tilemap
-        //         cell.row, // Y-coordinate (row) in the tilemap
-        //         true, // Optional: Recalculate faces after placement (set to true or false as needed)
-        //         this.blockLayer // Specify the layer to place the tile in
-        //     );
-        // }
 
         // Add Spoils:
         blastedCells.forEach((cell: ICell) => {
             if (cell.destroyed && cell.spoil) {
                 this.spoils.add(new Spoil(this, cell.spoil));
+            } else {
+                findAndDestroyByCoordinates(cell.col, cell.row, this.spoils);
             }
         });
-        // for (const cell of blastedCells) {
-        //     if (!cell.destroyed || !cell.spoil) {
-        //         continue;
-        //     }
-
-        //     this.spoils.add(new Spoil(this, cell.spoil));
-        // }
     }
 
     private onSpoilWasPicked({
@@ -456,7 +436,7 @@ class Playing extends Phaser.Scene {
             this.player.pickSpoil(spoil_type);
         }
 
-        findAndDestroyFrom(spoil_id, this.spoils);
+        findAndDestroyById(spoil_id, this.spoils);
     }
 
     private onShowBones({
@@ -469,7 +449,7 @@ class Playing extends Phaser.Scene {
         row: number;
     }) {
         this.bones.add(new Bone(this, col, row));
-        findAndDestroyFrom(player_id, this.enemies);
+        findAndDestroyById(player_id, this.enemies);
     }
 
     private onPlayerWin(winner_skin?: string) {
@@ -478,7 +458,7 @@ class Playing extends Phaser.Scene {
     }
 
     private onPlayerDisconnect({ player_id }: { player_id: number }) {
-        findAndDestroyFrom(player_id, this.enemies);
+        findAndDestroyById(player_id, this.enemies);
         if (this.enemies.getChildren().length >= 1) {
             return;
         }

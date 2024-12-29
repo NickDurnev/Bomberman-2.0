@@ -1,31 +1,61 @@
-import { Spawn } from "../utils/types";
-
-interface GameObjectWithId extends Phaser.GameObjects.GameObject {
+import { Spawn } from "@utils/types";
+import { TILE_SIZE } from "./constants";
+interface GameObject extends Phaser.GameObjects.GameObject {
     id: number;
+    x: number;
+    y: number;
     goTo(newPosition: Spawn): void;
 }
 
-// Update your findFrom function to use the custom type
-export const findFrom = function (
-    id: number,
+export const findByCoordinates = function (
+    col: number,
+    row: number,
     entities: Phaser.GameObjects.Group
-): GameObjectWithId | null {
-    for (const entity of entities.getChildren()) {
-        // Use type assertion to let TypeScript know this object has an id property
-        const gameObject = entity as GameObjectWithId;
-        if (gameObject.id !== id) {
-            continue;
+): GameObject | null {
+    const x = col * TILE_SIZE + TILE_SIZE / 2;
+    const y = row * TILE_SIZE + TILE_SIZE / 2;
+    let result = null;
+    entities.getChildren().forEach((entity) => {
+        const gameObject = entity as GameObject;
+        if (gameObject.x === x && gameObject.y === y) {
+            result = gameObject;
         }
-        return gameObject;
-    }
-    return null;
+    });
+    return result;
 };
 
-export const findAndDestroyFrom = function (
+export const findAndDestroyByCoordinates = function (
+    col: number,
+    row: number,
+    entities: Phaser.GameObjects.Group
+): void {
+    const entity = findByCoordinates(col, row, entities);
+    if (!entity) {
+        return;
+    }
+
+    entity.destroy();
+};
+
+export const findById = function (
+    id: number,
+    entities: Phaser.GameObjects.Group
+): GameObject | null {
+    let result = null;
+    entities.getChildren().forEach((entity) => {
+        const gameObject = entity as GameObject;
+        if (gameObject.id === id) {
+            result = gameObject;
+        }
+    });
+    return result;
+};
+
+export const findAndDestroyById = function (
     id: number,
     entities: Phaser.GameObjects.Group
 ): void {
-    const entity = findFrom(id, entities);
+    const entity = findById(id, entities);
     if (!entity) {
         return;
     }

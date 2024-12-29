@@ -171,11 +171,11 @@ export default class Player extends Physics.Arcade.Image {
     }
 
     currentCol() {
-        return Math.round(this.x / TILE_SIZE);
+        return Math.floor(this.x / TILE_SIZE);
     }
 
     currentRow() {
-        return Math.round(this.y / TILE_SIZE);
+        return Math.floor(this.y / TILE_SIZE);
     }
 
     positionUpdaterLoop() {
