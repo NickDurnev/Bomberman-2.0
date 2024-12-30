@@ -78,7 +78,7 @@ const Menu = () => {
         <div id="app" className="w-full h-screen mx-auto">
             <UserBar />
             <div className="pt-20">
-                <h1 className="text-8xl font-extrabold tracking-wider text-center motion-preset-expand motion-loop-once">
+                <h1 className="text-8xl font-extrabold text-foreground tracking-wider text-center motion-preset-expand motion-loop-once">
                     Bomberman 2.0
                 </h1>
             </div>

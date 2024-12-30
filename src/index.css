@@ -10,9 +10,6 @@
     font-family: "Outfit";
     src: local("Outfit-Bold"), url("./assets/fonts/Outfit-Bold.ttf");
 }
-body {
-    font-family: Outfit, sans-serif;
-}
 
 @layer base {
     :root {
@@ -75,12 +72,13 @@ body {
     transition: opacity 0.5s ease-in-out;
 }
 
-/* @layer base {
+@layer base {
     * {
         @apply border-border;
     }
     body {
         @apply bg-background text-foreground;
+        font-family: Outfit, sans-serif;
     }
-} */
+}
 
