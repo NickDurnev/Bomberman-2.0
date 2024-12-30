@@ -13,13 +13,17 @@ export const BOMBS = 2;
 export const DELAY = 3;
 
 export const INITIAL_SPEED = 150;
-export const STEP_SPEED = 50;
-export const MAX_SPEED = 350;
+export const STEP_SPEED = 25;
+export const MAX_SPEED = 400;
 export const INITIAL_DELAY = 2000;
 export const STEP_DELAY = 500;
 export const MIN_DELAY = 500;
 export const INITIAL_POWER = 1;
 export const STEP_POWER = 1;
+export const INITIAL_BOMBS = 1;
+export const STEP_BOMBS = 1;
+
+export const SET_BOMB_DELAY = 200;
 
 export const LOBBY_ID = "lobby_room";
 

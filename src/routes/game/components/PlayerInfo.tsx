@@ -3,7 +3,14 @@ import clsx from "clsx";
 import clientSocket from "@utils/socket";
 import { pickedSpoilSocketData } from "@utils/types";
 import { getDataFromLocalStorage } from "@utils/local_storage";
-import { SPEED, POWER, BOMBS } from "@utils/constants";
+import {
+    SPEED,
+    POWER,
+    BOMBS,
+    MAX_SPEED,
+    INITIAL_SPEED,
+    STEP_SPEED,
+} from "@utils/constants";
 
 const DEFAULT_INFO = [
     { title: "Speed", value: 1, color: "#37bf2e" },
@@ -16,6 +23,8 @@ type Info = {
     value: number;
     color: string;
 };
+
+const MAX_SPEED_VALUE = (MAX_SPEED - INITIAL_SPEED) / STEP_SPEED;
 
 const PlayerInfo = () => {
     const [info, setInfo] = useState(DEFAULT_INFO);
@@ -38,53 +47,56 @@ const PlayerInfo = () => {
         const storedSocketId = getDataFromLocalStorage("socket_id");
 
         if (player_id === storedSocketId) {
-            switch (spoil_type) {
-                case SPEED:
-                    setInfo((prev) =>
-                        prev.map((item) => {
-                            if (item.title === "Speed") {
-                                setLastInfo(item);
-                                triggerHide();
-                                return {
-                                    ...item,
-                                    value: item.value + 1,
-                                };
-                            }
-                            return item;
-                        })
-                    );
-                    break;
-                case POWER:
-                    setInfo((prev) =>
-                        prev.map((item) => {
-                            if (item.title === "Power") {
-                                setLastInfo(item);
-                                triggerHide();
-                                return {
-                                    ...item,
-                                    value: item.value + 1,
-                                };
-                            }
-                            return item;
-                        })
-                    );
-                    break;
-                case BOMBS:
-                    setInfo((prev) =>
-                        prev.map((item) => {
-                            if (item.title === "Bomb") {
-                                setLastInfo(item);
-                                triggerHide();
-                                return {
-                                    ...item,
-                                    value: item.value + 1,
-                                };
-                            }
-                            return item;
-                        })
-                    );
-                    break;
+            processInfo(spoil_type);
+        }
+    };
+
+    const processInfo = (spoil_type: number) => {
+        if (spoil_type === SPEED) {
+            if (MAX_SPEED_VALUE <= info[0].value) {
+                return;
             }
+            setInfo((prev) =>
+                prev.map((item) => {
+                    if (item.title === "Speed") {
+                        setLastInfo(item);
+                        triggerHide();
+                        return {
+                            ...item,
+                            value: item.value + 1,
+                        };
+                    }
+                    return item;
+                })
+            );
+        } else if (spoil_type === POWER) {
+            setInfo((prev) =>
+                prev.map((item) => {
+                    if (item.title === "Power") {
+                        setLastInfo(item);
+                        triggerHide();
+                        return {
+                            ...item,
+                            value: item.value + 1,
+                        };
+                    }
+                    return item;
+                })
+            );
+        } else if (spoil_type === BOMBS) {
+            setInfo((prev) =>
+                prev.map((item) => {
+                    if (item.title === "Bomb") {
+                        setLastInfo(item);
+                        triggerHide();
+                        return {
+                            ...item,
+                            value: item.value + 1,
+                        };
+                    }
+                    return item;
+                })
+            );
         }
     };
 

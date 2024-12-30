@@ -9,10 +9,14 @@ import {
     STEP_DELAY,
     INITIAL_DELAY,
     INITIAL_POWER,
+    INITIAL_BOMBS,
+    STEP_BOMBS,
     STEP_POWER,
     SPEED,
     POWER,
     DELAY,
+    BOMBS,
+    SET_BOMB_DELAY,
 } from "@utils/constants";
 import { ISpoilType, PlayerConfig } from "@utils/types";
 import clientSocket from "@utils/socket";
@@ -26,7 +30,9 @@ export default class Player extends Physics.Arcade.Image {
     delay: number;
     power: number;
     speed: number;
-    private _lastBombTime: number;
+    bombs: number;
+    activeBombs: number;
+    lastBombTime: number;
     upKey: Phaser.Input.Keyboard.Key;
     downKey: Phaser.Input.Keyboard.Key;
     leftKey: Phaser.Input.Keyboard.Key;
@@ -44,7 +50,9 @@ export default class Player extends Physics.Arcade.Image {
         this.delay = INITIAL_DELAY;
         this.power = INITIAL_POWER;
         this.speed = INITIAL_SPEED;
-        this._lastBombTime = 0;
+        this.bombs = INITIAL_BOMBS;
+        this.activeBombs = 0;
+        this.lastBombTime = 0;
 
         this.game.add.existing(this);
         this.game.physics.add.existing(this);
@@ -157,10 +165,13 @@ export default class Player extends Physics.Arcade.Image {
 
     handleBombs() {
         if (this.spaceKey.isDown) {
+            if (this.activeBombs >= this.bombs) {
+                return;
+            }
             const now = this.game.time.now;
 
-            if (now > this._lastBombTime) {
-                this._lastBombTime = now + this.delay;
+            if (now > this.lastBombTime) {
+                this.lastBombTime = now + SET_BOMB_DELAY;
 
                 clientSocket.emit("create bomb", {
                     playerId: this.id,
@@ -203,7 +214,21 @@ export default class Player extends Physics.Arcade.Image {
             this.increasePower();
         } else if (spoilType === DELAY) {
             this.increaseDelay();
+        } else if (spoilType === BOMBS) {
+            this.increaseBombs();
         }
+    }
+
+    getActiveBombs() {
+        return this.activeBombs;
+    }
+
+    decreaseActiveBombs() {
+        this.activeBombs--;
+    }
+
+    increaseActiveBombs() {
+        this.activeBombs++;
     }
 
     increaseSpeed() {
@@ -220,6 +245,10 @@ export default class Player extends Physics.Arcade.Image {
 
     increasePower() {
         this.power += STEP_POWER;
+    }
+
+    increaseBombs() {
+        this.bombs += STEP_BOMBS;
     }
 }
 

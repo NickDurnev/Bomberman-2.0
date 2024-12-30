@@ -120,40 +120,6 @@ class Playing extends Phaser.Scene {
             frameHeight: 35,
         });
 
-        // Load game bonuses and placeholders
-        this.load.image(
-            "speed_up_bonus",
-            "assets/images/game/speed_up_bonus.png"
-        );
-        this.load.image(
-            "speed_up_no_bonus",
-            "assets/images/game/speed_up_no_bonus.png"
-        );
-        this.load.image(
-            "delay_up_bonus",
-            "assets/images/game/delay_up_bonus.png"
-        );
-        this.load.image(
-            "delay_up_no_bonus",
-            "assets/images/game/delay_up_no_bonus.png"
-        );
-        this.load.image(
-            "power_up_bonus",
-            "assets/images/game/power_up_bonus.png"
-        );
-        this.load.image(
-            "placeholder_power",
-            "assets/images/game/placeholder_power.png"
-        );
-        this.load.image(
-            "placeholder_speed",
-            "assets/images/game/placeholder_speed.png"
-        );
-        this.load.image(
-            "placeholder_time",
-            "assets/images/game/placeholder_time.png"
-        );
-
         //Default avatars
         this.load.image("avatar-1", "assets/images/avatars/avatar-1.png");
         this.load.image("avatar-2", "assets/images/avatars/avatar-2.png");
@@ -388,6 +354,8 @@ class Playing extends Phaser.Scene {
         col: number;
         row: number;
     }) {
+        this.player.increaseActiveBombs();
+        console.log(this.player.getActiveBombs());
         this.bombs.add(new Bomb(this, bomb_id, col, row));
     }
 
@@ -398,6 +366,8 @@ class Playing extends Phaser.Scene {
         bomb_id: number;
         blastedCells: any[];
     }) {
+        this.player.decreaseActiveBombs();
+        console.log(this.player.getActiveBombs());
         // Remove Bomb:
         findAndDestroyById(bomb_id, this.bombs);
 
@@ -436,10 +406,6 @@ class Playing extends Phaser.Scene {
         spoil_id,
         spoil_type,
     }: pickedSpoilSocketData) {
-        console.log("spoil_type:", spoil_type);
-        console.log("spoil_id:", spoil_id);
-        console.log("player_id:", player_id);
-        console.log("this.player.id:", this.player.id);
         if (player_id === this.player.id) {
             this.player.pickSpoil(spoil_type);
         }
