@@ -53,9 +53,7 @@ const SelectMap: React.FC = () => {
     };
 
     const joinToNewGame = ({ game_id }: { game_id: string }) => {
-        console.log("Navigating to PendingGame with gameId:", game_id);
         navigate("/pending/" + game_id);
-        // Add navigation logic to PendingGame with gameId
     };
 
     const cards = data.map((card, index) => (

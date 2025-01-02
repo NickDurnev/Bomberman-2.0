@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 import { GameData } from "@utils/types";
 import clientSocket from "@utils/socket";
@@ -24,9 +23,6 @@ const Menu = () => {
         // Emit enter lobby event
         clientSocket.emit("enter lobby", handleDisplayPendingGames);
 
-        // Notify other components of scene readiness
-        // EventBus.emit("current-scene-ready");
-
         // Clean up WebSocket listeners on unmount
         return () => {
             clientSocket.off(
@@ -43,7 +39,7 @@ const Menu = () => {
     const handleDisplayPendingGames = (availableGames: GameData[]) => {
         setSlotsWithGame((prev) => [
             ...prev.filter((game) => {
-                return !availableGames.some((g) => g.id === game.id);
+                return !availableGames.some((g) => g?.id === game?.id);
             }),
             availableGames[availableGames.length - 1],
         ]);
@@ -55,22 +51,20 @@ const Menu = () => {
         navigate("/map");
     };
 
-    const handleJoinGame = (gameId: string) => {
+    const handleJoinGame = (game_id: string) => {
         clientSocket.emit("leave lobby");
-        // Navigate to "PendingGame" with gameId
-        console.log("Navigating to PendingGame with game_id:", gameId);
+        navigate("/pending/" + game_id);
     };
 
     const addUserToDB = async () => {
         if (user) {
-            const res = await addUser({
+            await addUser({
                 email: user.email ?? "",
                 name: user.name ?? "",
                 picture: user.picture ?? "",
                 locale: user.locale ?? "en-US",
                 socketID: getDataFromLocalStorage("socket_id"),
             });
-            console.log("res:", res);
         }
     };
 
@@ -91,7 +85,6 @@ const Menu = () => {
                     animatedIcon={"🎮"}
                     disabled={isBtnDisabled || !isAuthenticated}
                 />
-                <Button text="Toast" onClick={() => toast("Hello World")} />
                 <GameSlots data={slotsWithGame} onJoinGame={handleJoinGame} />
             </div>
         </div>

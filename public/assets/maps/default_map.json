@@ -48,12 +48,27 @@
             "type": "tilelayer",
             "visible": true,
             "properties": {
-                "max_players": 3,
+                "max_players": 14,
                 "collisionTiles": [1, 5],
                 "empty": 6,
                 "box": 5,
                 "wall": 1,
-                "spawns": [{ "col": 6, "row": 4 }]
+                "spawns": [
+                    { "col": 6, "row": 2 },
+                    { "col": 15, "row": 5 },
+                    { "col": 22, "row": 4 },
+                    { "col": 27, "row": 6 },
+                    { "col": 28, "row": 11 },
+                    { "col": 5, "row": 10 },
+                    { "col": 6, "row": 17 },
+                    { "col": 12, "row": 17 },
+                    { "col": 20, "row": 17 },
+                    { "col": 23, "row": 16 },
+                    { "col": 28, "row": 18 },
+                    { "col": 20, "row": 13 },
+                    { "col": 18, "row": 9 },
+                    { "col": 10, "row": 11 }
+                ]
             }
         }
     ],

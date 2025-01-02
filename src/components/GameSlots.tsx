@@ -43,12 +43,12 @@ export function GameSlots({ data, onJoinGame }: GameSlotsProps) {
                             >
                                 <button
                                     onClick={() => onJoinGame(game.id)}
-                                    className="rounded-lg h-20 w-20 md:h-32 md:w-32 object-cover flex-shrink-0 opacity-60"
+                                    className="rounded-lg h-20 w-20 md:h-32 md:w-32 object-cover flex-shrink-0 opacity-90 hover:opacity-100"
                                     style={{
                                         background: COLOR,
                                     }}
                                 >
-                                    <p className="font-medium text-lg letter-spacing-1 text-center">
+                                    <p className="font-medium text-lg text-white letter-spacing-1 text-center">
                                         {game.name}
                                     </p>
                                 </button>

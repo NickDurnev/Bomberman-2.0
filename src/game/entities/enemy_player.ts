@@ -1,79 +1,74 @@
-import Phaser from "phaser";
+import { Physics } from "phaser";
 import { TILE_SIZE, PING } from "@utils/constants";
 import { Spawn, PlayerConfig } from "@utils/types";
 import { Text } from "@helpers/elements";
 
 export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
-    private game: Phaser.Scene;
-    private id: number;
-    private currentPosition: Spawn;
+    game: Phaser.Scene;
+    id: number;
+    currentPosition: Spawn;
+    playerText: Text;
     lastMoveAt: number;
 
-    constructor({ scene, id, spawn, skin }: PlayerConfig) {
-        super(scene, spawn.x, spawn.y, "bomberman_" + skin);
+    constructor({ scene, id, spawn, skin, name }: PlayerConfig) {
+        super(scene, spawn.x, spawn.y, skin, name);
 
         this.game = scene;
         this.id = id;
         this.currentPosition = spawn;
         this.lastMoveAt = 0;
+        this.playerText;
 
         // Enable physics on this object
-        this.scene.physics.add.existing(this);
+        this.game.add.existing(this);
+        this.game.physics.add.existing(this);
+
+        if (this.game.textures.exists(`${id}`)) {
+            this.setTexture(`${id}`);
+            this.setDisplaySize(TILE_SIZE - 7, TILE_SIZE - 7);
+            this.getBody().setSize((TILE_SIZE - 7) * 4, (TILE_SIZE - 7) * 4);
+        } else {
+            const randomNumber = Math.floor(Math.random() * 12) + 1;
+            this.setTexture(`avatar-${randomNumber}`);
+            this.setDisplaySize(TILE_SIZE - 3, TILE_SIZE - 3);
+            this.getBody().setSize((TILE_SIZE - 3) * 4, (TILE_SIZE - 3) * 4);
+        }
+
+        //DEBUG
+        this.game.physics.world.createDebugGraphic();
+        this.getBody().debugBodyColor = 0xff0000;
+
         const body = this.body as Phaser.Physics.Arcade.Body;
         if (body) {
             body.setSize(20, 20).setOffset(6, 6);
             body.immovable = true;
         }
 
-        // Creating animations with generateFrameNumbers for each animation direction
-        this.anims.create({
-            key: "up",
-            frames: this.anims.generateFrameNumbers("bomberman_" + skin, {
-                frames: [9, 10, 11],
-            }),
-            frameRate: 15,
-            repeat: -1,
-        });
-
-        this.anims.create({
-            key: "down",
-            frames: this.anims.generateFrameNumbers("bomberman_" + skin, {
-                frames: [0, 1, 2],
-            }),
-            frameRate: 15,
-            repeat: -1,
-        });
-
-        this.anims.create({
-            key: "right",
-            frames: this.anims.generateFrameNumbers("bomberman_" + skin, {
-                frames: [6, 7, 8],
-            }),
-            frameRate: 15,
-            repeat: -1,
-        });
-
-        this.anims.create({
-            key: "left",
-            frames: this.anims.generateFrameNumbers("bomberman_" + skin, {
-                frames: [3, 4, 5],
-            }),
-            frameRate: 15,
-            repeat: -1,
-        });
-
+        this.defineText(name);
         this.defineSelf(skin);
     }
 
     update() {
+        // Update the text position
+        if (this.playerText) {
+            this.playerText.setPosition(
+                this.x - this.playerText.width / 2,
+                this.y - TILE_SIZE * 1.2
+            );
+        }
         // this.game.debug.body(this);
     }
 
-    goTo(newPosition: Spawn) {
-        this.lastMoveAt = this.game.time.now;
-        this.animateFace(newPosition);
+    protected getBody(): Physics.Arcade.Body {
+        return this.body as Physics.Arcade.Body;
+    }
 
-        this.scene.add.tween({
+    goTo(newPosition: Spawn) {
+        console.log("newPosition:", newPosition);
+        this.lastMoveAt = this.game.time.now;
+        this.currentPosition = newPosition;
+
+        this.game.add.tween({
             targets: this,
             x: newPosition.x,
             y: newPosition.y,
@@ -82,23 +77,23 @@ export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
         });
     }
 
-    private animateFace(newPosition: Spawn) {
-        let face = "down";
-        const diffX = newPosition.x - this.currentPosition.x;
-        const diffY = newPosition.y - this.currentPosition.y;
+    private defineText(name: string) {
+        const style = {
+            font: "14px Arial",
+            fill: "#FFFFFF",
+            stroke: "#000000",
+            strokeThickness: 3,
+        } as Phaser.Types.GameObjects.Text.TextStyle;
 
-        if (diffX < 0) {
-            face = "left";
-        } else if (diffX > 0) {
-            face = "right";
-        } else if (diffY < 0) {
-            face = "up";
-        } else if (diffY > 0) {
-            face = "down";
-        }
+        this.playerText = this.game.add.text(
+            this.x,
+            this.y - TILE_SIZE * 1.2,
+            name,
+            style
+        );
 
-        this.anims.play(face);
-        this.currentPosition = newPosition;
+        this.playerText.setX(this.x - this.playerText.width / 2);
+        this.playerText.setDepth(10);
     }
 
     private defineSelf(name: string) {
@@ -123,4 +118,5 @@ export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
         this.scene.add.existing(playerText);
     }
 }
+
 

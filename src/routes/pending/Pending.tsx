@@ -17,7 +17,6 @@ const PendingGame = () => {
     const { gameId } = useParams();
     const navigate = useNavigate();
     const [gameInfo, setGameInfo] = useState<GameInfo | null>(null);
-    console.log("gameInfo:", gameInfo);
 
     useEffect(() => {
         clientSocket.on("update game", handleUpdateGame);

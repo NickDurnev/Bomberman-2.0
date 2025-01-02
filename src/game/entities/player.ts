@@ -41,11 +41,17 @@ export default class Player extends Physics.Arcade.Image {
     sprite: Phaser.GameObjects.Sprite;
 
     constructor({ scene, id, spawn, skin, name }: PlayerConfig) {
-        super(scene, spawn.x, spawn.y, skin, name);
+        const centerCol = spawn.x - TILE_SIZE / 2;
+        const centerRow = spawn.y - TILE_SIZE / 2;
+
+        super(scene, centerCol, centerRow, skin, name);
 
         this.game = scene;
         this.id = id;
-        this.prevPosition = { x: spawn.x, y: spawn.y };
+        this.prevPosition = {
+            x: centerCol,
+            y: centerRow,
+        };
         this.playerText;
         this.delay = INITIAL_DELAY;
         this.power = INITIAL_POWER;
@@ -197,7 +203,10 @@ export default class Player extends Physics.Arcade.Image {
             this.prevPosition.x !== newPosition.x ||
             this.prevPosition.y !== newPosition.y
         ) {
-            clientSocket.emit("update player position", newPosition);
+            clientSocket.emit("update player position", {
+                playerId: this.id,
+                ...newPosition,
+            });
             this.prevPosition = newPosition;
         }
     }
