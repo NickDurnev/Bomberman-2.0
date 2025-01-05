@@ -2,7 +2,7 @@ import { Physics } from "phaser";
 import { TILE_SIZE, EXPLOSION_TIME } from "@utils/constants";
 
 export default class Bomb extends Phaser.GameObjects.Sprite {
-    private game: Phaser.Scene;
+    readonly game: Phaser.Scene;
     id: number;
 
     constructor(scene: Phaser.Scene, id: number, col: number, row: number) {

@@ -31,14 +31,14 @@ interface PlayerData {
 
 class Playing extends Phaser.Scene {
     private currentGame: any; // Define the type according to your game object structure
-    private player!: Player;
-    private bones!: Phaser.GameObjects.Group;
-    private bombs!: Phaser.GameObjects.Group;
-    private spoils!: Phaser.GameObjects.Group;
-    private blasts!: Phaser.GameObjects.Group;
-    private enemies!: Phaser.GameObjects.Group;
-    private blockLayer!: Phaser.Tilemaps.TilemapLayer;
-    private map!: Phaser.Tilemaps.Tilemap;
+    private player: Player;
+    private bones: Phaser.GameObjects.Group;
+    private bombs: Phaser.GameObjects.Group;
+    private spoils: Phaser.GameObjects.Group;
+    private blasts: Phaser.GameObjects.Group;
+    private enemies: Phaser.GameObjects.Group;
+    private blockLayer: Phaser.Tilemaps.TilemapLayer;
+    private map: Phaser.Tilemaps.Tilemap;
 
     constructor() {
         super("Playing");
@@ -230,7 +230,7 @@ class Playing extends Phaser.Scene {
             this.blasts,
             (obj1: any, obj2: any) => {
                 if (obj1 instanceof Player && obj2 instanceof FireBlast) {
-                    this.onPlayerVsBlast(obj1, obj2);
+                    this.onPlayerVsBlast(obj1);
                 }
             },
             undefined,
@@ -238,10 +238,9 @@ class Playing extends Phaser.Scene {
         );
     }
 
-    // onGetGame(game: any) {
-    //     console.log("game:", game);
-    //     this.currentGame = game;
-    // }
+    getGameId() {
+        return this.currentGame.id;
+    }
 
     createMap() {
         this.map = this.make.tilemap({
@@ -264,12 +263,11 @@ class Playing extends Phaser.Scene {
     }
 
     private createPlayers() {
-        console.log("this.currentGame.players:", this.currentGame.players);
         for (const player of Object.values(
             this.currentGame.players
         ) as PlayerData[]) {
             const setup: PlayerConfig = {
-                scene: this,
+                game: this,
                 id: player.id,
                 spawn: player.spawn,
                 skin: player.skin,
@@ -303,17 +301,18 @@ class Playing extends Phaser.Scene {
         clientSocket.emit("pick up spoil", {
             spoil_id: spoil.id,
             playerId: player.id,
+            gameId: player.gameId,
         });
         spoil.destroy();
     }
 
-    private onPlayerVsBlast(player: Player, blast: FireBlast) {
-        console.log(blast);
+    private onPlayerVsBlast(player: Player) {
         if (player.active) {
             clientSocket.emit("player died", {
                 col: player.currentCol(),
                 row: player.currentRow(),
                 playerId: player.id,
+                gameId: player.gameId,
             });
             player.becomesDead();
         }
@@ -355,7 +354,6 @@ class Playing extends Phaser.Scene {
         row: number;
     }) {
         this.player.increaseActiveBombs();
-        console.log(this.player.getActiveBombs());
         this.bombs.add(new Bomb(this, bomb_id, col, row));
     }
 

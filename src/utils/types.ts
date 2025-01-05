@@ -1,3 +1,5 @@
+import Playing from "@game/scenes/Playing";
+
 export interface IUser {
     email: string;
     locale: string;
@@ -15,7 +17,7 @@ export interface Spawn {
 }
 
 export interface PlayerConfig {
-    scene: Phaser.Scene;
+    game: Playing;
     id: number;
     spawn: { x: number; y: number };
     skin: string;
@@ -23,7 +25,7 @@ export interface PlayerConfig {
 }
 
 export interface TextConstructorParams {
-    scene: Phaser.Scene;
+    scene: Playing;
     x: number;
     y: number;
     text: string;
@@ -31,7 +33,7 @@ export interface TextConstructorParams {
 }
 
 export interface ButtonConstructorParams {
-    scene: Phaser.Scene;
+    scene: Playing;
     x: number;
     y: number;
     asset: string;

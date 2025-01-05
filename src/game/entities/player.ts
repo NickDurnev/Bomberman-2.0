@@ -18,41 +18,43 @@ import {
     BOMBS,
     SET_BOMB_DELAY,
 } from "@utils/constants";
+import Playing from "@game/scenes/Playing";
 import { ISpoilType, PlayerConfig } from "@utils/types";
 import clientSocket from "@utils/socket";
 import { Text } from "@helpers/elements";
 
 export default class Player extends Physics.Arcade.Image {
-    game: Phaser.Scene;
-    id: number;
-    prevPosition: { x: number; y: number };
-    playerText: Text;
-    delay: number;
-    power: number;
-    speed: number;
-    bombs: number;
-    activeBombs: number;
-    lastBombTime: number;
-    upKey: Phaser.Input.Keyboard.Key;
-    downKey: Phaser.Input.Keyboard.Key;
-    leftKey: Phaser.Input.Keyboard.Key;
-    rightKey: Phaser.Input.Keyboard.Key;
-    spaceKey: Phaser.Input.Keyboard.Key;
-    sprite: Phaser.GameObjects.Sprite;
+    readonly game: Playing;
+    readonly id: number;
+    readonly gameId: string;
+    private prevPosition: { x: number; y: number };
+    private playerText: Text;
+    private delay: number;
+    private power: number;
+    private speed: number;
+    private bombs: number;
+    private activeBombs: number;
+    private lastBombTime: number;
+    private upKey: Phaser.Input.Keyboard.Key;
+    private downKey: Phaser.Input.Keyboard.Key;
+    private leftKey: Phaser.Input.Keyboard.Key;
+    private rightKey: Phaser.Input.Keyboard.Key;
+    private spaceKey: Phaser.Input.Keyboard.Key;
+    readonly sprite: Phaser.GameObjects.Sprite;
 
-    constructor({ scene, id, spawn, skin, name }: PlayerConfig) {
+    constructor({ game, id, spawn, skin, name }: PlayerConfig) {
         const centerCol = spawn.x - TILE_SIZE / 2;
         const centerRow = spawn.y - TILE_SIZE / 2;
 
-        super(scene, centerCol, centerRow, skin, name);
+        super(game, centerCol, centerRow, skin, name);
 
-        this.game = scene;
+        this.game = game;
         this.id = id;
+        this.gameId = game.getGameId();
         this.prevPosition = {
             x: centerCol,
             y: centerRow,
         };
-        this.playerText;
         this.delay = INITIAL_DELAY;
         this.power = INITIAL_POWER;
         this.speed = INITIAL_SPEED;
@@ -181,6 +183,7 @@ export default class Player extends Physics.Arcade.Image {
 
                 clientSocket.emit("create bomb", {
                     playerId: this.id,
+                    gameId: this.gameId,
                     col: this.currentCol(),
                     row: this.currentRow(),
                 });
@@ -205,6 +208,7 @@ export default class Player extends Physics.Arcade.Image {
         ) {
             clientSocket.emit("update player position", {
                 playerId: this.id,
+                gameId: this.gameId,
                 ...newPosition,
             });
             this.prevPosition = newPosition;
