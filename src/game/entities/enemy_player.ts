@@ -13,7 +13,10 @@ export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
     lastMoveAt: number;
 
     constructor({ game, id, spawn, skin, name }: PlayerConfig) {
-        super(game, spawn.x, spawn.y, skin, name);
+        const centerCol = spawn.x - TILE_SIZE / 2;
+        const centerRow = spawn.y - TILE_SIZE / 2;
+
+        super(game, centerCol, centerRow, skin, name);
 
         this.game = game;
         this.id = id;
@@ -42,25 +45,7 @@ export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
         this.game.physics.world.createDebugGraphic();
         this.getBody().debugBodyColor = 0xff0000;
 
-        // const body = this.body as Phaser.Physics.Arcade.Body;
-        // if (body) {
-        //     body.setSize(20, 20).setOffset(6, 6);
-        //     body.immovable = true;
-        // }
-
         this.defineText(name);
-        // this.defineSelf(skin);
-    }
-
-    update() {
-        // // Update the text position
-        // if (this.playerText) {
-        //     this.playerText.setPosition(
-        //         this.x - this.playerText.width / 2,
-        //         this.y - TILE_SIZE * 1.2
-        //     );
-        // }
-        // this.game.debug.body(this);
     }
 
     protected getBody(): Physics.Arcade.Body {
@@ -108,27 +93,5 @@ export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
         this.playerText.setX(this.x - this.playerText.width / 2);
         this.playerText.setDepth(10);
     }
-
-    // private defineSelf(name: string) {
-    //     // Define text styling with a type assertion if necessary
-    //     const style = {
-    //         font: "14px Arial",
-    //         fill: "#FFFFFF",
-    //         stroke: "#000000",
-    //         strokeThickness: 3,
-    //     } as Phaser.Types.GameObjects.Text.TextStyle;
-
-    //     // Construct playerText using type assertion to allow 'game'
-    //     const playerText = new Text({
-    //         scene: this.game, // Type assertion to avoid TypeScript error
-    //         x: this.x + TILE_SIZE / 2,
-    //         y: this.y - 10,
-    //         text: name,
-    //         style: style,
-    //     } as any);
-
-    //     // Add the text to the scene
-    //     this.scene.add.existing(playerText);
-    // }
 }
 

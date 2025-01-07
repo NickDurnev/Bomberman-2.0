@@ -1,22 +1,17 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import clientSocket from "@utils/socket";
+import { GameData as Game } from "@utils/types";
 import { Button, PlayersSlots, UserBar } from "@components/index";
 
-interface GameInfo {
-    name: string;
-    players: Record<string, any>;
-    max_players: number;
-}
-
 interface GameData {
-    current_game: GameInfo;
+    current_game: Game;
 }
 
 const PendingGame = () => {
     const { gameId } = useParams();
     const navigate = useNavigate();
-    const [gameInfo, setGameInfo] = useState<GameInfo | null>(null);
+    const [gameInfo, setGameInfo] = useState<Game | null>(null);
 
     useEffect(() => {
         clientSocket.on("update game", handleUpdateGame);
@@ -34,7 +29,7 @@ const PendingGame = () => {
         setGameInfo(data.current_game);
     };
 
-    const handleLaunchGame = (game?: any) => {
+    const handleLaunchGame = () => {
         navigate("/game/" + gameId);
     };
 

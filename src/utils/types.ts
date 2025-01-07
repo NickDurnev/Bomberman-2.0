@@ -57,12 +57,11 @@ export interface GameData {
         y: number;
         data: number[];
     };
-    map_name: string;
+    mapName: string;
     max_players: number;
     name: string;
-    playerSkins: string[];
     playerSpawns: Spawn[];
-    players: object;
+    players: Player[];
     shadow_map: number[][];
     spoils: object;
 }
@@ -88,9 +87,10 @@ export interface Player {
     power: number;
 }
 
-export interface PlayerSlotsProps {
-    max_players: number;
-    players: Player[];
+export interface PlayerSlot {
+    name: string;
+    image: string;
+    id: number;
 }
 
 //Stores

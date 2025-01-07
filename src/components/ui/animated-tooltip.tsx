@@ -7,17 +7,9 @@ import {
     useMotionValue,
     useSpring,
 } from "framer-motion";
+import { PlayerSlot } from "@utils/types";
 
-export const AnimatedTooltip = ({
-    items,
-}: {
-    items: {
-        id: number;
-        name: string;
-        image?: string;
-        designation?: string;
-    }[];
-}) => {
+export const AnimatedTooltip = ({ items }: { items: PlayerSlot[] }) => {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const springConfig = { stiffness: 100, damping: 5 };
     const x = useMotionValue(0); // going to set this value on mouse move
@@ -38,10 +30,10 @@ export const AnimatedTooltip = ({
 
     return (
         <>
-            {items.map((item, idx) => (
+            {items.map((item, index) => (
                 <div
                     className="-mr-4  relative group"
-                    key={item.name}
+                    key={`${index}-${item.name}`}
                     onMouseEnter={() => setHoveredIndex(item.id)}
                     onMouseLeave={() => setHoveredIndex(null)}
                 >
@@ -72,11 +64,6 @@ export const AnimatedTooltip = ({
                                 <div className="font-bold text-white relative z-30 text-base">
                                     {item.name}
                                 </div>
-                                {item.designation && (
-                                    <div className="text-white text-xs">
-                                        {item.designation}
-                                    </div>
-                                )}
                             </motion.div>
                         )}
                     </AnimatePresence>
