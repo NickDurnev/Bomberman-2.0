@@ -1,46 +1,46 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 const phasermsg = () => {
     return {
-        name: 'phasermsg',
+        name: "phasermsg",
         buildStart() {
             process.stdout.write(`Building for production...\n`);
         },
         buildEnd() {
-            const line = "---------------------------------------------------------";
+            const line =
+                "---------------------------------------------------------";
             const msg = `❤️❤️❤️ Tell us about your game! - games@phaser.io ❤️❤️❤️`;
             process.stdout.write(`${line}\n${msg}\n${line}\n`);
 
             process.stdout.write(`✨ Done ✨\n`);
-        }
-    }
-}
+        },
+    };
+};
 
 export default defineConfig({
-    base: './',
-    plugins: [
-        react(),
-        phasermsg()
-    ],
-    logLevel: 'warning',
+    base: "/",
+    plugins: [react(), phasermsg(), tsconfigPaths()],
+    logLevel: "info",
     build: {
         rollupOptions: {
             output: {
                 manualChunks: {
-                    phaser: ['phaser']
-                }
-            }
+                    phaser: ["phaser"],
+                },
+            },
         },
-        minify: 'terser',
+        minify: "terser",
         terserOptions: {
             compress: {
-                passes: 2
+                passes: 2,
             },
             mangle: true,
             format: {
-                comments: false
-            }
-        }
-    }
+                comments: false,
+            },
+        },
+    },
 });
+

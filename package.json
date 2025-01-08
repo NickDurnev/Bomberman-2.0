@@ -23,7 +23,7 @@
     "scripts": {
         "dev": "vite --config vite/config.dev.mjs",
         "build": "vite build --config vite/config.prod.mjs",
-        "start": "vite preview --config vite/config.prod.mjs"
+        "start": "vite preview --config vite/config.prod.mjs --port 3000"
     },
     "dependencies": {
         "@auth0/auth0-react": "^2.2.4",

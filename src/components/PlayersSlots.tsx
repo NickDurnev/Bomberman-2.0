@@ -9,7 +9,6 @@ type Props = {
 
 export const PlayersSlots = ({ max_players, players }: Props) => {
     const [playersArray, setPlayersArray] = useState<PlayerSlot[]>([]);
-    console.log("playersArray:", playersArray);
 
     useEffect(() => {
         const playersArray = Array.from({ length: max_players }, (_, index) => {
@@ -47,9 +46,13 @@ export const PlayersSlots = ({ max_players, players }: Props) => {
 
     return (
         <div className="px-24 text-center motion-preset-expand motion-loop-once">
-            <div className="text-2xl font-black drop-shadow-md mb-4">
-                Players
-            </div>
+            <h4 className="text-lg md:text-2xl text-neutral-600 dark:text-neutral-100 font-bold text-center mb-8">
+                Need as minimum{" "}
+                <span className="px-1 py-0.5 rounded-md bg-gray-100 dark:bg-neutral-800 dark:border-neutral-700 border border-gray-200">
+                    2
+                </span>{" "}
+                players! 💣
+            </h4>
             <div className="flex flex-row items-center justify-center mb-10 w-full">
                 <AnimatedTooltip items={playersArray} />
             </div>
