@@ -3,7 +3,7 @@ import { SPEED, POWER, DELAY, BOMBS, TILE_SIZE } from "../../utils/constants";
 import { ISpoil } from "../../utils/types";
 
 export default class Spoil extends Phaser.GameObjects.Sprite {
-    private game: Phaser.Scene;
+    readonly game: Phaser.Scene;
     id: number;
 
     constructor(scene: Phaser.Scene, spoil: ISpoil) {

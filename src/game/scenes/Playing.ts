@@ -3,9 +3,14 @@ import EnemyPlayer from "../entities/enemy_player";
 import Bomb from "../entities/bomb";
 import Spoil from "../entities/spoil";
 import FireBlast from "../entities/fire_blast";
-import Bone from "../entities/bone";
+import Tombstone from "../entities/tombstone";
 import { TILESET, LAYER } from "@utils/constants";
-import { PlayerConfig, pickedSpoilSocketData, ICell } from "@utils/types";
+import {
+    PlayerConfig,
+    pickedSpoilSocketData,
+    ICell,
+    ITombStone,
+} from "@utils/types";
 import clientSocket from "@utils/socket";
 import {
     findById,
@@ -32,7 +37,7 @@ interface PlayerData {
 class Playing extends Phaser.Scene {
     private currentGame: any; // Define the type according to your game object structure
     private player: Player;
-    private bones: Phaser.GameObjects.Group;
+    private tombstones: Phaser.GameObjects.Group;
     private bombs: Phaser.GameObjects.Group;
     private spoils: Phaser.GameObjects.Group;
     private blasts: Phaser.GameObjects.Group;
@@ -47,13 +52,6 @@ class Playing extends Phaser.Scene {
     preload() {
         // Set the base path for loading assets
         this.load.baseURL = "/";
-
-        // Load menu images and spritesheets
-        this.load.image("main_menu", "assets/images/menu/main_menu.png");
-        this.load.spritesheet("check_icon", "assets/images/menu/accepts.png", {
-            frameWidth: 75,
-            frameHeight: 75,
-        });
 
         // Load map assets
         this.load.image("tiles", "assets/maps/tileset.png");
@@ -107,14 +105,10 @@ class Playing extends Phaser.Scene {
             "assets/images/game/spoil_tileset.png",
             { frameWidth: 35, frameHeight: 35 }
         );
-        this.load.spritesheet(
-            "bone_tileset",
-            "assets/images/game/bone_tileset.png",
-            {
-                frameWidth: 35,
-                frameHeight: 35,
-            }
-        );
+        this.load.spritesheet("tombstone", "assets/images/game/tombstone.png", {
+            frameWidth: 35,
+            frameHeight: 35,
+        });
         this.load.spritesheet("bomb_tileset", "assets/images/game/bombs.png", {
             frameWidth: 35,
             frameHeight: 35,
@@ -253,7 +247,7 @@ class Playing extends Phaser.Scene {
         // this.map.setCollisionByProperty({ collides: true }); // Use the property defined in your tileset
         this.map.setCollision([1, 2, 3, 4, 5]);
 
-        this.bones = this.add.group();
+        this.tombstones = this.add.group();
         this.bombs = this.add.group();
         this.spoils = this.add.group();
         this.blasts = this.add.group();
@@ -290,7 +284,7 @@ class Playing extends Phaser.Scene {
         clientSocket.on("show bomb", this.onShowBomb.bind(this));
         clientSocket.on("detonate bomb", this.onDetonateBomb.bind(this));
         clientSocket.on("spoil was picked", this.onSpoilWasPicked.bind(this));
-        clientSocket.on("show bones", this.onShowBones.bind(this));
+        clientSocket.on("show tombstone", this.onShowTombstone.bind(this));
         clientSocket.on(
             "player disconnect",
             this.onPlayerDisconnect.bind(this)
@@ -411,16 +405,9 @@ class Playing extends Phaser.Scene {
         findAndDestroyById(spoil_id, this.spoils);
     }
 
-    private onShowBones({
-        player_id,
-        col,
-        row,
-    }: {
-        player_id: number;
-        col: number;
-        row: number;
-    }) {
-        this.bones.add(new Bone(this, col, row));
+    private onShowTombstone({ player_id, tombId, col, row }: ITombStone) {
+        this.tombstones.add(new Tombstone(this, tombId, col, row));
+        console.log("game", this);
         findAndDestroyById(player_id, this.enemies);
     }
 

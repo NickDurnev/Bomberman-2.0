@@ -106,6 +106,13 @@ export type pickedSpoilSocketData = {
     spoil_type: ISpoilType;
 };
 
+export interface ITombStone {
+    player_id: number;
+    tombId: string;
+    col: number;
+    row: number;
+}
+
 export interface ISpoil {
     id: number;
     spoil_type: ISpoilType;
