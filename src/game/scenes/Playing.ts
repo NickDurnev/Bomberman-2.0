@@ -280,6 +280,7 @@ class Playing extends Phaser.Scene {
     private setEventHandlers() {
         this.onMovePlayer.bind(this);
         clientSocket.on("move player", this.onMovePlayer.bind(this));
+        clientSocket.on("end game", this.onEndGame.bind(this));
         clientSocket.on("player win", this.onPlayerWin.bind(this));
         clientSocket.on("show bomb", this.onShowBomb.bind(this));
         clientSocket.on("detonate bomb", this.onDetonateBomb.bind(this));
@@ -411,9 +412,16 @@ class Playing extends Phaser.Scene {
         findAndDestroyById(player_id, this.enemies);
     }
 
-    private onPlayerWin(winner_skin?: string) {
+    private onPlayerWin(player?: Player) {
         clientSocket.emit("leave game");
-        this.scene.start("Win", { winner_skin });
+        console.log(player);
+        // this.scene.start("Win", player);
+    }
+
+    private onEndGame({ game_id }: { game_id: string }) {
+        console.log("end game", game_id);
+        clientSocket.emit("leave game");
+        this.scene.start("Win");
     }
 
     private onPlayerDisconnect({ player_id }: { player_id: number }) {
