@@ -128,3 +128,8 @@ export interface ICell {
     spoil?: ISpoil | null;
 }
 
+export interface EndGame {
+    game_id: string;
+    new_game_id: string;
+}
+

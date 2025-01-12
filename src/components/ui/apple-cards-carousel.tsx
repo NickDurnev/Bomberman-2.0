@@ -12,7 +12,7 @@ import {
     IconArrowNarrowRight,
     IconX,
 } from "@tabler/icons-react";
-import { useOutsideClick } from "@hooks/use-outside-click";
+import useOutsideClick from "@hooks/use-outside-click";
 import { cn } from "src/lib/utils";
 import { getRandomColor } from "@utils/utils";
 import { Button } from "@components/index";

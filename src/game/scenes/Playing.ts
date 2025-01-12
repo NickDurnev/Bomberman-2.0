@@ -10,6 +10,7 @@ import {
     pickedSpoilSocketData,
     ICell,
     ITombStone,
+    EndGame,
 } from "@utils/types";
 import clientSocket from "@utils/socket";
 import {
@@ -415,13 +416,15 @@ class Playing extends Phaser.Scene {
     private onPlayerWin(player?: Player) {
         clientSocket.emit("leave game");
         console.log(player);
-        // this.scene.start("Win", player);
+        this.scene.start("GameOver");
     }
 
-    private onEndGame({ game_id }: { game_id: string }) {
+    private onEndGame({ game_id, new_game_id }: EndGame) {
+        console.log("new_game_id:", new_game_id);
         console.log("end game", game_id);
+
         clientSocket.emit("leave game");
-        this.scene.start("Win");
+        this.scene.start("GameOver");
     }
 
     private onPlayerDisconnect({ player_id }: { player_id: number }) {

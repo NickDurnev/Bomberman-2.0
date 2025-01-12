@@ -5,9 +5,14 @@ import { AnimatedTooltip } from "./ui/animated-tooltip";
 type Props = {
     max_players: number;
     players: Player[];
+    size?: "small" | "medium" | "large";
 };
 
-export const PlayersSlots = ({ max_players, players }: Props) => {
+export const PlayersSlots = ({
+    max_players,
+    players,
+    size = "medium",
+}: Props) => {
     const [playersArray, setPlayersArray] = useState<PlayerSlot[]>([]);
 
     useEffect(() => {
@@ -54,7 +59,7 @@ export const PlayersSlots = ({ max_players, players }: Props) => {
                 players! 💣
             </h4>
             <div className="flex flex-row items-center justify-center mb-10 w-full">
-                <AnimatedTooltip items={playersArray} />
+                <AnimatedTooltip items={playersArray} size={size} />
             </div>
         </div>
     );

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import clsx from "clsx";
 import {
     motion,
     useTransform,
@@ -9,7 +10,12 @@ import {
 } from "framer-motion";
 import { PlayerSlot } from "@utils/types";
 
-export const AnimatedTooltip = ({ items }: { items: PlayerSlot[] }) => {
+type Props = {
+    items: PlayerSlot[];
+    size?: "small" | "medium" | "large";
+};
+
+export const AnimatedTooltip = ({ items, size }: Props) => {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const springConfig = { stiffness: 100, damping: 5 };
     const x = useMotionValue(0); // going to set this value on mouse move
@@ -73,7 +79,11 @@ export const AnimatedTooltip = ({ items }: { items: PlayerSlot[] }) => {
                         width={100}
                         src={item.image}
                         alt={item.name}
-                        className="object-cover !m-0 !p-0 object-top rounded-full h-14 w-14 border-2 group-hover:scale-105 group-hover:z-30 border-white  relative transition duration-500"
+                        className={clsx(
+                            "object-cover !m-0 !p-0 object-top rounded-full h-14 w-14 border-2 group-hover:scale-105 group-hover:z-30 border-white  relative transition duration-500",
+                            size === "small" && "h-8 w-8",
+                            size === "large" && "h-16 w-16"
+                        )}
                     />
                 </div>
             ))}
