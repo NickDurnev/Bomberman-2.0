@@ -15,6 +15,7 @@ export default class Tombstone extends Phaser.GameObjects.Sprite {
         this.game = game;
         this.id = tombId;
         this.game.add.existing(this);
+        this.setDepth(1);
     }
 }
 

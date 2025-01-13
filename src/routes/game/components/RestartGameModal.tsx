@@ -21,6 +21,7 @@ interface GameData {
 const RestartGameModal = () => {
     const [gameInfo, setGameInfo] = useState<Game | null>(null);
     const [gameId, setGameId] = useState<string | null>(null);
+    console.log("gameId:", gameId);
     const navigate = useNavigate();
     const { setOpen } = useModal();
 
@@ -37,6 +38,7 @@ const RestartGameModal = () => {
     }, []);
 
     const onEndGame = ({ new_game_id }: EndGame) => {
+        console.log("new_game_id:", new_game_id);
         clientSocket.emit("enter pending game", new_game_id);
         setGameId(new_game_id);
         setOpen(true);

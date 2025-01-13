@@ -64,6 +64,7 @@ export default class Player extends Physics.Arcade.Image {
 
         this.game.add.existing(this);
         this.game.physics.add.existing(this);
+        this.setDepth(10);
 
         this.game.time.addEvent({
             delay: PING,

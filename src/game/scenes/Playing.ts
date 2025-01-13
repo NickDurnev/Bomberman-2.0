@@ -225,6 +225,8 @@ class Playing extends Phaser.Scene {
             this.blasts,
             (obj1: any, obj2: any) => {
                 if (obj1 instanceof Player && obj2 instanceof FireBlast) {
+                    console.log("obj2:", obj2);
+                    console.log("obj1:", obj1);
                     this.onPlayerVsBlast(obj1);
                 }
             },
@@ -409,7 +411,6 @@ class Playing extends Phaser.Scene {
 
     private onShowTombstone({ player_id, tombId, col, row }: ITombStone) {
         this.tombstones.add(new Tombstone(this, tombId, col, row));
-        console.log("game", this);
         findAndDestroyById(player_id, this.enemies);
     }
 
