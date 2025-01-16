@@ -1,68 +1,89 @@
 import { forwardRef, useEffect, useLayoutEffect, useRef } from "react";
-import StartGame from "./main";
+import { config } from "./main";
 import { EventBus } from "./EventBus";
+import clientSocket from "../utils/socket";
+
 export interface IRefPhaserGame {
     game: Phaser.Game | null;
     scene: Phaser.Scene | null;
 }
+
 interface IProps {
-    currentActiveScene?: (scene_instance: Phaser.Scene) => void;
+    // currentActiveScene?: (scene_instance: Phaser.Scene) => void;
     gameId: string;
 }
-export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(
-    function PhaserGame({ currentActiveScene, gameId }, ref) {
-        const game = useRef<Phaser.Game | null>(null!);
 
-        useLayoutEffect(() => {
-            if (game.current === null) {
-                const start: any = StartGame(gameId);
-                if (start instanceof Phaser.Game) {
-                    game.current = start;
-                }
-                if (typeof ref === "function") {
-                    ref({ game: game.current, scene: null });
-                } else if (ref) {
-                    ref.current = { game: game.current, scene: null };
-                }
+export function PhaserGame({ gameId }: Readonly<IProps>) {
+    const game = useRef<Phaser.Game | null>(null);
+    console.log("game:", game);
+
+    useEffect(() => {
+        // Destroy the existing game if any, then initialize a new one
+        // if (game.current) {
+        //     game.current.destroy(true); // Clean up the game
+        //     game.current = null; // Reset reference
+        // }
+
+        launchGame();
+
+        return () => {
+            // Cleanup when component unmounts
+            if (game.current) {
+                console.log("CLEANUP ON UNMOUNT");
+                game.current.destroy(true);
+                game.current = null;
             }
-            return () => {
-                if (game.current) {
-                    game.current.destroy(true);
-                    if (game.current !== null) {
-                        game.current = null;
-                    }
-                }
-            };
-        }, [ref, gameId]);
-        useEffect(() => {
-            EventBus.on(
-                "current-scene-ready",
-                (scene_instance: Phaser.Scene) => {
-                    if (
-                        currentActiveScene &&
-                        typeof currentActiveScene === "function"
-                    ) {
-                        currentActiveScene(scene_instance);
-                    }
-                    if (typeof ref === "function") {
-                        ref({
-                            game: game.current,
-                            scene: scene_instance,
-                        });
-                    } else if (ref) {
-                        ref.current = {
-                            game: game.current,
-                            scene: scene_instance,
-                        };
-                    }
-                }
-            );
-            return () => {
-                EventBus.removeListener("current-scene-ready");
-            };
-        }, [currentActiveScene, ref]);
+        };
+    }, []);
 
-        return <div id="game-container"></div>;
-    }
-);
+    // useEffect(() => {
+    //     // Register listener for the current scene
+    //     const onCurrentSceneReady = (scene_instance: Phaser.Scene) => {
+    //         if (
+    //             currentActiveScene &&
+    //             typeof currentActiveScene === "function"
+    //         ) {
+    //             currentActiveScene(scene_instance);
+    //         }
+    //         if (typeof ref === "function") {
+    //             ref({
+    //                 game: game.current,
+    //                 scene: scene_instance,
+    //             });
+    //         } else if (ref) {
+    //             ref.current = {
+    //                 game: game.current,
+    //                 scene: scene_instance,
+    //             };
+    //         }
+    //     };
+
+    //     EventBus.on("current-scene-ready", onCurrentSceneReady);
+
+    //     return () => {
+    //         console.log("Removing EventBus listener");
+    //         EventBus.off("current-scene-ready", onCurrentSceneReady);
+    //     };
+    // }, [currentActiveScene, ref]);
+
+    const launchGame = () => {
+        if (game.current) {
+            return;
+        }
+        clientSocket.emit("get current game", gameId, (gameData: any) => {
+            if (gameData) {
+                const newGame = new Phaser.Game(config);
+
+                game.current = newGame;
+
+                newGame.scene.start("Playing", gameData); // Start the scene here
+            } else {
+                console.error("Failed to retrieve game data!");
+            }
+        });
+        console.log("Game launched successfully");
+    };
+
+    return <div id="game-container"></div>;
+}
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import clsx from "clsx";
 import clientSocket from "@utils/socket";
 import { pickedSpoilSocketData } from "@utils/types";
@@ -27,17 +28,27 @@ type Info = {
 const MAX_SPEED_VALUE = (MAX_SPEED - INITIAL_SPEED) / STEP_SPEED;
 
 const PlayerInfo = () => {
+    const { gameId } = useParams();
     const [info, setInfo] = useState(DEFAULT_INFO);
     const [lastInfo, setLastInfo] = useState<Info | null>(null);
     const [hidden, setHidden] = useState(false);
 
+    // useEffect(() => {
+    //     if (gameId) {
+    //         setInfo(DEFAULT_INFO);
+    //     }
+    // }, [gameId]);
+
     useEffect(() => {
+        if (gameId) {
+            setInfo(DEFAULT_INFO);
+        }
         clientSocket.on("spoil was picked", updateInfo);
 
         return () => {
             clientSocket.off("spoil was picked", updateInfo);
         };
-    }, []);
+    }, [gameId]);
 
     const updateInfo = ({
         player_id,

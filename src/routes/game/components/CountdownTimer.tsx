@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { MdOutlineTimer } from "react-icons/md";
 import { GAME_DURATION } from "@utils/constants";
 
 const CountdownTimer = () => {
+    const { gameId } = useParams();
     const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
 
     useEffect(() => {
@@ -18,6 +20,10 @@ const CountdownTimer = () => {
 
         return () => clearInterval(timer); // Cleanup on component unmount
     }, []);
+
+    useEffect(() => {
+        setTimeLeft(GAME_DURATION);
+    }, [gameId]);
 
     // Format time as MM:SS
     const formatTime = (seconds: number) => {

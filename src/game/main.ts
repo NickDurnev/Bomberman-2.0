@@ -1,9 +1,8 @@
 import { AUTO } from "phaser";
 import { GameOver } from "./scenes/GameOver";
 import Playing from "./scenes/Playing";
-import clientSocket from "../utils/socket";
 
-const config: Phaser.Types.Core.GameConfig = {
+export const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
     width: 1120,
     height: 735,
@@ -19,18 +18,20 @@ const config: Phaser.Types.Core.GameConfig = {
     },
 };
 
-const StartGame = (gameId?: string) => {
-    clientSocket.emit("get current game", gameId, (gameData: any) => {
-        if (gameData) {
-            const game = new Phaser.Game(config);
+// const StartGame = (gameId: string) => {
+//     let game = null;
+//     clientSocket.emit("get current game", gameId, (gameData: any) => {
+//         if (gameData) {
+//             game = new Phaser.Game(config);
 
-            game.scene.start("Playing", gameData); // Start the scene here
-            return game;
-        } else {
-            console.error("Failed to retrieve game data!");
-        }
-    });
-};
+//             game.scene.start("Playing", gameData); // Start the scene here
+//         } else {
+//             console.error("Failed to retrieve game data!");
+//         }
+//     });
+//     console.log("game:", game);
+//     return game;
+// };
 
-export default StartGame;
+// export default StartGame;
 

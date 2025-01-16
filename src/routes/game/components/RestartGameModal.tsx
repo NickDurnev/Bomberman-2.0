@@ -4,9 +4,7 @@ import clientSocket from "@utils/socket";
 import { EndGame, GameData as Game } from "@utils/types";
 import {
     Button,
-    Socket,
     Modal,
-    ModalTrigger,
     ModalContent,
     ModalFooter,
     ModalBody,
@@ -14,22 +12,26 @@ import {
     PlayersSlots,
 } from "@components/index";
 
-interface GameData {
+type GameData = {
     current_game: Game;
-}
+};
 
-const RestartGameModal = () => {
+type Props = {
+    setIsGameStarted: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const RestartGameModal = ({ setIsGameStarted }: Props) => {
     const [gameInfo, setGameInfo] = useState<Game | null>(null);
     const [gameId, setGameId] = useState<string | null>(null);
-    console.log("gameId:", gameId);
     const navigate = useNavigate();
     const { setOpen } = useModal();
 
     useEffect(() => {
-        clientSocket.on("end game", onEndGame);
-        clientSocket.on("update game", handleUpdateGame);
-        clientSocket.on("launch game", handleLaunchGame);
-
+        setTimeout(() => {
+            clientSocket.on("end game", onEndGame);
+            clientSocket.on("update game", handleUpdateGame);
+            clientSocket.on("launch game", handleLaunchGame);
+        }, 3000);
         return () => {
             clientSocket.off("end game", onEndGame);
             clientSocket.on("update game", handleUpdateGame);
@@ -38,9 +40,9 @@ const RestartGameModal = () => {
     }, []);
 
     const onEndGame = ({ new_game_id }: EndGame) => {
-        console.log("new_game_id:", new_game_id);
         clientSocket.emit("enter pending game", new_game_id);
         setGameId(new_game_id);
+        setIsGameStarted(false);
         setOpen(true);
     };
 
@@ -48,8 +50,13 @@ const RestartGameModal = () => {
         setGameInfo(data.current_game);
     };
 
-    const handleLaunchGame = () => {
-        navigate("/game/" + gameId);
+    const handleLaunchGame = (game?: Game) => {
+        if (gameId || game?.id) {
+            const id = gameId || game?.id;
+            navigate("/game/" + id);
+        }
+        setIsGameStarted(true);
+        setOpen(false);
     };
 
     const startGameAction = () => {
@@ -88,10 +95,6 @@ const RestartGameModal = () => {
                                 onClick={startGameAction}
                                 // disabled={!canStartGame}
                             />
-                            {/* <Button
-                                text="Leave Game"
-                                onClick={leaveGameAction}
-                            /> */}
                         </div>
                     </ModalFooter>
                 </ModalBody>

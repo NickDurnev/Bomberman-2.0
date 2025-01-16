@@ -10,7 +10,6 @@ import {
     pickedSpoilSocketData,
     ICell,
     ITombStone,
-    EndGame,
 } from "@utils/types";
 import clientSocket from "@utils/socket";
 import {
@@ -135,6 +134,7 @@ class Playing extends Phaser.Scene {
     }
 
     init(game: any) {
+        console.log("GAME INIT");
         // Draw a simple progress bar outline
         const progressBarOutline = this.add.rectangle(512, 384, 468, 32);
         progressBarOutline.setStrokeStyle(2, 0xffffff);
@@ -225,8 +225,6 @@ class Playing extends Phaser.Scene {
             this.blasts,
             (obj1: any, obj2: any) => {
                 if (obj1 instanceof Player && obj2 instanceof FireBlast) {
-                    console.log("obj2:", obj2);
-                    console.log("obj1:", obj1);
                     this.onPlayerVsBlast(obj1);
                 }
             },
@@ -363,7 +361,6 @@ class Playing extends Phaser.Scene {
         blastedCells: any[];
     }) {
         this.player.decreaseActiveBombs();
-        console.log(this.player.getActiveBombs());
         // Remove Bomb:
         findAndDestroyById(bomb_id, this.bombs);
 
@@ -417,14 +414,13 @@ class Playing extends Phaser.Scene {
     private onPlayerWin(player?: Player) {
         clientSocket.emit("leave game");
         console.log(player);
+        this.scene.stop("Playing");
         this.scene.start("GameOver");
     }
 
-    private onEndGame({ game_id, new_game_id }: EndGame) {
-        console.log("new_game_id:", new_game_id);
-        console.log("end game", game_id);
-
+    private onEndGame() {
         clientSocket.emit("leave game");
+        this.scene.stop("Playing");
         this.scene.start("GameOver");
     }
 
