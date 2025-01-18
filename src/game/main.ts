@@ -1,6 +1,7 @@
 import { AUTO } from "phaser";
-import { GameOver } from "./scenes/GameOver";
+import Preload from "./scenes/Preload";
 import Playing from "./scenes/Playing";
+import GameOver from "./scenes/GameOver";
 
 export const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
@@ -8,7 +9,7 @@ export const config: Phaser.Types.Core.GameConfig = {
     height: 735,
     parent: "game-container",
     backgroundColor: "#202121",
-    scene: [Playing, GameOver],
+    scene: [Preload, Playing, GameOver],
     pixelArt: true,
     physics: {
         default: "arcade",
@@ -17,21 +18,4 @@ export const config: Phaser.Types.Core.GameConfig = {
         },
     },
 };
-
-// const StartGame = (gameId: string) => {
-//     let game = null;
-//     clientSocket.emit("get current game", gameId, (gameData: any) => {
-//         if (gameData) {
-//             game = new Phaser.Game(config);
-
-//             game.scene.start("Playing", gameData); // Start the scene here
-//         } else {
-//             console.error("Failed to retrieve game data!");
-//         }
-//     });
-//     console.log("game:", game);
-//     return game;
-// };
-
-// export default StartGame;
 

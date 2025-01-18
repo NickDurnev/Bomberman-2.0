@@ -16,11 +16,7 @@ type GameData = {
     current_game: Game;
 };
 
-type Props = {
-    setIsGameStarted: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-const RestartGameModal = ({ setIsGameStarted }: Props) => {
+const RestartGameModal = () => {
     const [gameInfo, setGameInfo] = useState<Game | null>(null);
     const [gameId, setGameId] = useState<string | null>(null);
     const navigate = useNavigate();
@@ -42,7 +38,6 @@ const RestartGameModal = ({ setIsGameStarted }: Props) => {
     const onEndGame = ({ new_game_id }: EndGame) => {
         clientSocket.emit("enter pending game", new_game_id);
         setGameId(new_game_id);
-        setIsGameStarted(false);
         setOpen(true);
     };
 
@@ -55,7 +50,6 @@ const RestartGameModal = ({ setIsGameStarted }: Props) => {
             const id = gameId || game?.id;
             navigate("/game/" + id);
         }
-        setIsGameStarted(true);
         setOpen(false);
     };
 

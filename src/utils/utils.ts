@@ -18,8 +18,8 @@ export const findByCoordinates = function (
     const x = col * TILE_SIZE + TILE_SIZE / 2;
     const y = row * TILE_SIZE + TILE_SIZE / 2;
     let result = null;
-    console.log("entities.getChildren():", entities?.getChildren());
-    entities.getChildren().forEach((entity) => {
+    entities?.getChildren()?.forEach((entity) => {
+        console.log("entity:", entity);
         const gameObject = entity as GameObject;
         if (gameObject.x === x && gameObject.y === y) {
             result = gameObject;
@@ -48,9 +48,9 @@ export const findById = function (
     if (!entities) {
         return null;
     }
-    console.log("entities.getChildren():", entities?.getChildren());
     let result = null;
-    entities.getChildren().forEach((entity) => {
+    entities?.getChildren()?.forEach((entity) => {
+        console.log("entity:", entity);
         const gameObject = entity as GameObject;
         if (gameObject.id === id) {
             result = gameObject;

@@ -8,6 +8,8 @@ const CountdownTimer = () => {
     const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
 
     useEffect(() => {
+        setTimeLeft(GAME_DURATION);
+
         const timer = setInterval(() => {
             setTimeLeft((prevTime) => {
                 if (prevTime <= 0) {
@@ -19,7 +21,7 @@ const CountdownTimer = () => {
         }, 1000);
 
         return () => clearInterval(timer); // Cleanup on component unmount
-    }, []);
+    }, [gameId]);
 
     useEffect(() => {
         setTimeLeft(GAME_DURATION);
