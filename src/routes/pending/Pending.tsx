@@ -26,6 +26,7 @@ const PendingGame = () => {
     }, [gameId]);
 
     const handleUpdateGame = (data: GameData) => {
+        console.log("data:", data);
         setGameInfo(data.current_game);
     };
 
@@ -55,13 +56,20 @@ const PendingGame = () => {
                         {gameInfo?.name ?? "Game"}
                     </h1>
                 </div>
-                <div className="mt-20 flex flex-col justify-center items-center mx-auto gap-y-8">
+                <div className="mt-6 flex flex-col justify-center items-center mx-auto gap-y-8">
                     <Button
                         text="Start Game"
+                        animated
+                        animatedIcon={"💣"}
                         onClick={startGameAction}
                         // disabled={!canStartGame}
                     />
-                    <Button text="Leave Game" onClick={leaveGameAction} />
+                    <Button
+                        text="Leave Game"
+                        animated
+                        animatedIcon={"🚪"}
+                        onClick={leaveGameAction}
+                    />
                 </div>
                 {gameInfo && (
                     <PlayersSlots

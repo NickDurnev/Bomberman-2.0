@@ -19,12 +19,7 @@ import {
 } from "@utils/utils";
 import { getDataFromLocalStorage } from "@utils/local_storage";
 
-interface PlayerData {
-    id: number;
-    spawn: { x: number; y: number };
-    skin: string;
-    name: string;
-}
+type PlayerData = Pick<PlayerConfig, "id" | "name" | "spawn" | "skin">;
 
 // interface ISocket  {
 //     id: number;
@@ -187,11 +182,8 @@ class Playing extends Phaser.Scene {
     }) {
         const enemy = findById(player_id, this.enemies);
         if (!enemy) {
-            console.warn(`Enemy with ID ${player_id} not found.`);
             return;
         }
-
-        console.log(`Moving enemy ${player_id} to (${x}, ${y})`);
 
         enemy.goTo({ x, y });
     }

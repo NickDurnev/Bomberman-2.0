@@ -42,7 +42,7 @@ export const findAndDestroyByCoordinates = function (
 };
 
 export const findById = function (
-    id: number,
+    id: number | string,
     entities: Phaser.GameObjects.Group
 ): GameObject | null {
     if (!entities) {
@@ -50,7 +50,6 @@ export const findById = function (
     }
     let result = null;
     entities?.getChildren()?.forEach((entity) => {
-        console.log("entity:", entity);
         const gameObject = entity as GameObject;
         if (gameObject.id === id) {
             result = gameObject;
@@ -60,7 +59,7 @@ export const findById = function (
 };
 
 export const findAndDestroyById = function (
-    id: number,
+    id: number | string,
     entities: Phaser.GameObjects.Group
 ): void {
     const entity = findById(id, entities);

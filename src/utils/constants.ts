@@ -24,7 +24,7 @@ export const INITIAL_BOMBS = 1;
 export const STEP_BOMBS = 1;
 
 export const SET_BOMB_DELAY = 200;
-export const GAME_DURATION = 10; // 3 minutes
+export const GAME_DURATION = 180; // 3 minutes
 
 export const LOBBY_ID = "lobby_room";
 

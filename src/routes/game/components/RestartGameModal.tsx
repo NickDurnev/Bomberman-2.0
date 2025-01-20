@@ -6,7 +6,6 @@ import {
     Button,
     Modal,
     ModalContent,
-    ModalFooter,
     ModalBody,
     useModal,
     PlayersSlots,
@@ -58,20 +57,17 @@ const RestartGameModal = () => {
         handleLaunchGame(); // Trigger the game launch
     };
 
+    const leaveGameAction = () => {
+        clientSocket.emit("leave pending game");
+        navigate("/");
+    };
+
     const players = gameInfo ? Object.values(gameInfo.players) : [];
     const canStartGame = players.length > 1;
 
     return (
         <div className="py-40  flex items-center justify-center">
             <Modal>
-                {/* <ModalTrigger className="bg-black dark:bg-white dark:text-black text-white flex justify-center group/modal-btn">
-                    <span className="group-hover/modal-btn:translate-x-40 text-center transition duration-500">
-                        Book your flight
-                    </span>
-                    <div className="-translate-x-40 group-hover/modal-btn:translate-x-0 flex items-center justify-center absolute inset-0 transition duration-500 text-white z-20">
-                        ✈️
-                    </div>
-                </ModalTrigger> */}
                 <ModalBody>
                     <ModalContent>
                         {gameInfo && (
@@ -80,17 +76,23 @@ const RestartGameModal = () => {
                                 players={players}
                                 size={"small"}
                             />
-                        )}{" "}
-                    </ModalContent>
-                    <ModalFooter className="gap-4">
-                        <div className="mt-20 flex flex-col justify-center items-center mx-auto gap-y-8">
+                        )}
+                        <div className="mt-6 flex flex-col justify-center items-center mx-auto gap-y-8">
                             <Button
-                                text="Start Game"
+                                text="Restart Game"
+                                animated
+                                animatedIcon={"💣"}
                                 onClick={startGameAction}
                                 // disabled={!canStartGame}
                             />
+                            <Button
+                                text="Main Menu"
+                                animated
+                                animatedIcon={"🚪"}
+                                onClick={leaveGameAction}
+                            />
                         </div>
-                    </ModalFooter>
+                    </ModalContent>
                 </ModalBody>
             </Modal>
         </div>

@@ -26,39 +26,39 @@ type Info = {
 };
 
 const MAX_SPEED_VALUE = (MAX_SPEED - INITIAL_SPEED) / STEP_SPEED;
+const STORED_SOCKET_ID = getDataFromLocalStorage("socket_id");
 
 const PlayerInfo = () => {
     const { gameId } = useParams();
     const [info, setInfo] = useState(DEFAULT_INFO);
     const [lastInfo, setLastInfo] = useState<Info | null>(null);
     const [hidden, setHidden] = useState(false);
-
-    // useEffect(() => {
-    //     if (gameId) {
-    //         setInfo(DEFAULT_INFO);
-    //     }
-    // }, [gameId]);
+    const [isDead, setIsDead] = useState(false);
 
     useEffect(() => {
         if (gameId) {
             setInfo(DEFAULT_INFO);
+            setIsDead(false);
         }
         clientSocket.on("spoil was picked", updateInfo);
 
+        clientSocket.on("show tombstone", playerDied);
+
         return () => {
             clientSocket.off("spoil was picked", updateInfo);
+            clientSocket.off("show tombstone", playerDied);
         };
     }, [gameId]);
 
-    const updateInfo = ({
-        player_id,
-        spoil_id,
-        spoil_type,
-    }: pickedSpoilSocketData) => {
-        const storedSocketId = getDataFromLocalStorage("socket_id");
-
-        if (player_id === storedSocketId) {
+    const updateInfo = ({ player_id, spoil_type }: pickedSpoilSocketData) => {
+        if (player_id === STORED_SOCKET_ID) {
             processInfo(spoil_type);
+        }
+    };
+
+    const playerDied = ({ player_id }: { player_id: string }) => {
+        if (player_id === STORED_SOCKET_ID) {
+            setIsDead(true);
         }
     };
 
@@ -150,6 +150,17 @@ const PlayerInfo = () => {
                     >
                         +1 {lastInfo.title}
                     </p>
+                </li>
+            )}
+            {isDead && (
+                <li
+                    key="notification"
+                    className={clsx(
+                        "flex items-center gap-x-2 bg-transparent transition-opacity duration-500 rounded-lg px-3",
+                        hidden ? "opacity-0" : "opacity-100"
+                    )}
+                >
+                    <p className="text-lg font-bold text-white">You died</p>
                 </li>
             )}
         </ul>

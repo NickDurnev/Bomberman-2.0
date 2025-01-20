@@ -18,7 +18,7 @@ export interface Spawn {
 
 export interface PlayerConfig {
     game: Playing;
-    id: number;
+    id: string;
     spawn: { x: number; y: number };
     skin: string;
     name: string;
@@ -101,13 +101,13 @@ export interface GameStore {
 }
 
 export type pickedSpoilSocketData = {
-    player_id: number;
+    player_id: string;
     spoil_id: number;
     spoil_type: ISpoilType;
 };
 
 export interface ITombStone {
-    player_id: number;
+    player_id: string;
     tombId: string;
     col: number;
     row: number;

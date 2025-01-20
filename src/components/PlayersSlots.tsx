@@ -32,7 +32,7 @@ export const PlayersSlots = ({
         });
 
         setPlayersArray(playersArray);
-    }, []);
+    }, [max_players, players]);
 
     useEffect(() => {
         setPlayersArray((prev) => {

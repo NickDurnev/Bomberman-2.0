@@ -25,7 +25,7 @@ import { Text } from "@helpers/elements";
 
 export default class Player extends Physics.Arcade.Image {
     readonly game: Playing;
-    readonly id: number;
+    readonly id: string;
     readonly gameId: string;
     private prevPosition: { x: number; y: number };
     private playerText: Text;
