@@ -3,6 +3,7 @@ import { PhaserGame } from "@game/PhaserGame";
 import { Socket, ModalProvider } from "@components/index";
 import PlayerInfo from "./components/PlayerInfo";
 import RestartGameModal from "./components/RestartGameModal";
+import PlayerWinModal from "./components/PlayerWinModal";
 import CountdownTimer from "./components/CountdownTimer";
 
 function Game() {
@@ -10,18 +11,21 @@ function Game() {
 
     return (
         <div id="app">
-            <ModalProvider>
-                <Socket>
-                    <div className="flex items-center justify-center py-10 relative">
+            <Socket>
+                <div className="flex items-center justify-center py-10 relative">
+                    <ModalProvider isUnclosable={true}>
                         <RestartGameModal />
-                        <PlayerInfo />
-                        <div className="p-2 absolute top-[34px] left-1/2 -translate-x-1/2">
-                            <CountdownTimer />
-                        </div>
-                        {gameId && <PhaserGame gameId={gameId} />}
+                    </ModalProvider>
+                    <ModalProvider>
+                        <PlayerWinModal />
+                    </ModalProvider>
+                    <PlayerInfo />
+                    <div className="p-2 absolute top-[34px] left-1/2 -translate-x-1/2">
+                        <CountdownTimer />
                     </div>
-                </Socket>
-            </ModalProvider>
+                    {gameId && <PhaserGame gameId={gameId} />}
+                </div>
+            </Socket>
         </div>
     );
 }

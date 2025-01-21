@@ -14,15 +14,22 @@ import useOutsideClick from "@hooks/use-outside-click";
 interface ModalContextType {
     open: boolean;
     setOpen: (open: boolean) => void;
+    isUnclosable: boolean;
 }
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
-export const ModalProvider = ({ children }: { children: ReactNode }) => {
+export const ModalProvider = ({
+    isUnclosable = false,
+    children,
+}: {
+    isUnclosable?: boolean;
+    children: ReactNode;
+}) => {
     const [open, setOpen] = useState(false);
 
     return (
-        <ModalContext.Provider value={{ open, setOpen }}>
+        <ModalContext.Provider value={{ open, setOpen, isUnclosable }}>
             {children}
         </ModalContext.Provider>
     );
@@ -68,7 +75,7 @@ export const ModalBody = ({
     children: ReactNode;
     className?: string;
 }) => {
-    const { open } = useModal();
+    const { open, isUnclosable } = useModal();
 
     useEffect(() => {
         if (open) {
@@ -80,7 +87,12 @@ export const ModalBody = ({
 
     const modalRef = useRef(null);
     const { setOpen } = useModal();
-    useOutsideClick(modalRef, () => setOpen(false));
+    useOutsideClick(modalRef, () => {
+        if (isUnclosable) {
+            return;
+        }
+        setOpen(false);
+    });
 
     return (
         <AnimatePresence>
@@ -130,7 +142,7 @@ export const ModalBody = ({
                             damping: 15,
                         }}
                     >
-                        <CloseIcon />
+                        {!isUnclosable && <CloseIcon />}
                         {children}
                     </motion.div>
                 </motion.div>

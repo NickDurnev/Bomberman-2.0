@@ -34,7 +34,8 @@ const RestartGameModal = () => {
         };
     }, []);
 
-    const onEndGame = ({ new_game_id }: EndGame) => {
+    const onEndGame = ({ new_game_id, prevGameInfo }: EndGame) => {
+        console.log("prevGameInfo:", prevGameInfo);
         clientSocket.emit("enter pending game", new_game_id);
         setGameId(new_game_id);
         setOpen(true);

@@ -85,7 +85,8 @@ class Playing extends Phaser.Scene {
             this.blasts,
             (obj1: any, obj2: any) => {
                 if (obj1 instanceof Player && obj2 instanceof FireBlast) {
-                    this.onPlayerVsBlast(obj1);
+                    const playerId = obj2.getPlayerId();
+                    this.onPlayerVsBlast(obj1, playerId);
                 }
             },
             undefined,
@@ -139,7 +140,7 @@ class Playing extends Phaser.Scene {
         this.onMovePlayer.bind(this);
         clientSocket.on("move player", this.onMovePlayer.bind(this));
         clientSocket.on("end game", this.onEndGame.bind(this));
-        clientSocket.on("player win", this.onPlayerWin.bind(this));
+        // clientSocket.on("player win", this.onPlayerWin.bind(this));
         clientSocket.on("show bomb", this.onShowBomb.bind(this));
         clientSocket.on("detonate bomb", this.onDetonateBomb.bind(this));
         clientSocket.on("spoil was picked", this.onSpoilWasPicked.bind(this));
@@ -159,12 +160,13 @@ class Playing extends Phaser.Scene {
         spoil.destroy();
     }
 
-    private onPlayerVsBlast(player: Player) {
+    private onPlayerVsBlast(player: Player, killerId: string) {
         if (player.active) {
             clientSocket.emit("player died", {
                 col: player.currentCol(),
                 row: player.currentRow(),
                 playerId: player.id,
+                killerId,
                 gameId: player.gameId,
             });
             player.becomesDead();
@@ -199,22 +201,34 @@ class Playing extends Phaser.Scene {
 
     private onShowBomb({
         bomb_id,
+        playerId,
         col,
         row,
     }: {
         bomb_id: number;
+        playerId: string;
         col: number;
         row: number;
     }) {
         this.player.increaseActiveBombs();
-        this.bombs.add(new Bomb(this, bomb_id, col, row));
+        this.bombs.add(
+            new Bomb({
+                scene: this,
+                id: bomb_id,
+                col,
+                row,
+                playerId,
+            })
+        );
     }
 
     private onDetonateBomb({
         bomb_id,
+        playerId,
         blastedCells,
     }: {
         bomb_id: number;
+        playerId: string;
         blastedCells: any[];
     }) {
         this.player.decreaseActiveBombs();
@@ -223,7 +237,7 @@ class Playing extends Phaser.Scene {
 
         // Render Blast:
         for (const cell of blastedCells) {
-            this.blasts.add(new FireBlast(this, cell));
+            this.blasts.add(new FireBlast(this, cell, playerId));
         }
 
         // Destroy Tiles:
@@ -268,12 +282,12 @@ class Playing extends Phaser.Scene {
         findAndDestroyById(player_id, this.enemies);
     }
 
-    private onPlayerWin(player?: Player) {
-        clientSocket.emit("leave game");
-        console.log(player);
-        this.game.destroy(true);
-        this.scene.start("GameOver");
-    }
+    // private onPlayerWin(player?: Player) {
+    //     clientSocket.emit("leave game");
+    //     console.log(player);
+    //     this.game.destroy(true);
+    //     this.scene.start("GameOver");
+    // }
 
     private onEndGame() {
         // Emit socket event
@@ -298,7 +312,7 @@ class Playing extends Phaser.Scene {
         if (this.enemies.getChildren().length >= 1) {
             return;
         }
-        this.onPlayerWin();
+        this.onEndGame();
     }
 }
 

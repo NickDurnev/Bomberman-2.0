@@ -85,6 +85,7 @@ export interface Player {
     };
     isAlive: boolean;
     power: number;
+    kills: number;
 }
 
 export interface PlayerSlot {
@@ -131,5 +132,6 @@ export interface ICell {
 export interface EndGame {
     game_id: string;
     new_game_id: string;
+    prevGameInfo: GameData;
 }
 

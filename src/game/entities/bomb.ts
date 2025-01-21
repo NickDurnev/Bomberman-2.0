@@ -1,11 +1,20 @@
 import { Physics } from "phaser";
 import { TILE_SIZE, EXPLOSION_TIME } from "@utils/constants";
 
+type ConstructorParams = {
+    scene: Phaser.Scene;
+    id: number;
+    col: number;
+    row: number;
+    playerId: string;
+};
+
 export default class Bomb extends Phaser.GameObjects.Sprite {
     readonly game: Phaser.Scene;
+    private playerId: string;
     id: number;
 
-    constructor(scene: Phaser.Scene, id: number, col: number, row: number) {
+    constructor({ scene, id, col, row, playerId }: ConstructorParams) {
         // Calculate the center of the cell
         const centerCol = col * TILE_SIZE + TILE_SIZE / 2;
         const centerRow = row * TILE_SIZE + TILE_SIZE / 2;
@@ -14,6 +23,7 @@ export default class Bomb extends Phaser.GameObjects.Sprite {
 
         this.game = scene;
         this.id = id;
+        this.playerId = playerId;
 
         // Add the bomb sprite to the scene
         this.game.add.existing(this);
@@ -51,6 +61,10 @@ export default class Bomb extends Phaser.GameObjects.Sprite {
 
     protected getBody(): Physics.Arcade.Body {
         return this.body as Physics.Arcade.Body;
+    }
+
+    public getPlayerId(): string {
+        return this.playerId;
     }
 }
 
