@@ -6,7 +6,7 @@ import Playing from "@game/scenes/Playing";
 
 export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
     readonly game: Playing;
-    readonly id: number;
+    readonly id: string;
     readonly gameId: string;
     currentPosition: Spawn;
     playerText: Text;

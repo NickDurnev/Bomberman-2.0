@@ -3,7 +3,7 @@ import { TILE_SIZE, EXPLOSION_TIME } from "@utils/constants";
 
 type ConstructorParams = {
     scene: Phaser.Scene;
-    id: number;
+    id: string;
     col: number;
     row: number;
     playerId: string;
@@ -12,7 +12,7 @@ type ConstructorParams = {
 export default class Bomb extends Phaser.GameObjects.Sprite {
     readonly game: Phaser.Scene;
     private playerId: string;
-    id: number;
+    id: string;
 
     constructor({ scene, id, col, row, playerId }: ConstructorParams) {
         // Calculate the center of the cell

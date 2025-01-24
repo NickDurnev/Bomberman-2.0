@@ -21,14 +21,6 @@ import { getDataFromLocalStorage } from "@utils/local_storage";
 
 type PlayerData = Pick<PlayerConfig, "id" | "name" | "spawn" | "skin">;
 
-// interface ISocket  {
-//     id: number;
-//     emit(event: string, data?: any): void;
-//     on(event: string, callback: (...args: any[]) => void): void;
-// }
-
-// declare const socket: ClientSocket; // Assuming clientSocket is globally defined
-
 class Playing extends Phaser.Scene {
     private currentGame: any; // Define the type according to your game object structure
     private player: Player;
@@ -81,6 +73,19 @@ class Playing extends Phaser.Scene {
         );
 
         this.physics.overlap(
+            this.bombs,
+            this.blasts,
+            (obj1: any, obj2: any) => {
+                if (obj1 instanceof Bomb && obj2 instanceof FireBlast) {
+                    console.log(obj1);
+                    this.onBombVsBlast(obj1);
+                }
+            },
+            undefined,
+            this
+        );
+
+        this.physics.overlap(
             this.player,
             this.blasts,
             (obj1: any, obj2: any) => {
@@ -94,11 +99,11 @@ class Playing extends Phaser.Scene {
         );
     }
 
-    getGameId() {
+    public getGameId() {
         return this.currentGame.id;
     }
 
-    createMap() {
+    private createMap() {
         this.map = this.make.tilemap({
             key: this.currentGame.mapName ?? "default_map",
         });
@@ -173,6 +178,14 @@ class Playing extends Phaser.Scene {
         }
     }
 
+    private onBombVsBlast(bomb: Bomb) {
+        clientSocket.emit("detonate bomb by blast", {
+            bomb_id: bomb.id,
+            gameId: this.currentGame.id,
+            playerId: bomb.getPlayerId(),
+        });
+    }
+
     private onMovePlayer({
         player_id,
         x,
@@ -205,7 +218,7 @@ class Playing extends Phaser.Scene {
         col,
         row,
     }: {
-        bomb_id: number;
+        bomb_id: string;
         playerId: string;
         col: number;
         row: number;
