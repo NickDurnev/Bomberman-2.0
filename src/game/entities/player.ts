@@ -23,7 +23,7 @@ import { ISpoilType, PlayerConfig } from "@utils/types";
 import clientSocket from "@utils/socket";
 import { Text } from "@helpers/elements";
 
-export default class Player extends Physics.Arcade.Image {
+export default class Player extends Phaser.GameObjects.Sprite {
     readonly game: Playing;
     readonly id: string;
     readonly gameId: string;
@@ -73,15 +73,29 @@ export default class Player extends Physics.Arcade.Image {
             loop: true,
         });
 
-        if (this.game.textures.exists(`${id}`)) {
-            this.setTexture(`${id}`);
-            this.setDisplaySize(TILE_SIZE - 7, TILE_SIZE - 7);
-            this.getBody().setSize((TILE_SIZE - 7) * 4, (TILE_SIZE - 7) * 4);
+        if (this.game.textures.get(id)) {
+            this.setTexture(id);
+
+            // Get texture size
+            const textureFrame = this.game.textures.get(id).getSourceImage();
+            const textureWidth = textureFrame.width;
+            const textureHeight = textureFrame.height;
+
+            // Set display size and body size dynamically
+            this.setDisplaySize(TILE_SIZE - 3, TILE_SIZE - 3);
+            this.getBody().setSize(textureWidth, textureHeight);
         } else {
             const randomNumber = Math.floor(Math.random() * 12) + 1;
             this.setTexture(`avatar-${randomNumber}`);
+
+            const randomTextureFrame = this.game.textures
+                .get(`avatar-${randomNumber}`)
+                .getSourceImage();
+            const randomTextureWidth = randomTextureFrame.width;
+            const randomTextureHeight = randomTextureFrame.height;
+
             this.setDisplaySize(TILE_SIZE - 3, TILE_SIZE - 3);
-            this.getBody().setSize((TILE_SIZE - 3) * 4, (TILE_SIZE - 3) * 4);
+            this.getBody().setSize(randomTextureWidth, randomTextureHeight);
         }
 
         // this.getBody().setOffset(0, 0);

@@ -28,15 +28,29 @@ export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
         this.game.add.existing(this);
         this.game.physics.add.existing(this);
 
-        if (this.game.textures.exists(`${id}`)) {
-            this.setTexture(`${id}`);
-            this.setDisplaySize(TILE_SIZE - 7, TILE_SIZE - 7);
-            this.getBody().setSize((TILE_SIZE - 7) * 4, (TILE_SIZE - 7) * 4);
+        if (this.game.textures.get(id)) {
+            this.setTexture(id);
+
+            // Get texture size
+            const textureFrame = this.game.textures.get(id).getSourceImage();
+            const textureWidth = textureFrame.width;
+            const textureHeight = textureFrame.height;
+
+            // Set display size and body size dynamically
+            this.setDisplaySize(TILE_SIZE - 3, TILE_SIZE - 3);
+            this.getBody().setSize(textureWidth, textureHeight);
         } else {
             const randomNumber = Math.floor(Math.random() * 12) + 1;
             this.setTexture(`avatar-${randomNumber}`);
+
+            const randomTextureFrame = this.game.textures
+                .get(`avatar-${randomNumber}`)
+                .getSourceImage();
+            const randomTextureWidth = randomTextureFrame.width;
+            const randomTextureHeight = randomTextureFrame.height;
+
             this.setDisplaySize(TILE_SIZE - 3, TILE_SIZE - 3);
-            this.getBody().setSize((TILE_SIZE - 3) * 4, (TILE_SIZE - 3) * 4);
+            this.getBody().setSize(randomTextureWidth, randomTextureHeight);
         }
 
         this.getBody().setImmovable(true);
