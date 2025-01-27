@@ -29,6 +29,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
     readonly gameId: string;
     private prevPosition: { x: number; y: number };
     private playerText: Text;
+    private maskShape: Phaser.GameObjects.Graphics;
     private delay: number;
     private power: number;
     private speed: number;
@@ -98,12 +99,29 @@ export default class Player extends Phaser.GameObjects.Sprite {
             this.getBody().setSize(randomTextureWidth, randomTextureHeight);
         }
 
-        // this.getBody().setOffset(0, 0);
-        // this.setCircle(
-        //     this.getBody().halfWidth,
-        //     0,
-        //     this.getBody().halfHeight - this.getBody().halfWidth
-        // );
+        // Set the physics body to a circle
+        const radius = TILE_SIZE / 2; // Ensure the radius matches TILE_SIZE
+        this.getBody().setCircle(
+            this.getBody().halfWidth,
+            0,
+            this.getBody().halfHeight - this.getBody().halfWidth
+        );
+
+        // Resize the sprite to fit TILE_SIZE
+        this.setDisplaySize(TILE_SIZE, TILE_SIZE);
+
+        // Apply a circular mask
+        this.maskShape = this.game.add.graphics();
+        this.maskShape.fillStyle(0xffffff);
+        this.maskShape.fillCircle(0, 0, radius);
+        this.maskShape.setPosition(this.x, this.y);
+
+        const mask = this.maskShape.createGeometryMask();
+        this.setMask(mask);
+
+        // Cleanup: Hide the mask shape
+        this.maskShape.setVisible(false);
+
         //DEBUG
         this.game.physics.world.createDebugGraphic();
         this.getBody().debugBodyColor = 0xff0000;
@@ -123,6 +141,11 @@ export default class Player extends Phaser.GameObjects.Sprite {
                     this.x - this.playerText.width / 2,
                     this.y - TILE_SIZE * 1.2
                 );
+            }
+
+            // Update mask position
+            if (this.maskShape) {
+                this.maskShape.setPosition(this.x, this.y);
             }
         }
     }
