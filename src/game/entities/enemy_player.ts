@@ -1,5 +1,6 @@
 import { Physics } from "phaser";
 import { TILE_SIZE, PING } from "@utils/constants";
+import { setPlayerAvatar } from "@utils/utils";
 import { Spawn, PlayerConfig } from "@utils/types";
 import { Text } from "@helpers/elements";
 import Playing from "@game/scenes/Playing";
@@ -11,6 +12,7 @@ export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
     currentPosition: Spawn;
     playerText: Text;
     lastMoveAt: number;
+    maskShape: Phaser.GameObjects.Graphics;
 
     constructor({ game, id, spawn, skin, name }: PlayerConfig) {
         const centerCol = spawn.x - TILE_SIZE / 2;
@@ -28,30 +30,7 @@ export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
         this.game.add.existing(this);
         this.game.physics.add.existing(this);
 
-        if (this.game.textures.get(id)) {
-            this.setTexture(id);
-
-            // Get texture size
-            const textureFrame = this.game.textures.get(id).getSourceImage();
-            const textureWidth = textureFrame.width;
-            const textureHeight = textureFrame.height;
-
-            // Set display size and body size dynamically
-            this.setDisplaySize(TILE_SIZE - 3, TILE_SIZE - 3);
-            this.getBody().setSize(textureWidth, textureHeight);
-        } else {
-            const randomNumber = Math.floor(Math.random() * 12) + 1;
-            this.setTexture(`avatar-${randomNumber}`);
-
-            const randomTextureFrame = this.game.textures
-                .get(`avatar-${randomNumber}`)
-                .getSourceImage();
-            const randomTextureWidth = randomTextureFrame.width;
-            const randomTextureHeight = randomTextureFrame.height;
-
-            this.setDisplaySize(TILE_SIZE - 3, TILE_SIZE - 3);
-            this.getBody().setSize(randomTextureWidth, randomTextureHeight);
-        }
+        setPlayerAvatar(this, id);
 
         this.getBody().setImmovable(true);
 
@@ -62,7 +41,7 @@ export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
         this.defineText(name);
     }
 
-    protected getBody(): Physics.Arcade.Body {
+    getBody(): Physics.Arcade.Body {
         return this.body as Physics.Arcade.Body;
     }
 
@@ -86,6 +65,11 @@ export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
                 duration: PING,
                 ease: Phaser.Math.Easing.Linear,
             });
+        }
+
+        // Update mask position
+        if (this.maskShape) {
+            this.maskShape.setPosition(newPosition.x, newPosition.y);
         }
     }
 

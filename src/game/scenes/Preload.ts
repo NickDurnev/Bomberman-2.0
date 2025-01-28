@@ -34,8 +34,6 @@ class Preload extends Phaser.Scene {
 
                 activeRequests++;
 
-                console.log("skin:", skin);
-                console.log("id:", id);
                 scene.load.image(id, skin);
                 scene.load.once("complete", () => {
                     activeRequests--;

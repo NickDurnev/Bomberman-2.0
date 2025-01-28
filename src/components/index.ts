@@ -19,4 +19,5 @@ export {
     ModalTrigger,
     useModal,
 } from "./ui/animated-modal";
+export { ColourfulText } from "./ui/colourful-text";
 

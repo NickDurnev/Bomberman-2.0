@@ -1,9 +1,17 @@
 import { useEffect, useState } from "react";
 import clientSocket from "@utils/socket";
-import { Player } from "@utils/types";
-import { Modal, ModalContent, ModalBody, useModal } from "@components/index";
+import { Player, PlayerWin, PlayerSlot } from "@utils/types";
+import {
+    Modal,
+    ModalContent,
+    ModalBody,
+    useModal,
+    ColourfulText,
+    AnimatedTooltip,
+} from "@components/index";
 
 const PlayerWinModal = () => {
+    const [victims, setVictims] = useState<PlayerSlot[]>([]);
     const [winner, setWinner] = useState<Player | null>(null);
     const { setOpen } = useModal();
 
@@ -22,8 +30,19 @@ const PlayerWinModal = () => {
         setOpen(false);
     };
 
-    const onPlayerWin = (winner: Player) => {
-        console.log("Winner:", winner);
+    const onPlayerWin = ({ winner, prevGameInfo }: PlayerWin) => {
+        const victims = prevGameInfo.players.filter((player) =>
+            winner.kills.includes(player.id)
+        );
+        const normalizedVictims = victims.map(({ name, skin }, index) => {
+            return {
+                name,
+                image: skin,
+                id: index,
+            };
+        });
+        setVictims(normalizedVictims);
+
         setWinner(winner);
         setOpen(true);
     };
@@ -33,23 +52,31 @@ const PlayerWinModal = () => {
             <Modal>
                 <ModalBody>
                     <ModalContent>
-                        <div className="mt-6 flex flex-col justify-center items-center mx-auto gap-y-8 motion-preset-confetti motion-loop-once">
-                            {winner && (
-                                <>
-                                    <img
-                                        src={winner.skin}
-                                        alt={winner.name}
-                                        className="w-32 h-32 rounded-full"
+                        {winner && (
+                            <div className="mt-6 flex flex-col justify-center items-center mx-auto gap-y-8 motion-preset-confetti motion-loop-once">
+                                <img
+                                    src={winner.skin}
+                                    alt={winner.name}
+                                    className="w-32 h-32 rounded-full"
+                                />
+                                <h3 className="text-3xl font-bold tracking-wider text-center motion-preset-expand motion-loop-once">
+                                    Winner{" "}
+                                    <ColourfulText
+                                        text={winner.name}
+                                        colors={["#8852AC"]}
                                     />
-                                    <h3 className="text-3xl font-bold tracking-wider text-center motion-preset-expand motion-loop-once">
-                                        Player {winner.name} has won the game!
-                                    </h3>
-                                    <h4 className="text-2xl font-bold tracking-wider text-center motion-preset-expand motion-loop-once">
-                                        Kills: {winner.kills}
-                                    </h4>
-                                </>
-                            )}
-                        </div>
+                                </h3>
+                                <h4 className="text-2xl font-bold tracking-wider text-center">
+                                    Killed:
+                                </h4>
+                                <div className="flex flex-row items-center justify-center mb-10 w-full">
+                                    <AnimatedTooltip
+                                        items={victims}
+                                        size={"small"}
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </ModalContent>
                 </ModalBody>
             </Modal>

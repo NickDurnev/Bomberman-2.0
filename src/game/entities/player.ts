@@ -18,8 +18,9 @@ import {
     BOMBS,
     SET_BOMB_DELAY,
 } from "@utils/constants";
-import Playing from "@game/scenes/Playing";
+import { setPlayerAvatar } from "@utils/utils";
 import { ISpoilType, PlayerConfig } from "@utils/types";
+import Playing from "@game/scenes/Playing";
 import clientSocket from "@utils/socket";
 import { Text } from "@helpers/elements";
 
@@ -29,7 +30,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
     readonly gameId: string;
     private prevPosition: { x: number; y: number };
     private playerText: Text;
-    private maskShape: Phaser.GameObjects.Graphics;
     private delay: number;
     private power: number;
     private speed: number;
@@ -42,6 +42,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
     private rightKey: Phaser.Input.Keyboard.Key;
     private spaceKey: Phaser.Input.Keyboard.Key;
     readonly sprite: Phaser.GameObjects.Sprite;
+    maskShape: Phaser.GameObjects.Graphics;
 
     constructor({ game, id, spawn, skin, name }: PlayerConfig) {
         const centerCol = spawn.x - TILE_SIZE / 2;
@@ -74,53 +75,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
             loop: true,
         });
 
-        if (this.game.textures.get(id)) {
-            this.setTexture(id);
-
-            // Get texture size
-            const textureFrame = this.game.textures.get(id).getSourceImage();
-            const textureWidth = textureFrame.width;
-            const textureHeight = textureFrame.height;
-
-            // Set display size and body size dynamically
-            this.setDisplaySize(TILE_SIZE - 3, TILE_SIZE - 3);
-            this.getBody().setSize(textureWidth, textureHeight);
-        } else {
-            const randomNumber = Math.floor(Math.random() * 12) + 1;
-            this.setTexture(`avatar-${randomNumber}`);
-
-            const randomTextureFrame = this.game.textures
-                .get(`avatar-${randomNumber}`)
-                .getSourceImage();
-            const randomTextureWidth = randomTextureFrame.width;
-            const randomTextureHeight = randomTextureFrame.height;
-
-            this.setDisplaySize(TILE_SIZE - 3, TILE_SIZE - 3);
-            this.getBody().setSize(randomTextureWidth, randomTextureHeight);
-        }
-
-        // Set the physics body to a circle
-        const radius = TILE_SIZE / 2; // Ensure the radius matches TILE_SIZE
-        this.getBody().setCircle(
-            this.getBody().halfWidth,
-            0,
-            this.getBody().halfHeight - this.getBody().halfWidth
-        );
-
-        // Resize the sprite to fit TILE_SIZE
-        this.setDisplaySize(TILE_SIZE, TILE_SIZE);
-
-        // Apply a circular mask
-        this.maskShape = this.game.add.graphics();
-        this.maskShape.fillStyle(0xffffff);
-        this.maskShape.fillCircle(0, 0, radius);
-        this.maskShape.setPosition(this.x, this.y);
-
-        const mask = this.maskShape.createGeometryMask();
-        this.setMask(mask);
-
-        // Cleanup: Hide the mask shape
-        this.maskShape.setVisible(false);
+        setPlayerAvatar(this, id);
 
         //DEBUG
         this.game.physics.world.createDebugGraphic();
@@ -150,11 +105,11 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
     }
 
-    protected getBody(): Physics.Arcade.Body {
+    getBody(): Physics.Arcade.Body {
         return this.body as Physics.Arcade.Body;
     }
 
-    defineKeyboard() {
+    private defineKeyboard() {
         this.upKey = this.game.input.keyboard!.addKey(
             Phaser.Input.Keyboard.KeyCodes.UP
         );
