@@ -98,7 +98,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
                 );
             }
 
-            // Update mask position
             if (this.maskShape) {
                 this.maskShape.setPosition(this.x, this.y);
             }

@@ -69,7 +69,13 @@ export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
 
         // Update mask position
         if (this.maskShape) {
-            this.maskShape.setPosition(newPosition.x, newPosition.y);
+            this.game.add.tween({
+                targets: this.maskShape,
+                x: newPosition.x,
+                y: newPosition.y,
+                duration: PING,
+                ease: Phaser.Math.Easing.Linear,
+            });
         }
     }
 

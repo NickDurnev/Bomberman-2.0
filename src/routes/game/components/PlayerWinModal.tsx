@@ -53,11 +53,11 @@ const PlayerWinModal = () => {
                 <ModalBody>
                     <ModalContent>
                         {winner && (
-                            <div className="mt-6 flex flex-col justify-center items-center mx-auto gap-y-8 motion-preset-confetti motion-loop-once">
+                            <div className="mt-6 flex flex-col justify-center items-center mx-auto gap-y-8">
                                 <img
                                     src={winner.skin}
                                     alt={winner.name}
-                                    className="w-32 h-32 rounded-full"
+                                    className="w-32 h-32 rounded-full motion-preset-confetti motion-loop-once"
                                 />
                                 <h3 className="text-3xl font-bold tracking-wider text-center motion-preset-expand motion-loop-once">
                                     Winner{" "}
