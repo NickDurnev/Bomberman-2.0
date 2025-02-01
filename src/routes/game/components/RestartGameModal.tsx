@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import clientSocket from "@utils/socket";
 import { EndGame, GameData as Game } from "@utils/types";
+import { noKillPhrases } from "@utils/constants";
+import { getPlayerVictims, getRandomItem } from "@utils/utils";
 import {
     Button,
     Modal,
@@ -10,6 +12,13 @@ import {
     ModalBody,
     useModal,
     PlayersSlots,
+    Table,
+    TableBody,
+    TableHead,
+    TableRow,
+    TableHeader,
+    TableCell,
+    AnimatedTooltip,
 } from "@components/index";
 
 type GameData = {
@@ -18,6 +27,7 @@ type GameData = {
 
 const RestartGameModal = () => {
     const [gameInfo, setGameInfo] = useState<Game | null>(null);
+    const [prevGameInfo, setPrevGameInfo] = useState<Game | null>(null);
     const [gameId, setGameId] = useState<string | null>(null);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const navigate = useNavigate();
@@ -43,6 +53,7 @@ const RestartGameModal = () => {
 
     const onEndGame = ({ new_game_id, prevGameInfo }: EndGame) => {
         console.log("prevGameInfo:", prevGameInfo);
+        setPrevGameInfo(prevGameInfo);
         clientSocket.emit("enter pending game", new_game_id);
         setGameId(new_game_id);
         setOpen(true);
@@ -82,6 +93,62 @@ const RestartGameModal = () => {
             <Modal>
                 <ModalBody>
                     <ModalContent>
+                        <h3 className="text-3xl font-bold tracking-wider text-center motion-preset-expand motion-loop-once">
+                            Stats
+                        </h3>
+                        <div className="pt-5 mb-5 max-h-[325px] overflow-y-auto overflow-x-hidden">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="w-[100px]">
+                                            No.
+                                        </TableHead>
+                                        <TableHead>Player</TableHead>
+                                        <TableHead>Eliminated</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {prevGameInfo &&
+                                        prevGameInfo.players.map(
+                                            (player, index) => {
+                                                const victims =
+                                                    getPlayerVictims(
+                                                        prevGameInfo,
+                                                        player
+                                                    );
+                                                return (
+                                                    <TableRow key={player.id}>
+                                                        <TableCell className="font-medium">
+                                                            {index + 1}
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {player.name}
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {victims.length !==
+                                                                0 && (
+                                                                <AnimatedTooltip
+                                                                    items={
+                                                                        victims
+                                                                    }
+                                                                    size={
+                                                                        "small"
+                                                                    }
+                                                                />
+                                                            )}
+                                                            {victims.length ===
+                                                                0 &&
+                                                                getRandomItem(
+                                                                    noKillPhrases
+                                                                )}
+                                                        </TableCell>
+                                                    </TableRow>
+                                                );
+                                            }
+                                        )}
+                                </TableBody>
+                            </Table>
+                        </div>
                         {gameInfo && (
                             <PlayersSlots
                                 max_players={gameInfo.max_players}
@@ -114,7 +181,7 @@ const RestartGameModal = () => {
                                 </div>
                             </div>
                         ) : (
-                            <div className="mt-6 flex flex-col justify-center items-center mx-auto gap-y-8">
+                            <div className="flex flex-col justify-center items-center mx-auto gap-y-8">
                                 <Button
                                     text="Restart Game"
                                     animated

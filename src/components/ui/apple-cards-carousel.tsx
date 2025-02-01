@@ -14,7 +14,7 @@ import {
 } from "@tabler/icons-react";
 import useOutsideClick from "@hooks/use-outside-click";
 import { cn } from "src/lib/utils";
-import { getRandomColor } from "@utils/utils";
+import { getRandomItem } from "@utils/utils";
 import { Button } from "@components/index";
 import { colors } from "@utils/constants";
 
@@ -36,7 +36,7 @@ type CardProps = {
     layout?: boolean;
 };
 
-const COLOR = getRandomColor(colors);
+const COLOR = getRandomItem(colors);
 
 export const CarouselContext = createContext<{
     onCardClose: (index: number) => void;

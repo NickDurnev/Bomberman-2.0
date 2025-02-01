@@ -1,7 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { GameSlotsProps } from "@utils/types";
 import { colors } from "@utils/constants";
-import { getRandomColor } from "@utils/utils";
+import { getRandomItem } from "@utils/utils";
 import { motion } from "framer-motion";
 
 export function GameSlots({ data, onJoinGame }: GameSlotsProps) {
@@ -21,7 +21,7 @@ export function GameSlots({ data, onJoinGame }: GameSlotsProps) {
                     {data?.map((game) => {
                         if (!game) return null;
 
-                        const COLOR = getRandomColor(colors);
+                        const COLOR = getRandomItem(colors);
 
                         return (
                             <motion.div

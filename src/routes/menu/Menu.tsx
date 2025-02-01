@@ -37,6 +37,11 @@ const Menu = () => {
     }, [user]);
 
     const handleDisplayPendingGames = (availableGames: GameData[]) => {
+        console.log("availableGames:", availableGames);
+        if (!availableGames.length) {
+            setSlotsWithGame([]);
+            return;
+        }
         setSlotsWithGame((prev) => [
             ...prev.filter((game) => {
                 return !availableGames.some((g) => g?.id === game?.id);

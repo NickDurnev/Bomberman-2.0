@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import clientSocket from "@utils/socket";
 import { Player, PlayerWin, PlayerSlot } from "@utils/types";
+import { noKillPhrases } from "@utils/constants";
+import { getPlayerVictims, getRandomItem } from "@utils/utils";
 import {
     Modal,
     ModalContent,
@@ -31,17 +33,8 @@ const PlayerWinModal = () => {
     };
 
     const onPlayerWin = ({ winner, prevGameInfo }: PlayerWin) => {
-        const victims = prevGameInfo.players.filter((player) =>
-            winner.kills.includes(player.id)
-        );
-        const normalizedVictims = victims.map(({ name, skin }, index) => {
-            return {
-                name,
-                image: skin,
-                id: index,
-            };
-        });
-        setVictims(normalizedVictims);
+        const victims = getPlayerVictims(prevGameInfo, winner);
+        setVictims(victims);
 
         setWinner(winner);
         setOpen(true);
@@ -67,13 +60,20 @@ const PlayerWinModal = () => {
                                     />
                                 </h3>
                                 <h4 className="text-2xl font-bold tracking-wider text-center">
-                                    Killed:
+                                    Eliminated:
                                 </h4>
                                 <div className="flex flex-row items-center justify-center mb-10 w-full">
-                                    <AnimatedTooltip
-                                        items={victims}
-                                        size={"small"}
-                                    />
+                                    {victims.length !== 0 && (
+                                        <AnimatedTooltip
+                                            items={victims}
+                                            size={"medium"}
+                                        />
+                                    )}
+                                    {victims.length === 0 && (
+                                        <p className="text-xl font-semibold text-center">
+                                            {getRandomItem(noKillPhrases)}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         )}

@@ -1,4 +1,4 @@
-import { Spawn } from "@utils/types";
+import { Spawn, GameData, Player as PlayerType } from "@utils/types";
 import { TILE_SIZE } from "./constants";
 import Player from "@game/entities/player";
 import EnemyPlayer from "@game/entities/enemy_player";
@@ -72,9 +72,9 @@ export const findAndDestroyById = function (
     entity.destroy();
 };
 
-export const getRandomColor = (colors: string[]) => {
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    return colors[randomIndex];
+export const getRandomItem = (items: string[]) => {
+    const randomIndex = Math.floor(Math.random() * items.length);
+    return items[randomIndex];
 };
 
 export const setPlayerAvatar = (player: Player | EnemyPlayer, id: string) => {
@@ -125,5 +125,23 @@ export const setPlayerAvatar = (player: Player | EnemyPlayer, id: string) => {
 
     // Cleanup: Hide the mask shape
     player.maskShape.setVisible(false);
+};
+
+export const getPlayerVictims = (
+    prevGameInfo: GameData,
+    killer: PlayerType
+) => {
+    const victims = prevGameInfo.players.filter((player) =>
+        killer.kills.includes(player.id)
+    );
+    const normalizedVictims = victims.map(({ name, skin }, index) => {
+        return {
+            name,
+            image: skin,
+            id: index,
+        };
+    });
+
+    return normalizedVictims;
 };
 

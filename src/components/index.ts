@@ -19,5 +19,15 @@ export {
     ModalTrigger,
     useModal,
 } from "./ui/animated-modal";
+export {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+    TableFooter,
+} from "./ui/table";
 export { ColourfulText } from "./ui/colourful-text";
 
