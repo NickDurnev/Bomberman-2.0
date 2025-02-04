@@ -7,7 +7,7 @@ import clientSocket from "@utils/socket";
 import { getDataFromLocalStorage } from "@utils/local_storage";
 import { addUser } from "../../services/auth";
 
-import { GameSlots, UserBar } from "@components/index";
+import { GameSlots, UserBar, Button } from "@components/index";
 import GameForm from "./components/GameForm";
 
 const Menu = () => {
@@ -77,6 +77,12 @@ const Menu = () => {
             </div>
             <div className="mt-20 flex flex-col justify-center items-center mx-auto gap-y-8">
                 <GameForm />
+                <Button
+                    text="Stats"
+                    onClick={() => navigate("/stats")}
+                    animated
+                    animatedIcon={"📊"}
+                />
                 <GameSlots data={slotsWithGame} onJoinGame={handleJoinGame} />
             </div>
         </div>

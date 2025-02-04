@@ -9,6 +9,7 @@ import Menu from "./routes/menu/Menu";
 import SelectMap from "./routes/map/SelectMap";
 import Game from "./routes/game/Game";
 import Pending from "./routes/pending/Pending";
+import Stats from "./routes/stats/Stats";
 
 import { Socket, PaddingContainer, BackgroundLines } from "@components/index";
 
@@ -37,6 +38,11 @@ const router = createBrowserRouter([
     {
         path: "/game/:gameId",
         element: <Game />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/stats",
+        element: <Stats />,
         errorElement: <ErrorPage />,
     },
 ]);

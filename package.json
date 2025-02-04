@@ -28,6 +28,7 @@
     "dependencies": {
         "@auth0/auth0-react": "^2.2.4",
         "@tabler/icons-react": "^3.22.0",
+        "@tanstack/react-table": "^8.20.6",
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.1",
         "framer-motion": "^11.13.1",

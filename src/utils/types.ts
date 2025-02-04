@@ -84,6 +84,7 @@ export interface Player {
         row: number;
     };
     isAlive: boolean;
+    isTop3: boolean;
     power: number;
     kills: string[];
 }
@@ -140,3 +141,11 @@ export interface PlayerWin {
     prevGameInfo: GameData;
 }
 
+export interface UserStats {
+    userId: string;
+    points: number;
+    kills: number;
+    wins: number;
+    games: number;
+    top3: number;
+}

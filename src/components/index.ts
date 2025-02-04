@@ -30,4 +30,5 @@ export {
     TableFooter,
 } from "./ui/table";
 export { ColourfulText } from "./ui/colourful-text";
+export { Loader } from "./Loader";
 

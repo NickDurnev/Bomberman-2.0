@@ -59,14 +59,6 @@ const PendingGame = () => {
     const players = gameInfo ? Object.values(gameInfo.players) : [];
     const canStartGame = players.length > 1;
 
-    // const renderTime = ({ remainingTime }: { remainingTime: number }) => {
-    //     // if (remainingTime === 0) {
-    //     //     return <div className="timer">Too lale...</div>;
-    //     // }
-
-    //     return <div className="text-4xl font-bold">{remainingTime}</div>;
-    // };
-
     return (
         <>
             <UserBar />

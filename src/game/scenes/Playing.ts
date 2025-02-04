@@ -55,7 +55,7 @@ class Playing extends Phaser.Scene {
 
     update() {
         this.physics.collide(this.player, this.blockLayer);
-        this.physics.collide(this.player, this.enemies);
+        // this.physics.collide(this.player, this.enemies);
         this.physics.collide(this.player, this.bombs);
 
         this.player.update();

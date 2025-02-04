@@ -28,6 +28,10 @@ export const GAME_DURATION = 180; // 3 minutes
 
 export const LOBBY_ID = "lobby_room";
 
+export const POINTS_PER_KILL = 1;
+export const POINTS_PER_WIN = 3;
+export const POINTS_PER_TOP3 = 1;
+
 export const colors = [
     "#46A5CA",
     "#8C2F2F",
