@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
     ColumnDef,
     flexRender,
@@ -6,6 +6,8 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
+
+import { debounce } from "@utils/utils";
 import {
     Table,
     TableBody,
@@ -27,6 +29,7 @@ interface DataTableProps<TData, TValue> {
     data: TData[];
     sortOption: string;
     setSortOption: React.Dispatch<React.SetStateAction<string>>;
+    setName: React.Dispatch<React.SetStateAction<string>>;
     isLoading?: boolean;
 }
 
@@ -35,9 +38,10 @@ export function DataTable<TData, TValue>({
     data,
     sortOption,
     setSortOption,
+    setName,
     isLoading,
 }: DataTableProps<TData, TValue>) {
-    const [name, setName] = useState("");
+    const [input, setInput] = useState("");
 
     const table = useReactTable({
         data,
@@ -45,15 +49,24 @@ export function DataTable<TData, TValue>({
         getCoreRowModel: getCoreRowModel(),
     });
 
+    const debounceInput = useCallback(
+        debounce((value: string) => {
+            console.log("input:", value);
+            setName(value);
+        }, 400),
+        []
+    );
+
     return (
         <div>
             <div className="flex items-center py-4">
                 <Input
                     placeholder="Enter name..."
-                    value={name}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setName(e.target.value)
-                    }
+                    value={input}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setInput(e.target.value);
+                        debounceInput(e.target.value);
+                    }}
                     className="max-w-sm"
                 />
                 <DropdownMenu>

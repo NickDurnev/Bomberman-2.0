@@ -1,32 +1,49 @@
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { UserStats } from "@utils/types";
 import { ShadButton } from "@components/index";
+import { getUserStats } from "@utils/statsAPI";
 import { columns } from "./components/statsColumn";
 import { DataTable } from "./components/dataTable";
-import { getUserStats } from "@utils/statsAPI";
 
 const Stats = () => {
     const [data, setData] = useState<UserStats[]>([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
+    const [name, setName] = useState("");
     const [sortOption, setSortOption] = useState("points");
     const [isLoading, setIsLoading] = useState(true);
-    console.log("isLoading:", isLoading);
 
     useEffect(() => {
-        const skip = (page - 1) * 10;
-        getUserStats({ skip, limit: 10, sort: sortOption }).then(
-            ({ total, stats }) => {
-                const data = stats.map((stat: UserStats, index: number) => ({
-                    ...stat,
-                    index: index + 1,
-                }));
-                setData(data);
-                setTotal(total);
-                setIsLoading(false);
-            }
-        );
-    }, []);
+        getStats();
+    }, [page, sortOption, name]);
+
+    useEffect(() => {
+        setPage(1);
+    }, [sortOption, name]);
+
+    const getStats = async () => {
+        try {
+            setIsLoading(true);
+            const { total, stats } = await getUserStats({
+                skip: (page - 1) * 10,
+                limit: 10,
+                sort: sortOption,
+                name,
+            });
+
+            const data = stats.map((stat: UserStats, index: number) => ({
+                ...stat,
+                index: index + 1 + (page - 1) * 10,
+            }));
+            setData(data);
+            setTotal(total);
+        } catch (error) {
+            toast("Something went wrong");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div className="w-full h-full py-20 flex flex-col gap-y-10">
@@ -38,6 +55,7 @@ const Stats = () => {
                         sortOption={sortOption}
                         setSortOption={setSortOption}
                         isLoading={isLoading}
+                        setName={setName}
                     />
                     {!isLoading && data?.length > 0 && (
                         <div className="flex items-center justify-end space-x-2 py-4">

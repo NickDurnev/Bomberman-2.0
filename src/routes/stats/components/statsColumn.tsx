@@ -12,6 +12,15 @@ export const columns: ColumnDef<UserStats>[] = [
         enableHiding: false,
     },
     {
+        accessorKey: "userName",
+        header: () => <div className="text-center">Name</div>,
+        cell: ({ row }) => {
+            const name = row.getValue("userName") as string;
+            return <div className="text-center font-medium">{name}</div>;
+        },
+        enableHiding: false,
+    },
+    {
         accessorKey: "points",
         header: () => <div className="text-center">Points</div>,
         cell: ({ row }) => {

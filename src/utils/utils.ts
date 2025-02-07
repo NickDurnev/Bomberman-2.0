@@ -145,3 +145,16 @@ export const getPlayerVictims = (
     return normalizedVictims;
 };
 
+type Procedure = (...args: any[]) => void;
+
+export const debounce = (func: Procedure, delay: number) => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    return (...args: any[]) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            func(...args);
+        }, delay);
+    };
+};
+
