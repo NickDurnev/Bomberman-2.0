@@ -51,7 +51,6 @@ export function DataTable<TData, TValue>({
 
     const debounceInput = useCallback(
         debounce((value: string) => {
-            console.log("input:", value);
             setName(value);
         }, 400),
         []

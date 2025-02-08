@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { GameData } from "@utils/types";
 import clientSocket from "@utils/socket";
@@ -12,11 +12,14 @@ import GameForm from "./components/GameForm";
 
 const Menu = () => {
     const { user } = useAuth0();
+    const location = useLocation();
+    const { pathname } = location;
 
     const navigate = useNavigate();
     const [slotsWithGame, setSlotsWithGame] = useState<GameData[]>([]);
 
     useEffect(() => {
+        setSlotsWithGame([]);
         // Handle WebSocket events
         clientSocket.on("display pending games", handleDisplayPendingGames);
 
@@ -30,7 +33,7 @@ const Menu = () => {
                 handleDisplayPendingGames
             );
         };
-    }, []);
+    }, [pathname]);
 
     useEffect(() => {
         addUserToDB();
@@ -38,10 +41,6 @@ const Menu = () => {
 
     const handleDisplayPendingGames = (availableGames: GameData[]) => {
         console.log("availableGames:", availableGames);
-        if (!availableGames.length) {
-            setSlotsWithGame([]);
-            return;
-        }
         setSlotsWithGame((prev) => [
             ...prev.filter((game) => {
                 return !availableGames.some((g) => g?.id === game?.id);

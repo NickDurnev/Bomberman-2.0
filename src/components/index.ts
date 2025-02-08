@@ -49,4 +49,4 @@ export {
 export { ColourfulText } from "./ui/colourful-text";
 export { Loader } from "./Loader";
 export { ShadButton, buttonVariants } from "./ui/button";
-
+export { AuthCheck } from "./AuthCheck";

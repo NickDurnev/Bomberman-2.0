@@ -11,7 +11,12 @@ import Game from "./routes/game/Game";
 import Pending from "./routes/pending/Pending";
 import Stats from "./routes/stats/Stats";
 
-import { Socket, PaddingContainer, BackgroundLines } from "@components/index";
+import {
+    Socket,
+    PaddingContainer,
+    BackgroundLines,
+    AuthCheck,
+} from "@components/index";
 
 import "./index.css";
 
@@ -27,17 +32,29 @@ const router = createBrowserRouter([
     },
     {
         path: "/map",
-        element: <SelectMap />,
+        element: (
+            <AuthCheck>
+                <SelectMap />
+            </AuthCheck>
+        ),
         errorElement: <ErrorPage />,
     },
     {
         path: "/pending/:gameId",
-        element: <Pending />,
+        element: (
+            <AuthCheck>
+                <Pending />
+            </AuthCheck>
+        ),
         errorElement: <ErrorPage />,
     },
     {
         path: "/game/:gameId",
-        element: <Game />,
+        element: (
+            <AuthCheck>
+                <Game />
+            </AuthCheck>
+        ),
         errorElement: <ErrorPage />,
     },
     {
