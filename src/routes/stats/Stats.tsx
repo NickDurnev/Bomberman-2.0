@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { UserStats } from "@utils/types";
-import { ShadButton } from "@components/index";
+import { ShadButton, UserBar } from "@components/index";
 import { getUserStats } from "@utils/statsAPI";
 import { columns } from "./components/statsColumn";
 import { DataTable } from "./components/dataTable";
@@ -46,43 +46,46 @@ const Stats = () => {
     };
 
     return (
-        <div className="w-full h-full py-20 flex flex-col gap-y-10">
-            <div className="w-3/4 mx-auto">
-                <>
-                    <DataTable
-                        columns={columns}
-                        data={data}
-                        sortOption={sortOption}
-                        setSortOption={setSortOption}
-                        isLoading={isLoading}
-                        setName={setName}
-                    />
-                    {!isLoading && data?.length > 0 && (
-                        <div className="flex items-center justify-end space-x-2 py-4">
-                            <ShadButton
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setPage((prev) => prev - 1)}
-                                disabled={total === 0 || page === 1}
-                            >
-                                Previous
-                            </ShadButton>
-                            <ShadButton
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setPage((prev) => prev + 1)}
-                                disabled={
-                                    total === 0 ||
-                                    page === Math.ceil(total / 10)
-                                }
-                            >
-                                Next
-                            </ShadButton>
-                        </div>
-                    )}
-                </>
+        <>
+            <UserBar />
+            <div className="w-full h-full py-20 flex flex-col gap-y-10">
+                <div className="w-3/4 mx-auto">
+                    <>
+                        <DataTable
+                            columns={columns}
+                            data={data}
+                            sortOption={sortOption}
+                            setSortOption={setSortOption}
+                            isLoading={isLoading}
+                            setName={setName}
+                        />
+                        {!isLoading && data?.length > 0 && (
+                            <div className="flex items-center justify-end space-x-2 py-4">
+                                <ShadButton
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setPage((prev) => prev - 1)}
+                                    disabled={total === 0 || page === 1}
+                                >
+                                    Previous
+                                </ShadButton>
+                                <ShadButton
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setPage((prev) => prev + 1)}
+                                    disabled={
+                                        total === 0 ||
+                                        page === Math.ceil(total / 10)
+                                    }
+                                >
+                                    Next
+                                </ShadButton>
+                            </div>
+                        )}
+                    </>
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

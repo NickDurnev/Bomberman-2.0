@@ -69,7 +69,7 @@ class Preload extends Phaser.Scene {
             "default_map",
             "assets/maps/default_map.json"
         );
-        this.load.tilemapTiledJSON("cold_map", "assets/maps/cold_map.json");
+        this.load.tilemapTiledJSON("small_map", "assets/maps/small_map.json");
 
         // Load game spritesheets
         this.load.spritesheet(

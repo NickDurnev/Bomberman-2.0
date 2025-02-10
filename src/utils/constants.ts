@@ -1,6 +1,6 @@
 export const TILE_SIZE = 35;
 
-export const AVAILABLE_MAPS = ["default_map", "cold_map"];
+export const AVAILABLE_MAPS = ["default_map", "small_map"];
 export const TILESET = "tiles";
 export const LAYER = "Blocks";
 

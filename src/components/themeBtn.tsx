@@ -1,17 +1,25 @@
 import { useEffect, useState } from "react";
 import { FaMoon } from "react-icons/fa";
 import { IoSunny } from "react-icons/io5";
+import {
+    addToLocalStorage,
+    getDataFromLocalStorage,
+} from "@utils/local_storage";
 import { Button } from "@components/index";
 
 export const ThemeBtn = () => {
-    const [isDark, setIsDark] = useState(false);
+    const [isDark, setIsDark] = useState(
+        getDataFromLocalStorage("theme") === "dark"
+    );
+    const html = document.documentElement;
 
     useEffect(() => {
-        const html = document.documentElement;
         if (isDark) {
             html.classList.add("dark");
+            addToLocalStorage({ key: "theme", value: "dark" });
         } else {
             html.classList.remove("dark");
+            addToLocalStorage({ key: "theme", value: "light" });
         }
     }, [isDark]);
 

@@ -104,6 +104,7 @@ class Playing extends Phaser.Scene {
     }
 
     private createMap() {
+        console.log("this.currentGame.mapName:", this.currentGame.mapName);
         this.map = this.make.tilemap({
             key: this.currentGame.mapName ?? "default_map",
         });
