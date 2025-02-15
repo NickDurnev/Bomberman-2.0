@@ -33,7 +33,7 @@ export default class FireBlast extends Phaser.GameObjects.Sprite {
                 start: 0,
                 end: 4,
             }),
-            frameRate: 30,
+            frameRate: 20,
             repeat: 0, // No looping
             hideOnComplete: true,
         });

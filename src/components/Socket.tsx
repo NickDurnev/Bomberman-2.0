@@ -45,7 +45,6 @@ export const Socket = ({ children }: Props) => {
                 { email: user?.email, socket_id: socketId },
                 (response: any) => {
                     console.log("Response from server:", response);
-                    // Handle response from server here
                 }
             );
         }

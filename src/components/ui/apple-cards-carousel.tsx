@@ -32,7 +32,9 @@ type CardProps = {
     card: Card;
     index: number;
     mapName: string;
+    disabled: boolean;
     onSelect: (mapName: string) => void;
+    maxPlayers?: number;
     layout?: boolean;
 };
 
@@ -143,22 +145,24 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
                         ))}
                     </div>
                 </div>
-                <div className="flex justify-end gap-2 mr-10">
-                    <button
-                        className="relative z-40 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center disabled:opacity-50"
-                        onClick={scrollLeft}
-                        disabled={!canScrollLeft}
-                    >
-                        <IconArrowNarrowLeft className="h-6 w-6 text-gray-500" />
-                    </button>
-                    <button
-                        className="relative z-40 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center disabled:opacity-50"
-                        onClick={scrollRight}
-                        disabled={!canScrollRight}
-                    >
-                        <IconArrowNarrowRight className="h-6 w-6 text-gray-500" />
-                    </button>
-                </div>
+                {items.length > 3 && (
+                    <div className="flex justify-end gap-2 mr-10">
+                        <button
+                            className="relative z-40 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center disabled:opacity-50"
+                            onClick={scrollLeft}
+                            disabled={!canScrollLeft}
+                        >
+                            <IconArrowNarrowLeft className="h-6 w-6 text-gray-500" />
+                        </button>
+                        <button
+                            className="relative z-40 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center disabled:opacity-50"
+                            onClick={scrollRight}
+                            disabled={!canScrollRight}
+                        >
+                            <IconArrowNarrowRight className="h-6 w-6 text-gray-500" />
+                        </button>
+                    </div>
+                )}
             </div>
         </CarouselContext.Provider>
     );
@@ -169,6 +173,8 @@ export const Card = ({
     index,
     mapName,
     onSelect,
+    maxPlayers,
+    disabled,
     layout = false,
 }: CardProps) => {
     const [open, setOpen] = useState(false);
@@ -237,17 +243,11 @@ export const Card = ({
                                 {card.title}
                             </motion.p>
                             <div className="py-10">
-                                <div className="flex flex-col items-center justify-center bg-[#F5F5F7] dark:bg-neutral-800 p-8 md:p-14 rounded-3xl mb-4">
-                                    <p className="text-neutral-600 dark:text-neutral-400 text-base md:text-2xl font-sans max-w-3xl mx-auto">
-                                        <span className="font-bold text-neutral-700 dark:text-neutral-200">
-                                            Lorem ipsum dolor sit amet
-                                            consectetur adipisicing elit. Sit
-                                            deleniti sapiente excepturi ad esse.
-                                            Vitae debitis id repudiandae, fuga
-                                            error amet accusantium at odit hic
-                                            quisquam magni, facilis, veritatis
-                                            numquam?
-                                        </span>{" "}
+                                <div className="flex flex-col gap-y-5 items-start justify-start bg-[#F5F5F7] dark:bg-neutral-800 p-8 md:p-14 text-left rounded-3xl mb-4">
+                                    <p className="text-neutral-700 dark:text-neutral-200 text-base md:text-2xl font-bold max-w-3xl">
+                                        Players: 1 - {maxPlayers}
+                                    </p>
+                                    <p className="text-neutral-600 dark:text-neutral-400 text-base md:text-2xl font-sans max-w-3xl">
                                         Lorem ipsum dolor sit amet consectetur
                                         adipisicing elit. Neque praesentium, ea
                                         id labore quam consequuntur, voluptas
@@ -281,6 +281,7 @@ export const Card = ({
             <motion.button
                 layoutId={layout ? `card-${card.title}` : undefined}
                 onClick={handleOpen}
+                disabled={disabled}
                 className="rounded-3xl bg-gray-100 dark:bg-neutral-900 h-80 w-56 md:h-[30rem] md:w-80 overflow-hidden flex flex-col items-start justify-start relative z-10"
             >
                 <div className="absolute h-full top-0 inset-x-0 bg-gradient-to-b from-black/50 via-transparent to-transparent z-30 pointer-events-none" />

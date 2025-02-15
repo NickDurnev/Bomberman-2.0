@@ -7,42 +7,26 @@ import { useGameStore } from "@hooks/stores";
 import { AVAILABLE_MAPS } from "@utils/constants";
 import { Carousel, Card, UserBar } from "@components/index";
 
-// interface MapButtonProps {
-//     mapName: string;
-//     onSelect: (mapName: string) => void;
-// }
+import default_map_data from "public/assets/maps/default_map.json";
+import small_map_data from "public/assets/maps/small_map.json";
+
+console.log("default_data:", default_map_data);
 
 const data = [
     {
         title: "Default map",
-        // src: "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?q=80&w=3556&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        src: "./assets/images/menu/default_map_preview.png",
+        maxPlayers: default_map_data.layers[0].properties.max_players,
     },
     {
         title: "Small map",
-        // src: "https://images.unsplash.com/photo-1531554694128-c4c6665f59c2?q=80&w=3387&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        src: "./assets/images/menu/small_map_preview.png",
+        maxPlayers: small_map_data.layers[0].properties.max_players,
     },
     {
-        title: "Launching the new Apple Vision Pro.",
-        src: "https://images.unsplash.com/photo-1713869791518-a770879e60dc?q=80&w=2333&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        title: "In progress",
     },
 ];
-
-// const MapButton: React.FC<MapButtonProps> = ({ mapName, onSelect }) => (
-//     <button
-//         onClick={() => onSelect(mapName)}
-//         style={{
-//             backgroundImage: `url(/assets/images/menu/${mapName}_preview.png)`,
-//             backgroundSize: "cover",
-//             width: "300px",
-//             height: "100px",
-//             border: "none",
-//             marginBottom: "20px",
-//             cursor: "pointer",
-//         }}
-//     >
-//         {mapName}
-//     </button>
-// );
 
 const SelectMap: React.FC = () => {
     const navigate = useNavigate();
@@ -61,7 +45,9 @@ const SelectMap: React.FC = () => {
             key={card.src ?? index}
             card={card}
             index={index}
+            maxPlayers={card.maxPlayers}
             mapName={AVAILABLE_MAPS[index]}
+            disabled={!card.src}
             onSelect={(mapName) => confirmStageSelection(mapName)}
         />
     ));
