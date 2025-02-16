@@ -25,6 +25,8 @@ interface CarouselProps {
 
 type Card = {
     title: string;
+    maxPlayers?: number;
+    description?: string;
     src?: string;
 };
 
@@ -32,9 +34,7 @@ type CardProps = {
     card: Card;
     index: number;
     mapName: string;
-    disabled: boolean;
     onSelect: (mapName: string) => void;
-    maxPlayers?: number;
     layout?: boolean;
 };
 
@@ -173,8 +173,6 @@ export const Card = ({
     index,
     mapName,
     onSelect,
-    maxPlayers,
-    disabled,
     layout = false,
 }: CardProps) => {
     const [open, setOpen] = useState(false);
@@ -245,27 +243,10 @@ export const Card = ({
                             <div className="py-10">
                                 <div className="flex flex-col gap-y-5 items-start justify-start bg-[#F5F5F7] dark:bg-neutral-800 p-8 md:p-14 text-left rounded-3xl mb-4">
                                     <p className="text-neutral-700 dark:text-neutral-200 text-base md:text-2xl font-bold max-w-3xl">
-                                        Players: 1 - {maxPlayers}
+                                        Players: 1 - {card.maxPlayers}
                                     </p>
                                     <p className="text-neutral-600 dark:text-neutral-400 text-base md:text-2xl font-sans max-w-3xl">
-                                        Lorem ipsum dolor sit amet consectetur
-                                        adipisicing elit. Neque praesentium, ea
-                                        id labore quam consequuntur, voluptas
-                                        porro cum aspernatur amet modi rerum
-                                        perspiciatis mollitia vitae! Ipsa odio
-                                        est error minima! Nam sapiente aliquid
-                                        corporis impedit adipisci, eligendi
-                                        voluptatem saepe similique maiores quis
-                                        fugit, cum reprehenderit nisi facilis?
-                                        Totam modi recusandae laudantium facere
-                                        sunt excepturi corporis quis asperiores
-                                        tenetur a? At. Corporis totam ex alias
-                                        similique asperiores eveniet iure
-                                        dolores dolorem numquam, illum possimus
-                                        distinctio quod! Commodi optio soluta
-                                        obcaecati, nostrum architecto animi,
-                                        ducimus saepe atque numquam molestiae
-                                        aspernatur delectus eius!
+                                        {card.description}
                                     </p>
                                     <Button
                                         text="Play"
@@ -281,7 +262,7 @@ export const Card = ({
             <motion.button
                 layoutId={layout ? `card-${card.title}` : undefined}
                 onClick={handleOpen}
-                disabled={disabled}
+                disabled={!card.src}
                 className="rounded-3xl bg-gray-100 dark:bg-neutral-900 h-80 w-56 md:h-[30rem] md:w-80 overflow-hidden flex flex-col items-start justify-start relative z-10"
             >
                 <div className="absolute h-full top-0 inset-x-0 bg-gradient-to-b from-black/50 via-transparent to-transparent z-30 pointer-events-none" />
@@ -335,7 +316,7 @@ export const BlurImage = ({
             height={height}
             loading="lazy"
             decoding="async"
-            // blurDataURL={typeof src === "string" ? src : undefined}
+            blurDataURL={typeof src === "string" ? src : undefined}
             alt={alt ?? "Background of a beautiful view"}
             {...rest}
         />

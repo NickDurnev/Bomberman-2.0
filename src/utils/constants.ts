@@ -32,6 +32,16 @@ export const POINTS_PER_KILL = 1;
 export const POINTS_PER_WIN = 3;
 export const POINTS_PER_TOP3 = 1;
 
+export const TUTORIAL = {
+    actions:
+        "Use the arrow keys to move your character across the map. Press the Spacebar to place a bomb. Bombs explode after a short delay, destroying nearby boxes and eliminating opponents caught in the blast.",
+    earningPoints: {
+        kills: "per enemy eliminated.",
+        wins: "for winning the match.",
+        top3: "for finishing in the top 3.",
+    },
+};
+
 export const colors = [
     "#46A5CA",
     "#8C2F2F",

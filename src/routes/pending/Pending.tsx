@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import { IoIosAlert } from "react-icons/io";
+
 import clientSocket from "@utils/socket";
+import {
+    TUTORIAL,
+    POINTS_PER_KILL,
+    POINTS_PER_WIN,
+    POINTS_PER_TOP3,
+} from "@utils/constants";
 import { GameData as Game } from "@utils/types";
 import { Button, PlayersSlots, UserBar } from "@components/index";
 
@@ -62,7 +70,7 @@ const PendingGame = () => {
     return (
         <>
             <UserBar />
-            <div className="w-full h-full py-20 flex flex-col gap-y-10">
+            <div className="w-full h-full py-10 flex flex-col gap-y-10">
                 <div>
                     <h1 className="text-5xl font-extrabold tracking-wider text-center motion-preset-expand motion-loop-once">
                         {gameInfo?.name ?? "Game"}
@@ -115,6 +123,30 @@ const PendingGame = () => {
                         players={players}
                     />
                 )}
+                <div className="flex justify-center items-start gap-x-2 w-1/2 mx-auto p-2 bg-modal text-white rounded-lg motion-preset-expand motion-loop-once">
+                    <IoIosAlert size={40} />
+                    <div>
+                        <p className="font-medium">{TUTORIAL.actions}</p>
+                        <p className="font-medium">
+                            <span className="font-bold">
+                                {POINTS_PER_WIN} points
+                            </span>{" "}
+                            {TUTORIAL.earningPoints.wins}
+                        </p>
+                        <p className="font-medium">
+                            <span className="font-bold">
+                                {POINTS_PER_TOP3} point
+                            </span>{" "}
+                            {TUTORIAL.earningPoints.top3}
+                        </p>
+                        <p className="font-medium">
+                            <span className="font-bold">
+                                {POINTS_PER_KILL} point
+                            </span>{" "}
+                            {TUTORIAL.earningPoints.kills}
+                        </p>
+                    </div>
+                </div>
             </div>
         </>
     );

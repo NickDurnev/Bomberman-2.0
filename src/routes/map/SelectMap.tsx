@@ -10,18 +10,20 @@ import { Carousel, Card, UserBar } from "@components/index";
 import default_map_data from "public/assets/maps/default_map.json";
 import small_map_data from "public/assets/maps/small_map.json";
 
-console.log("default_data:", default_map_data);
-
 const data = [
     {
         title: "Default map",
         src: "./assets/images/menu/default_map_preview.png",
         maxPlayers: default_map_data.layers[0].properties.max_players,
+        description:
+            "A balanced battlefield with walls and destructible boxes. Collect power-ups like speed boosts, extra bombs, and fire blasts to gain the upper hand. Strategize your moves and outlast your opponents in explosive combat!",
     },
     {
         title: "Small map",
         src: "./assets/images/menu/small_map_preview.png",
         maxPlayers: small_map_data.layers[0].properties.max_players,
+        description:
+            "A compact and intense arena where every move counts. With limited space, action is fast-paced, and bombs explode closer than ever. Use power-ups wisely and dominate your rivals before they get you first!",
     },
     {
         title: "In progress",
@@ -45,9 +47,7 @@ const SelectMap: React.FC = () => {
             key={card.src ?? index}
             card={card}
             index={index}
-            maxPlayers={card.maxPlayers}
             mapName={AVAILABLE_MAPS[index]}
-            disabled={!card.src}
             onSelect={(mapName) => confirmStageSelection(mapName)}
         />
     ));
