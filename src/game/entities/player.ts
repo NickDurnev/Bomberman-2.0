@@ -78,8 +78,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         setPlayerAvatar(this, id);
 
         //DEBUG
-        this.game.physics.world.createDebugGraphic();
-        this.getBody().debugBodyColor = 0xff0000;
+        // this.game.physics.world.createDebugGraphic();
+        // this.getBody().debugBodyColor = 0xff0000;
 
         this.defineText(name);
         this.defineKeyboard();
@@ -129,7 +129,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
     private defineText(name: string) {
         const style = {
             font: "14px Arial",
-            fill: "#FFFFFF",
+            fill: "#493D9E",
             stroke: "#000000",
             strokeThickness: 3,
         } as Phaser.Types.GameObjects.Text.TextStyle;

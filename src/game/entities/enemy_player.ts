@@ -35,8 +35,8 @@ export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
         this.getBody().setImmovable(true);
 
         //DEBUG
-        this.game.physics.world.createDebugGraphic();
-        this.getBody().debugBodyColor = 0xff0000;
+        // this.game.physics.world.createDebugGraphic();
+        // this.getBody().debugBodyColor = 0xff0000;
 
         this.defineText(name);
     }

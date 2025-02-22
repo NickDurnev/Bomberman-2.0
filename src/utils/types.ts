@@ -32,20 +32,6 @@ export interface TextConstructorParams {
     style: Phaser.Types.GameObjects.Text.TextStyle;
 }
 
-export interface ButtonConstructorParams {
-    scene: Playing;
-    x: number;
-    y: number;
-    asset: string;
-    callback: () => void;
-    callbackContext: unknown;
-}
-
-export interface TextButtonConstructorParams extends ButtonConstructorParams {
-    label: string;
-    style: Phaser.Types.GameObjects.Text.TextStyle;
-}
-
 export interface GameData {
     bombs: object;
     id: string;
@@ -149,3 +135,4 @@ export interface UserStats {
     games: number;
     top3: number;
 }
+
