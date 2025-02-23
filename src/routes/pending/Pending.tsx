@@ -42,7 +42,6 @@ const PendingGame = () => {
     }, [gameId]);
 
     const handleUpdateGame = (data: GameData) => {
-        console.log("data:", data);
         setGameInfo(data.current_game);
     };
 

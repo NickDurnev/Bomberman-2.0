@@ -224,7 +224,9 @@ class Playing extends Phaser.Scene {
         col: number;
         row: number;
     }) {
-        this.player.increaseActiveBombs();
+        if (this.player.id === playerId) {
+            this.player.increaseActiveBombs();
+        }
         this.bombs.add(
             new Bomb({
                 scene: this,
@@ -245,7 +247,9 @@ class Playing extends Phaser.Scene {
         playerId: string;
         blastedCells: any[];
     }) {
-        this.player.decreaseActiveBombs();
+        if (this.player.id === playerId) {
+            this.player.decreaseActiveBombs();
+        }
         // Remove Bomb:
         findAndDestroyById(bomb_id, this.bombs);
 
@@ -307,6 +311,12 @@ class Playing extends Phaser.Scene {
         // Emit socket event
         clientSocket.emit("leave game");
 
+        // Reset player
+        if (this.player) {
+            this.player.resetProperties();
+            this.player.removeKeyboard();
+        }
+
         // Destroy game objects and groups
         if (this.tombstones) this.tombstones.destroy(true);
         if (this.bombs) this.bombs.destroy(true);
@@ -318,6 +328,8 @@ class Playing extends Phaser.Scene {
         this.tweens.killAll();
         this.time.removeAllEvents();
 
+        this.registry.destroy(); // destroy registry
+        // this.scene.stop();
         this.scene.start("GameOver");
     }
 

@@ -48,6 +48,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         const centerCol = spawn.x - TILE_SIZE / 2;
         const centerRow = spawn.y - TILE_SIZE / 2;
 
+        console.log("CONSTRUCTING PLAYER");
+
         super(game, centerCol, centerRow, skin, name);
 
         this.game = game;
@@ -165,11 +167,14 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     handleBombs() {
         if (this.spaceKey.isDown) {
+            console.log(" this.activeBombs:", this.activeBombs);
+            console.log(" this.bombs:", this.bombs);
             if (this.activeBombs >= this.bombs) {
                 return;
             }
             const now = this.game.time.now;
 
+            console.log(" this.lastBombTime:", this.lastBombTime);
             if (now > this.lastBombTime) {
                 this.lastBombTime = now + SET_BOMB_DELAY;
 
@@ -224,10 +229,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
     }
 
-    getActiveBombs() {
-        return this.activeBombs;
-    }
-
     decreaseActiveBombs() {
         this.activeBombs--;
     }
@@ -254,6 +255,31 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     increaseBombs() {
         this.bombs += STEP_BOMBS;
+    }
+
+    resetProperties() {
+        this.delay = INITIAL_DELAY;
+        this.power = INITIAL_POWER;
+        this.speed = INITIAL_SPEED;
+        this.bombs = INITIAL_BOMBS;
+        this.activeBombs = 0;
+        this.lastBombTime = 0;
+    }
+
+    removeKeyboard() {
+        this.game.input.keyboard?.removeKey(Phaser.Input.Keyboard.KeyCodes.UP);
+        this.game.input.keyboard?.removeKey(
+            Phaser.Input.Keyboard.KeyCodes.DOWN
+        );
+        this.game.input.keyboard?.removeKey(
+            Phaser.Input.Keyboard.KeyCodes.LEFT
+        );
+        this.game.input.keyboard?.removeKey(
+            Phaser.Input.Keyboard.KeyCodes.RIGHT
+        );
+        this.game.input.keyboard?.removeKey(
+            Phaser.Input.Keyboard.KeyCodes.SPACE
+        );
     }
 }
 

@@ -31,7 +31,7 @@ const RestartGameModal = () => {
     const [gameId, setGameId] = useState<string | null>(null);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const navigate = useNavigate();
-    const { setOpen } = useModal();
+    const { open, setOpen } = useModal();
 
     useEffect(() => {
         clientSocket.on("end game", onEndGame);
@@ -52,7 +52,6 @@ const RestartGameModal = () => {
     }, []);
 
     const onEndGame = ({ new_game_id, prevGameInfo }: EndGame) => {
-        console.log("prevGameInfo:", prevGameInfo);
         setPrevGameInfo(prevGameInfo);
         clientSocket.emit("enter pending game", new_game_id);
         setGameId(new_game_id);
@@ -64,6 +63,9 @@ const RestartGameModal = () => {
     };
 
     const handleLaunchGame = (game?: Game) => {
+        if (!open) {
+            return;
+        }
         if (gameId || game?.id) {
             const id = gameId || game?.id;
             navigate("/game/" + id);
