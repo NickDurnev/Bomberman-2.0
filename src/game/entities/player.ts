@@ -174,7 +174,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
             }
             const now = this.game.time.now;
 
-            console.log(" this.lastBombTime:", this.lastBombTime);
             if (now > this.lastBombTime) {
                 this.lastBombTime = now + SET_BOMB_DELAY;
 

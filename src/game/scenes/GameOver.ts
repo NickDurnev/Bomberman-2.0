@@ -1,6 +1,7 @@
 import { EventBus } from "../EventBus";
 import { Scene } from "phaser";
 import clientSocket from "@utils/socket";
+import Playing from "./Playing";
 
 class GameOver extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -39,7 +40,8 @@ class GameOver extends Scene {
     }
 
     launchGame(game: any): void {
-        this.scene.start("Playing", game);
+        this.scene.remove("Playing");
+        this.scene.add("Playing", Playing, true, game);
     }
 
     changeScene() {

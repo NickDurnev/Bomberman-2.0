@@ -104,7 +104,7 @@ class Playing extends Phaser.Scene {
     }
 
     private createMap() {
-        console.log("this.currentGame.mapName:", this.currentGame.mapName);
+        console.log("CREATING MAP");
         this.map = this.make.tilemap({
             key: this.currentGame.mapName ?? "default_map",
         });
@@ -114,6 +114,7 @@ class Playing extends Phaser.Scene {
 
         this.map.setCollision([1, 2, 3, 4, 5]);
 
+        console.log("CREATING GROUPS");
         this.tombstones = this.add.group();
         this.bombs = this.add.group();
         this.spoils = this.add.group();
@@ -122,6 +123,7 @@ class Playing extends Phaser.Scene {
     }
 
     private createPlayers() {
+        console.log("CREATING PLAYERS");
         for (const player of Object.values(
             this.currentGame.players
         ) as PlayerData[]) {
@@ -308,29 +310,42 @@ class Playing extends Phaser.Scene {
     // }
 
     private onEndGame() {
-        // Emit socket event
         clientSocket.emit("leave game");
 
-        // Reset player
         if (this.player) {
             this.player.resetProperties();
             this.player.removeKeyboard();
         }
 
         // Destroy game objects and groups
-        if (this.tombstones) this.tombstones.destroy(true);
-        if (this.bombs) this.bombs.destroy(true);
-        if (this.spoils) this.spoils.destroy(true);
-        if (this.blasts) this.blasts.destroy(true);
-        if (this.enemies) this.enemies.destroy(true);
+        this.tombstones.destroy(true, true);
+        this.bombs.destroy(true, true);
+        this.spoils.destroy(true, true);
+        this.blasts.destroy(true, true);
+        this.enemies.destroy(true, true);
+        this.player.destroy(true);
 
-        // Remove any lingering event listeners or tweens
         this.tweens.killAll();
         this.time.removeAllEvents();
+        this.registry.destroy(); // Destroy registry
 
-        this.registry.destroy(); // destroy registry
-        // this.scene.stop();
-        this.scene.start("GameOver");
+        this.shutdown();
+        // Properly stop this scene before transitioning
+        this.scene.stop("Playing");
+
+        // this.scene.start("GameOver");
+    }
+
+    shutdown() {
+        console.log("Cleaning up Playing scene...");
+
+        clientSocket.off("move player", this.onMovePlayer);
+        clientSocket.off("end game", this.onEndGame);
+        clientSocket.off("show bomb", this.onShowBomb);
+        clientSocket.off("detonate bomb", this.onDetonateBomb);
+        clientSocket.off("spoil was picked", this.onSpoilWasPicked);
+        clientSocket.off("show tombstone", this.onShowTombstone);
+        clientSocket.off("player disconnect", this.onPlayerDisconnect);
     }
 
     private onPlayerDisconnect({ player_id }: { player_id: number }) {

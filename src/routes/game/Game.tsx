@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { PhaserGame } from "@game/PhaserGame";
-import { Socket, ModalProvider } from "@components/index";
+import { ModalProvider } from "@components/index";
 import PlayerInfo from "./components/PlayerInfo";
 import RestartGameModal from "./components/RestartGameModal";
 import PlayerWinModal from "./components/PlayerWinModal";
@@ -11,21 +11,19 @@ function Game() {
 
     return (
         <div id="app">
-            <Socket>
-                <div className="flex items-center justify-center py-10 relative">
-                    <ModalProvider isUnclosable={true}>
-                        <RestartGameModal />
-                    </ModalProvider>
-                    <ModalProvider>
-                        <PlayerWinModal />
-                    </ModalProvider>
-                    <PlayerInfo />
-                    <div className="p-2 absolute top-[34px] left-1/2 -translate-x-1/2">
-                        <CountdownTimer />
-                    </div>
-                    {gameId && <PhaserGame gameId={gameId} />}
+            <div className="flex items-center justify-center py-10 relative">
+                <ModalProvider isUnclosable={true}>
+                    <RestartGameModal />
+                </ModalProvider>
+                <ModalProvider>
+                    <PlayerWinModal />
+                </ModalProvider>
+                <PlayerInfo />
+                <div className="p-2 absolute top-[34px] left-1/2 -translate-x-1/2">
+                    <CountdownTimer />
                 </div>
-            </Socket>
+                {gameId && <PhaserGame gameId={gameId} />}
+            </div>
         </div>
     );
 }

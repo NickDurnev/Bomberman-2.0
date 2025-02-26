@@ -13,10 +13,10 @@ import GameForm from "./components/GameForm";
 const Menu = () => {
     const { user } = useAuth0();
     const location = useLocation();
-    const { pathname } = location;
-
     const navigate = useNavigate();
+
     const [slotsWithGame, setSlotsWithGame] = useState<GameData[]>([]);
+    const { pathname } = location;
 
     useEffect(() => {
         setSlotsWithGame([]);
