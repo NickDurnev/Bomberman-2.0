@@ -3,10 +3,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { CiLogout } from "react-icons/ci";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import clientSocket from "@utils/socket";
-import { Button, ThemeBtn } from "@components/index";
+import { Button, ThemeBtn, Loader } from "@components/index";
 
 export const UserBar = () => {
-    const { loginWithRedirect, logout, user } = useAuth0();
+    const { loginWithRedirect, logout, user, isLoading } = useAuth0();
     const location = useLocation();
     const navigate = useNavigate();
     const { pathname } = location;
@@ -33,6 +33,7 @@ export const UserBar = () => {
             )}
             <div className="flex items-center gap-8 justify-end p-6">
                 <ThemeBtn />
+                {isLoading && <Loader size={6} />}
                 {user ? (
                     <>
                         <Button
