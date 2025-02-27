@@ -337,8 +337,6 @@ class Playing extends Phaser.Scene {
     }
 
     shutdown() {
-        console.log("Cleaning up Playing scene...");
-
         clientSocket.off("move player", this.onMovePlayer);
         clientSocket.off("end game", this.onEndGame);
         clientSocket.off("show bomb", this.onShowBomb);

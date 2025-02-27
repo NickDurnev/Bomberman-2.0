@@ -28,7 +28,6 @@ type GameData = {
 const RestartGameModal = () => {
     const [gameInfo, setGameInfo] = useState<Game | null>(null);
     const [prevGameInfo, setPrevGameInfo] = useState<Game | null>(null);
-    console.log(" prevGameInfo:", prevGameInfo);
     const [gameId, setGameId] = useState<string | null>(null);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const navigate = useNavigate();
@@ -44,14 +43,11 @@ const RestartGameModal = () => {
 
         const prevGameInfo = sessionStorage.getItem("prevGameInfo");
         const newGameId = sessionStorage.getItem("new_game_id");
-        console.log(" newGameId:", newGameId);
         if (prevGameInfo && newGameId) {
             setTimeout(() => {
                 clientSocket.emit("enter pending game", newGameId);
             }, 200);
-            console.log(123);
             const data = JSON.parse(prevGameInfo);
-            console.log(" data:", data);
             setPrevGameInfo(data);
             setGameId(newGameId);
             setOpen(true);
