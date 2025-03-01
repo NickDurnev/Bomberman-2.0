@@ -47,6 +47,8 @@ export {
     DropdownMenuRadioGroup,
 } from "./ui/dropdown-menu";
 export { ColourfulText } from "./ui/colourful-text";
+export { TextGenerateEffect } from "./ui/text-generate-effect";
 export { Loader } from "./Loader";
 export { ShadButton, buttonVariants } from "./ui/button";
 export { AuthCheck } from "./AuthCheck";
+

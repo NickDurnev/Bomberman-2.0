@@ -7,7 +7,12 @@ import clientSocket from "@utils/socket";
 import { getDataFromLocalStorage } from "@utils/local_storage";
 import { addUser } from "../../services/auth";
 
-import { GameSlots, UserBar, Button } from "@components/index";
+import {
+    GameSlots,
+    UserBar,
+    Button,
+    TextGenerateEffect,
+} from "@components/index";
 import GameForm from "./components/GameForm";
 
 const Menu = () => {
@@ -70,9 +75,11 @@ const Menu = () => {
         <div id="app" className="w-full h-screen mx-auto">
             <UserBar />
             <div className="pt-20">
-                <h1 className="text-8xl font-extrabold text-foreground tracking-wider text-center motion-preset-expand motion-loop-once">
-                    Bomberman 2.0
-                </h1>
+                <TextGenerateEffect
+                    words="Bomberman 2.0"
+                    duration={2.0}
+                    className="text-8xl font-extrabold text-foreground tracking-wider text-center"
+                />
             </div>
             <div className="mt-20 flex flex-col justify-center items-center mx-auto gap-y-8">
                 <GameForm />

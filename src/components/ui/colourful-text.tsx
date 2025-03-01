@@ -13,13 +13,13 @@ export const ColourfulText = ({
     const [count, setCount] = React.useState(0);
 
     React.useEffect(() => {
-        // const interval = setInterval(() => {
-        const shuffled = [...colors].sort(() => Math.random() - 0.5);
-        setCurrentColors(shuffled);
-        setCount((prev) => prev + 1);
-        // }, 5000);
+        const interval = setInterval(() => {
+            const shuffled = [...colors].sort(() => Math.random() - 0.5);
+            setCurrentColors(shuffled);
+            setCount((prev) => prev + 1);
+        }, 5000);
 
-        // return () => clearInterval(interval);
+        return () => clearInterval(interval);
     }, []);
 
     return text.split("").map((char, index) => (
