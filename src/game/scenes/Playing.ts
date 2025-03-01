@@ -1,10 +1,13 @@
-import Player from "../entities/player";
-import EnemyPlayer from "../entities/enemy_player";
-import Bomb from "../entities/bomb";
-import Spoil from "../entities/spoil";
-import FireBlast from "../entities/fire_blast";
-import Tombstone from "../entities/tombstone";
 import { TILESET, LAYER } from "@utils/constants";
+import {
+    Player,
+    EnemyPlayer,
+    Portal,
+    Tombstone,
+    Bomb,
+    FireBlast,
+    Spoil,
+} from "@game/entities";
 import {
     PlayerConfig,
     pickedSpoilSocketData,
@@ -24,6 +27,7 @@ type PlayerData = Pick<PlayerConfig, "id" | "name" | "spawn" | "skin">;
 class Playing extends Phaser.Scene {
     private currentGame: any; // Define the type according to your game object structure
     private player: Player;
+    private portals: Phaser.GameObjects.Group;
     private tombstones: Phaser.GameObjects.Group;
     private bombs: Phaser.GameObjects.Group;
     private spoils: Phaser.GameObjects.Group;
@@ -108,13 +112,14 @@ class Playing extends Phaser.Scene {
         this.map = this.make.tilemap({
             key: this.currentGame.mapName ?? "default_map",
         });
+        console.log("this.map:", this.map);
         const tileset = this.map.addTilesetImage(TILESET);
 
         this.blockLayer = this.map.createLayer(LAYER, tileset!)!;
 
         this.map.setCollision([1, 2, 3, 4, 5]);
 
-        console.log("CREATING GROUPS");
+        this.portals = this.add.group();
         this.tombstones = this.add.group();
         this.bombs = this.add.group();
         this.spoils = this.add.group();
@@ -277,8 +282,13 @@ class Playing extends Phaser.Scene {
 
         // Add Spoils:
         blastedCells.forEach((cell: ICell) => {
+            console.log(" cell:", cell);
             if (cell.destroyed && cell.spoil) {
                 this.spoils.add(new Spoil(this, cell.spoil));
+            } else if (cell.portal) {
+                console.log("ADD PORTAL");
+                this.portals.add(new Portal(this, cell.portal));
+                console.log(" this.portals:", this.portals);
             } else {
                 findAndDestroyByCoordinates(cell.col, cell.row, this.spoils);
             }
@@ -297,9 +307,9 @@ class Playing extends Phaser.Scene {
         findAndDestroyById(spoil_id, this.spoils);
     }
 
-    private onShowTombstone({ player_id, tombId, col, row }: ITombStone) {
-        this.tombstones.add(new Tombstone(this, tombId, col, row));
-        findAndDestroyById(player_id, this.enemies);
+    private onShowTombstone(tombstone: ITombStone) {
+        this.tombstones.add(new Tombstone(this, tombstone));
+        findAndDestroyById(tombstone.player_id, this.enemies);
     }
 
     // private onPlayerWin(player?: Player) {

@@ -108,12 +108,19 @@ export interface ISpoil {
     row: number;
 }
 
+export interface IPortal {
+    portalId: string;
+    col: number;
+    row: number;
+}
+
 export interface ICell {
     col: number;
     row: number;
     type: string;
     destroyed?: boolean;
     spoil?: ISpoil | null;
+    portal?: IPortal | null;
 }
 
 export interface EndGame {

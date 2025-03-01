@@ -4,8 +4,7 @@ import { setPlayerAvatar } from "@utils/utils";
 import { Spawn, PlayerConfig } from "@utils/types";
 import { Text } from "@helpers/elements";
 import Playing from "@game/scenes/Playing";
-
-export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
+export class EnemyPlayer extends Phaser.GameObjects.Sprite {
     readonly game: Playing;
     readonly id: string;
     readonly gameId: string;

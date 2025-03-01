@@ -2,7 +2,7 @@ import { Physics } from "phaser";
 import { TILE_SIZE } from "@utils/constants";
 import { ICell } from "@utils/types";
 
-export default class FireBlast extends Phaser.GameObjects.Sprite {
+export class FireBlast extends Phaser.GameObjects.Sprite {
     private game: Phaser.Scene;
     private playerId: string;
 

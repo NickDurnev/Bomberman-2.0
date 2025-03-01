@@ -123,6 +123,14 @@ class Preload extends Phaser.Scene {
             frameWidth: 35,
             frameHeight: 35,
         });
+        this.load.spritesheet(
+            "portal_tileset",
+            "assets/images/game/portal.png",
+            {
+                frameWidth: 35,
+                frameHeight: 35,
+            }
+        );
 
         //Default avatars
         this.load.image("avatar-1", "assets/images/avatars/avatar-1.png");

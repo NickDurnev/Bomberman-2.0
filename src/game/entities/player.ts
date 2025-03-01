@@ -24,7 +24,7 @@ import Playing from "@game/scenes/Playing";
 import clientSocket from "@utils/socket";
 import { Text } from "@helpers/elements";
 
-export default class Player extends Phaser.GameObjects.Sprite {
+export class Player extends Phaser.GameObjects.Sprite {
     readonly game: Playing;
     readonly id: string;
     readonly gameId: string;

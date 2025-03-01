@@ -1,8 +1,8 @@
 import { Physics } from "phaser";
-import { SPEED, POWER, DELAY, BOMBS, TILE_SIZE } from "../../utils/constants";
+import { SPEED, POWER, BOMBS, TILE_SIZE } from "../../utils/constants";
 import { ISpoil } from "../../utils/types";
 
-export default class Spoil extends Phaser.GameObjects.Sprite {
+export class Spoil extends Phaser.GameObjects.Sprite {
     readonly game: Phaser.Scene;
     id: number;
 
