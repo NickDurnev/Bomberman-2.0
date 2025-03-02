@@ -147,3 +147,16 @@ export interface UserStats {
     top3: number;
 }
 
+export type MapCard = {
+    title: string;
+    maxPlayers?: number;
+    description?: string;
+    src?: string;
+};
+
+export type MapData = {
+    mapName: string;
+    isPortalsEnabled: boolean;
+    isDelaySpoilEnabled: boolean;
+};
+
