@@ -25,9 +25,6 @@ const data = [
         description:
             "A compact and intense arena where every move counts. With limited space, action is fast-paced, and bombs explode closer than ever. Use power-ups wisely and dominate your rivals before they get you first!",
     },
-    {
-        title: "In progress",
-    },
 ];
 
 const SelectMap: React.FC = () => {

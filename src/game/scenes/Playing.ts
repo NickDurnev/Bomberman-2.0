@@ -1,4 +1,4 @@
-import { TILESET, LAYER } from "@utils/constants";
+import { TILESET, LAYER, PORTAL_DELAY } from "@utils/constants";
 import {
     Player,
     EnemyPlayer,
@@ -13,6 +13,7 @@ import {
     pickedSpoilSocketData,
     ICell,
     ITombStone,
+    PlayerPositionData,
 } from "@utils/types";
 import clientSocket from "@utils/socket";
 import {
@@ -77,11 +78,22 @@ class Playing extends Phaser.Scene {
         );
 
         this.physics.overlap(
+            this.player,
+            this.portals,
+            (obj1: any, obj2: any) => {
+                if (obj1 instanceof Player && obj2 instanceof Portal) {
+                    this.onPlayerVsPortal(obj1, obj2);
+                }
+            },
+            undefined,
+            this
+        );
+
+        this.physics.overlap(
             this.bombs,
             this.blasts,
             (obj1: any, obj2: any) => {
                 if (obj1 instanceof Bomb && obj2 instanceof FireBlast) {
-                    console.log(obj1);
                     this.onBombVsBlast(obj1);
                 }
             },
@@ -108,7 +120,6 @@ class Playing extends Phaser.Scene {
     }
 
     private createMap() {
-        console.log("CREATING MAP");
         this.map = this.make.tilemap({
             key: this.currentGame.mapName ?? "default_map",
         });
@@ -128,7 +139,6 @@ class Playing extends Phaser.Scene {
     }
 
     private createPlayers() {
-        console.log("CREATING PLAYERS");
         for (const player of Object.values(
             this.currentGame.players
         ) as PlayerData[]) {
@@ -152,6 +162,7 @@ class Playing extends Phaser.Scene {
     private setEventHandlers() {
         this.onMovePlayer.bind(this);
         clientSocket.on("move player", this.onMovePlayer.bind(this));
+        clientSocket.on("teleport player", this.onTeleportPlayer.bind(this));
         clientSocket.on("end game", this.onEndGame.bind(this));
         // clientSocket.on("player win", this.onPlayerWin.bind(this));
         clientSocket.on("show bomb", this.onShowBomb.bind(this));
@@ -162,6 +173,21 @@ class Playing extends Phaser.Scene {
             "player disconnect",
             this.onPlayerDisconnect.bind(this)
         );
+    }
+
+    private onPlayerVsPortal(player: Player, portal: Portal) {
+        const now = this.time.now;
+
+        if (now - player.lastTeleportTime < PORTAL_DELAY) {
+            return;
+        }
+
+        player.lastTeleportTime = now; // Update the last teleport time
+        clientSocket.emit("use portal", {
+            portal_id: portal.id,
+            playerId: player.id,
+            gameId: player.gameId,
+        });
     }
 
     private onPlayerVsSpoil(player: Player, spoil: Spoil) {
@@ -194,21 +220,19 @@ class Playing extends Phaser.Scene {
         });
     }
 
-    private onMovePlayer({
-        player_id,
-        x,
-        y,
-    }: {
-        player_id: number;
-        x: number;
-        y: number;
-    }) {
+    private onMovePlayer({ player_id, x, y }: PlayerPositionData) {
         const enemy = findById(player_id, this.enemies);
-        if (!enemy) {
-            return;
+        if (enemy) {
+            enemy.goTo({ x, y });
         }
+    }
 
-        enemy.goTo({ x, y });
+    private onTeleportPlayer({ player_id, x, y }: PlayerPositionData) {
+        if (this.player.id === player_id) {
+            this.player.goTo({ x, y });
+        } else {
+            this.onMovePlayer({ player_id, x, y });
+        }
     }
 
     private stopAnimationLoop() {
@@ -282,13 +306,10 @@ class Playing extends Phaser.Scene {
 
         // Add Spoils:
         blastedCells.forEach((cell: ICell) => {
-            console.log(" cell:", cell);
             if (cell.destroyed && cell.spoil) {
                 this.spoils.add(new Spoil(this, cell.spoil));
             } else if (cell.portal) {
-                console.log("ADD PORTAL");
                 this.portals.add(new Portal(this, cell.portal));
-                console.log(" this.portals:", this.portals);
             } else {
                 findAndDestroyByCoordinates(cell.col, cell.row, this.spoils);
             }

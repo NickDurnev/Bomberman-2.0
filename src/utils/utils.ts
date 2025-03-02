@@ -1,12 +1,11 @@
-import { Spawn, GameData, Player as PlayerType } from "@utils/types";
+import { Coordinates, GameData, Player as PlayerType } from "@utils/types";
 import { TILE_SIZE } from "./constants";
-import Player from "@game/entities/player";
-import EnemyPlayer from "@game/entities/enemy_player";
+import { Player, EnemyPlayer } from "@game/entities";
 interface GameObject extends Phaser.GameObjects.GameObject {
     id: number;
     x: number;
     y: number;
-    goTo(newPosition: Spawn): void;
+    goTo(newPosition: Coordinates): void;
 }
 
 export const findByCoordinates = function (

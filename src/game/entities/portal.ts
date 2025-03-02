@@ -7,7 +7,6 @@ export class Portal extends Phaser.GameObjects.Sprite {
     id: string;
 
     constructor(scene: Phaser.Scene, portal: IPortal) {
-        console.log(" portal:", portal);
         // Calculate the center of the cell
         const centerCol = portal.col * TILE_SIZE + TILE_SIZE / 2;
         const centerRow = portal.row * TILE_SIZE + TILE_SIZE / 2;
@@ -15,7 +14,7 @@ export class Portal extends Phaser.GameObjects.Sprite {
         super(scene, centerCol, centerRow, "portal_tileset");
 
         this.game = scene;
-        this.id = portal.portalId;
+        this.id = portal.id;
 
         // Add the portal sprite to the scene
         this.game.add.existing(this);

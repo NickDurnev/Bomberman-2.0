@@ -17,9 +17,10 @@ import {
     DELAY,
     BOMBS,
     SET_BOMB_DELAY,
+    PORTAL_DELAY_STEP,
 } from "@utils/constants";
 import { setPlayerAvatar } from "@utils/utils";
-import { ISpoilType, PlayerConfig } from "@utils/types";
+import { ISpoilType, PlayerConfig, Coordinates } from "@utils/types";
 import Playing from "@game/scenes/Playing";
 import clientSocket from "@utils/socket";
 import { Text } from "@helpers/elements";
@@ -42,13 +43,12 @@ export class Player extends Phaser.GameObjects.Sprite {
     private rightKey: Phaser.Input.Keyboard.Key;
     private spaceKey: Phaser.Input.Keyboard.Key;
     readonly sprite: Phaser.GameObjects.Sprite;
+    lastTeleportTime: number = 0;
     maskShape: Phaser.GameObjects.Graphics;
 
     constructor({ game, id, spawn, skin, name }: PlayerConfig) {
         const centerCol = spawn.x - TILE_SIZE / 2;
         const centerRow = spawn.y - TILE_SIZE / 2;
-
-        console.log("CONSTRUCTING PLAYER");
 
         super(game, centerCol, centerRow, skin, name);
 
@@ -151,6 +151,12 @@ export class Player extends Phaser.GameObjects.Sprite {
         this.getBody().setVelocity(0);
         const velocity = this.speed;
 
+        const now = this.game.time.now;
+
+        if (now - this.lastTeleportTime < PORTAL_DELAY_STEP) {
+            return;
+        }
+
         if (this.upKey?.isDown) {
             this.body!.velocity.y = -velocity;
         }
@@ -167,8 +173,6 @@ export class Player extends Phaser.GameObjects.Sprite {
 
     handleBombs() {
         if (this.spaceKey.isDown) {
-            console.log(" this.activeBombs:", this.activeBombs);
-            console.log(" this.bombs:", this.bombs);
             if (this.activeBombs >= this.bombs) {
                 return;
             }
@@ -225,6 +229,42 @@ export class Player extends Phaser.GameObjects.Sprite {
             this.increaseDelay();
         } else if (spoilType === BOMBS) {
             this.increaseBombs();
+        }
+    }
+
+    goTo(newPosition: Coordinates) {
+        this.prevPosition = {
+            x: newPosition.x,
+            y: newPosition.y,
+        };
+
+        this.game.add.tween({
+            targets: this,
+            x: newPosition.x,
+            y: newPosition.y,
+            duration: PING,
+            ease: Phaser.Math.Easing.Linear,
+        });
+
+        if (this.playerText) {
+            this.game.add.tween({
+                targets: this.playerText,
+                x: newPosition.x - this.playerText.width / 2,
+                y: newPosition.y - TILE_SIZE * 1.2,
+                duration: PING,
+                ease: Phaser.Math.Easing.Linear,
+            });
+        }
+
+        // Update mask position
+        if (this.maskShape) {
+            this.game.add.tween({
+                targets: this.maskShape,
+                x: newPosition.x,
+                y: newPosition.y,
+                duration: PING,
+                ease: Phaser.Math.Easing.Linear,
+            });
         }
     }
 

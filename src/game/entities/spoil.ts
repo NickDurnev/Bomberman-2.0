@@ -4,7 +4,7 @@ import { ISpoil } from "../../utils/types";
 
 export class Spoil extends Phaser.GameObjects.Sprite {
     readonly game: Phaser.Scene;
-    id: number;
+    id: string;
 
     constructor(scene: Phaser.Scene, spoil: ISpoil) {
         // Determine the spoil type frame based on the type constant

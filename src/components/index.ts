@@ -5,11 +5,13 @@ export { GameSlots } from "./GameSlots";
 export { PlayersSlots } from "./PlayersSlots";
 export { ThemeBtn } from "./themeBtn";
 export { UserBar } from "./UserBar";
+export { AuthCheck } from "./AuthCheck";
 
 export { BackgroundLines } from "./ui/background-lines";
 export { Carousel, Card } from "./ui/apple-cards-carousel";
 export { AnimatedTooltip } from "./ui/animated-tooltip";
 export { Input } from "./ui/input";
+export { Switch } from "./ui/switch";
 export {
     Modal,
     ModalContent,
@@ -50,5 +52,4 @@ export { ColourfulText } from "./ui/colourful-text";
 export { TextGenerateEffect } from "./ui/text-generate-effect";
 export { Loader } from "./Loader";
 export { ShadButton, buttonVariants } from "./ui/button";
-export { AuthCheck } from "./AuthCheck";
 
