@@ -23,7 +23,6 @@ export const STEP_POWER = 1;
 export const INITIAL_BOMBS = 1;
 export const STEP_BOMBS = 1;
 
-export const SET_BOMB_DELAY = 200;
 export const PORTAL_DELAY = 3000;
 export const PORTAL_DELAY_STEP = 500;
 export const GAME_DURATION = 180; // 3 minutes

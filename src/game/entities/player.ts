@@ -16,7 +16,6 @@ import {
     POWER,
     DELAY,
     BOMBS,
-    SET_BOMB_DELAY,
     PORTAL_DELAY_STEP,
 } from "@utils/constants";
 import { setPlayerAvatar } from "@utils/utils";
@@ -179,7 +178,10 @@ export class Player extends Phaser.GameObjects.Sprite {
             const now = this.game.time.now;
 
             if (now > this.lastBombTime) {
-                this.lastBombTime = now + SET_BOMB_DELAY;
+                const delay =
+                    100 + ((MAX_SPEED - this.speed) / STEP_SPEED) * 10;
+                console.log(" delay:", delay);
+                this.lastBombTime = now + delay;
 
                 clientSocket.emit("create bomb", {
                     playerId: this.id,
