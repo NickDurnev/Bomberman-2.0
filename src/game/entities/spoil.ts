@@ -20,6 +20,8 @@ export class Spoil extends Phaser.GameObjects.Sprite {
             case SPEED:
                 spoil_tile = 2;
                 break;
+            default:
+                spoil_tile = 3;
         }
 
         // Calculate the center of the cell

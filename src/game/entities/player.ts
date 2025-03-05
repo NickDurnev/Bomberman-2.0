@@ -226,7 +226,7 @@ export class Player extends Phaser.GameObjects.Sprite {
         } else if (spoilType === POWER) {
             this.increasePower();
         } else if (spoilType === DELAY) {
-            this.increaseDelay();
+            this.decreaseDelay();
         } else if (spoilType === BOMBS) {
             this.increaseBombs();
         }
@@ -282,7 +282,7 @@ export class Player extends Phaser.GameObjects.Sprite {
         }
     }
 
-    increaseDelay() {
+    decreaseDelay() {
         if (this.delay > MIN_DELAY) {
             this.delay -= STEP_DELAY;
         }
