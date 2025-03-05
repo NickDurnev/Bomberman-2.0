@@ -9,7 +9,7 @@ type ConstructorParams = {
     playerId: string;
 };
 
-export default class Bomb extends Phaser.GameObjects.Sprite {
+export class Bomb extends Phaser.GameObjects.Sprite {
     readonly game: Phaser.Scene;
     private playerId: string;
     id: string;

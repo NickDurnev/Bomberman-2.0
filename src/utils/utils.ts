@@ -1,12 +1,11 @@
-import { Spawn, GameData, Player as PlayerType } from "@utils/types";
+import { Coordinates, GameData, Player as PlayerType } from "@utils/types";
 import { TILE_SIZE } from "./constants";
-import Player from "@game/entities/player";
-import EnemyPlayer from "@game/entities/enemy_player";
+import { Player, EnemyPlayer } from "@game/entities";
 interface GameObject extends Phaser.GameObjects.GameObject {
     id: number;
     x: number;
     y: number;
-    goTo(newPosition: Spawn): void;
+    goTo(newPosition: Coordinates): void;
 }
 
 export const findByCoordinates = function (
@@ -21,7 +20,6 @@ export const findByCoordinates = function (
     const y = row * TILE_SIZE + TILE_SIZE / 2;
     let result = null;
     entities?.getChildren()?.forEach((entity) => {
-        console.log("entity:", entity);
         const gameObject = entity as GameObject;
         if (gameObject.x === x && gameObject.y === y) {
             result = gameObject;
@@ -64,6 +62,13 @@ export const findAndDestroyById = function (
     id: number | string,
     entities: Phaser.GameObjects.Group
 ): void {
+    if (!entities || !(entities instanceof Phaser.GameObjects.Group)) {
+        console.error(
+            "Error: entities is undefined or not a Phaser.GameObjects.Group",
+            entities
+        );
+    }
+
     const entity = findById(id, entities);
     if (!entity) {
         return;

@@ -31,7 +31,7 @@ const RestartGameModal = () => {
     const [gameId, setGameId] = useState<string | null>(null);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const navigate = useNavigate();
-    const { setOpen } = useModal();
+    const { open, setOpen } = useModal();
 
     useEffect(() => {
         clientSocket.on("end game", onEndGame);
@@ -40,6 +40,21 @@ const RestartGameModal = () => {
         clientSocket.on("start timer", () => {
             setIsTimerRunning(true);
         });
+
+        const prevGameInfo = sessionStorage.getItem("prevGameInfo");
+        const newGameId = sessionStorage.getItem("new_game_id");
+        if (prevGameInfo && newGameId) {
+            setTimeout(() => {
+                clientSocket.emit("enter pending game", newGameId);
+            }, 200);
+            const data = JSON.parse(prevGameInfo);
+            setPrevGameInfo(data);
+            setGameId(newGameId);
+            setOpen(true);
+
+            sessionStorage.removeItem("prevGameInfo");
+            sessionStorage.removeItem("new_game_id");
+        }
 
         return () => {
             clientSocket.off("end game", onEndGame);
@@ -52,11 +67,9 @@ const RestartGameModal = () => {
     }, []);
 
     const onEndGame = ({ new_game_id, prevGameInfo }: EndGame) => {
-        console.log("prevGameInfo:", prevGameInfo);
-        setPrevGameInfo(prevGameInfo);
-        clientSocket.emit("enter pending game", new_game_id);
-        setGameId(new_game_id);
-        setOpen(true);
+        sessionStorage.setItem("prevGameInfo", JSON.stringify(prevGameInfo));
+        sessionStorage.setItem("new_game_id", new_game_id);
+        navigate(0);
     };
 
     const handleUpdateGame = (data: GameData) => {
@@ -64,11 +77,14 @@ const RestartGameModal = () => {
     };
 
     const handleLaunchGame = (game?: Game) => {
+        if (!open) {
+            return;
+        }
         if (gameId || game?.id) {
             const id = gameId || game?.id;
             navigate("/game/" + id);
+            setOpen(false);
         }
-        setOpen(false);
     };
 
     const startGameAction = () => {

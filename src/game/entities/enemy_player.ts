@@ -1,15 +1,14 @@
 import { Physics } from "phaser";
 import { TILE_SIZE, PING } from "@utils/constants";
 import { setPlayerAvatar } from "@utils/utils";
-import { Spawn, PlayerConfig } from "@utils/types";
+import { Coordinates, PlayerConfig } from "@utils/types";
 import { Text } from "@helpers/elements";
 import Playing from "@game/scenes/Playing";
-
-export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
+export class EnemyPlayer extends Phaser.GameObjects.Sprite {
     readonly game: Playing;
     readonly id: string;
     readonly gameId: string;
-    currentPosition: Spawn;
+    currentPosition: Coordinates;
     playerText: Text;
     lastMoveAt: number;
     maskShape: Phaser.GameObjects.Graphics;
@@ -45,7 +44,7 @@ export default class EnemyPlayer extends Phaser.GameObjects.Sprite {
         return this.body as Physics.Arcade.Body;
     }
 
-    goTo(newPosition: Spawn) {
+    goTo(newPosition: Coordinates) {
         this.lastMoveAt = this.game.time.now;
         this.currentPosition = newPosition;
 

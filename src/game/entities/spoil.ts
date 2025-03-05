@@ -1,10 +1,10 @@
 import { Physics } from "phaser";
-import { SPEED, POWER, DELAY, BOMBS, TILE_SIZE } from "../../utils/constants";
+import { SPEED, POWER, BOMBS, TILE_SIZE } from "../../utils/constants";
 import { ISpoil } from "../../utils/types";
 
-export default class Spoil extends Phaser.GameObjects.Sprite {
+export class Spoil extends Phaser.GameObjects.Sprite {
     readonly game: Phaser.Scene;
-    id: number;
+    id: string;
 
     constructor(scene: Phaser.Scene, spoil: ISpoil) {
         // Determine the spoil type frame based on the type constant
@@ -20,6 +20,8 @@ export default class Spoil extends Phaser.GameObjects.Sprite {
             case SPEED:
                 spoil_tile = 2;
                 break;
+            default:
+                spoil_tile = 3;
         }
 
         // Calculate the center of the cell

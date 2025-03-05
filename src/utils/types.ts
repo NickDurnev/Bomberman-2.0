@@ -11,14 +11,18 @@ export interface IUser {
 
 export type ISpoilType = 0 | 1 | 2 | 3;
 
-export interface Spawn {
-    x: number;
-    y: number;
+type PlayerId = string;
+type GameId = string;
+
+export type Coordinates = { x: number; y: number };
+
+export interface PlayerPositionData extends Coordinates {
+    player_id: PlayerId;
 }
 
 export interface PlayerConfig {
     game: Playing;
-    id: string;
+    id: PlayerId;
     spawn: { x: number; y: number };
     skin: string;
     name: string;
@@ -34,7 +38,7 @@ export interface TextConstructorParams {
 
 export interface GameData {
     bombs: object;
-    id: string;
+    id: GameId;
     layer_info: {
         name: string;
         width: number;
@@ -46,7 +50,7 @@ export interface GameData {
     mapName: string;
     max_players: number;
     name: string;
-    playerSpawns: Spawn[];
+    playerSpawns: Coordinates[];
     players: Player[];
     shadow_map: number[][];
     spoils: object;
@@ -58,7 +62,7 @@ export interface GameSlotsProps {
 }
 
 export interface Player {
-    id: string;
+    id: PlayerId;
     skin: string;
     name: string;
     spawn: {
@@ -78,7 +82,7 @@ export interface Player {
 export interface PlayerSlot {
     name: string;
     image: string;
-    id: number;
+    id: PlayerId;
 }
 
 //Stores
@@ -89,21 +93,27 @@ export interface GameStore {
 }
 
 export type pickedSpoilSocketData = {
-    player_id: string;
+    player_id: PlayerId;
     spoil_id: number;
     spoil_type: ISpoilType;
 };
 
 export interface ITombStone {
-    player_id: string;
+    player_id: PlayerId;
     tombId: string;
     col: number;
     row: number;
 }
 
 export interface ISpoil {
-    id: number;
+    id: string;
     spoil_type: ISpoilType;
+    col: number;
+    row: number;
+}
+
+export interface IPortal {
+    id: string;
     col: number;
     row: number;
 }
@@ -114,11 +124,12 @@ export interface ICell {
     type: string;
     destroyed?: boolean;
     spoil?: ISpoil | null;
+    portal?: IPortal | null;
 }
 
 export interface EndGame {
-    game_id: string;
-    new_game_id: string;
+    game_id: GameId;
+    new_game_id: GameId;
     prevGameInfo: GameData;
 }
 
@@ -135,4 +146,17 @@ export interface UserStats {
     games: number;
     top3: number;
 }
+
+export type MapCard = {
+    title: string;
+    maxPlayers?: number;
+    description?: string;
+    src?: string;
+};
+
+export type MapData = {
+    mapName: string;
+    isPortalsEnabled: boolean;
+    isDelaySpoilEnabled: boolean;
+};
 

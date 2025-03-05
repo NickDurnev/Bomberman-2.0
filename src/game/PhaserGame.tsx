@@ -16,22 +16,18 @@ export function PhaserGame({ gameId }: Readonly<IProps>) {
 
     useEffect(() => {
         launchGame();
-    }, []);
+    }, [gameId]);
 
     const launchGame = () => {
         if (game.current) {
-            return;
+            game.current?.destroy(true);
         }
         clientSocket.emit("get current game", gameId, (gameData: any) => {
             if (gameData) {
-                const newGame = new Phaser.Game(config);
-
-                newGame.scene.start("Preload", gameData); // Start the scene here
-            } else {
-                console.error("Failed to retrieve game data!");
+                game.current = new Phaser.Game(config);
+                game.current.scene.start("Preload", gameData);
             }
         });
-        console.log("Game launched successfully");
     };
 
     return <div id="game-container"></div>;

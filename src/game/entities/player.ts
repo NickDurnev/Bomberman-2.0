@@ -16,15 +16,15 @@ import {
     POWER,
     DELAY,
     BOMBS,
-    SET_BOMB_DELAY,
+    PORTAL_DELAY_STEP,
 } from "@utils/constants";
 import { setPlayerAvatar } from "@utils/utils";
-import { ISpoilType, PlayerConfig } from "@utils/types";
+import { ISpoilType, PlayerConfig, Coordinates } from "@utils/types";
 import Playing from "@game/scenes/Playing";
 import clientSocket from "@utils/socket";
 import { Text } from "@helpers/elements";
 
-export default class Player extends Phaser.GameObjects.Sprite {
+export class Player extends Phaser.GameObjects.Sprite {
     readonly game: Playing;
     readonly id: string;
     readonly gameId: string;
@@ -42,6 +42,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
     private rightKey: Phaser.Input.Keyboard.Key;
     private spaceKey: Phaser.Input.Keyboard.Key;
     readonly sprite: Phaser.GameObjects.Sprite;
+    lastTeleportTime: number = 0;
     maskShape: Phaser.GameObjects.Graphics;
 
     constructor({ game, id, spawn, skin, name }: PlayerConfig) {
@@ -149,6 +150,12 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.getBody().setVelocity(0);
         const velocity = this.speed;
 
+        const now = this.game.time.now;
+
+        if (now - this.lastTeleportTime < PORTAL_DELAY_STEP) {
+            return;
+        }
+
         if (this.upKey?.isDown) {
             this.body!.velocity.y = -velocity;
         }
@@ -171,7 +178,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
             const now = this.game.time.now;
 
             if (now > this.lastBombTime) {
-                this.lastBombTime = now + SET_BOMB_DELAY;
+                const delay =
+                    100 + ((MAX_SPEED - this.speed) / STEP_SPEED) * 10;
+                console.log(" delay:", delay);
+                this.lastBombTime = now + delay;
 
                 clientSocket.emit("create bomb", {
                     playerId: this.id,
@@ -218,14 +228,46 @@ export default class Player extends Phaser.GameObjects.Sprite {
         } else if (spoilType === POWER) {
             this.increasePower();
         } else if (spoilType === DELAY) {
-            this.increaseDelay();
+            this.decreaseDelay();
         } else if (spoilType === BOMBS) {
             this.increaseBombs();
         }
     }
 
-    getActiveBombs() {
-        return this.activeBombs;
+    goTo(newPosition: Coordinates) {
+        this.prevPosition = {
+            x: newPosition.x,
+            y: newPosition.y,
+        };
+
+        this.game.add.tween({
+            targets: this,
+            x: newPosition.x,
+            y: newPosition.y,
+            duration: PING,
+            ease: Phaser.Math.Easing.Linear,
+        });
+
+        if (this.playerText) {
+            this.game.add.tween({
+                targets: this.playerText,
+                x: newPosition.x - this.playerText.width / 2,
+                y: newPosition.y - TILE_SIZE * 1.2,
+                duration: PING,
+                ease: Phaser.Math.Easing.Linear,
+            });
+        }
+
+        // Update mask position
+        if (this.maskShape) {
+            this.game.add.tween({
+                targets: this.maskShape,
+                x: newPosition.x,
+                y: newPosition.y,
+                duration: PING,
+                ease: Phaser.Math.Easing.Linear,
+            });
+        }
     }
 
     decreaseActiveBombs() {
@@ -242,7 +284,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
     }
 
-    increaseDelay() {
+    decreaseDelay() {
         if (this.delay > MIN_DELAY) {
             this.delay -= STEP_DELAY;
         }
@@ -254,6 +296,31 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     increaseBombs() {
         this.bombs += STEP_BOMBS;
+    }
+
+    resetProperties() {
+        this.delay = INITIAL_DELAY;
+        this.power = INITIAL_POWER;
+        this.speed = INITIAL_SPEED;
+        this.bombs = INITIAL_BOMBS;
+        this.activeBombs = 0;
+        this.lastBombTime = 0;
+    }
+
+    removeKeyboard() {
+        this.game.input.keyboard?.removeKey(Phaser.Input.Keyboard.KeyCodes.UP);
+        this.game.input.keyboard?.removeKey(
+            Phaser.Input.Keyboard.KeyCodes.DOWN
+        );
+        this.game.input.keyboard?.removeKey(
+            Phaser.Input.Keyboard.KeyCodes.LEFT
+        );
+        this.game.input.keyboard?.removeKey(
+            Phaser.Input.Keyboard.KeyCodes.RIGHT
+        );
+        this.game.input.keyboard?.removeKey(
+            Phaser.Input.Keyboard.KeyCodes.SPACE
+        );
     }
 }
 

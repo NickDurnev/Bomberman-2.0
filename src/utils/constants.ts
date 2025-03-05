@@ -16,14 +16,15 @@ export const INITIAL_SPEED = 150;
 export const STEP_SPEED = 25;
 export const MAX_SPEED = 400;
 export const INITIAL_DELAY = 2000;
-export const STEP_DELAY = 500;
-export const MIN_DELAY = 500;
+export const STEP_DELAY = 200;
+export const MIN_DELAY = 200;
 export const INITIAL_POWER = 1;
 export const STEP_POWER = 1;
 export const INITIAL_BOMBS = 1;
 export const STEP_BOMBS = 1;
 
-export const SET_BOMB_DELAY = 200;
+export const PORTAL_DELAY = 3000;
+export const PORTAL_DELAY_STEP = 500;
 export const GAME_DURATION = 180; // 3 minutes
 
 export const LOBBY_ID = "lobby_room";

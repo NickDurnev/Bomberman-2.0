@@ -8,8 +8,12 @@ import {
     SPEED,
     POWER,
     BOMBS,
+    DELAY,
     MAX_SPEED,
+    MIN_DELAY,
+    INITIAL_DELAY,
     INITIAL_SPEED,
+    STEP_DELAY,
     STEP_SPEED,
 } from "@utils/constants";
 
@@ -19,6 +23,8 @@ const DEFAULT_INFO = [
     { title: "Bomb", value: 1, color: "#c347ee" },
 ];
 
+const DELAY_INFO = { title: "Delay", value: 2, color: "#5B5FCD" };
+
 type Info = {
     title: string;
     value: number;
@@ -26,6 +32,7 @@ type Info = {
 };
 
 const MAX_SPEED_VALUE = (MAX_SPEED - INITIAL_SPEED) / STEP_SPEED;
+const MAX_DELAY_VALUE = (INITIAL_DELAY - MIN_DELAY) / STEP_DELAY;
 const STORED_SOCKET_ID = getDataFromLocalStorage("socket_id");
 
 const PlayerInfo = () => {
@@ -34,6 +41,8 @@ const PlayerInfo = () => {
     const [lastInfo, setLastInfo] = useState<Info | null>(null);
     const [hidden, setHidden] = useState(false);
     const [isDead, setIsDead] = useState(false);
+
+    let isDelaySpoil = false;
 
     useEffect(() => {
         if (gameId) {
@@ -64,12 +73,12 @@ const PlayerInfo = () => {
 
     const processInfo = (spoil_type: number) => {
         if (spoil_type === SPEED) {
-            if (MAX_SPEED_VALUE <= info[0].value) {
-                return;
-            }
             setInfo((prev) =>
                 prev.map((item) => {
                     if (item.title === "Speed") {
+                        if (item.value >= MAX_SPEED_VALUE) {
+                            return item;
+                        }
                         setLastInfo(item);
                         triggerHide();
                         return {
@@ -108,6 +117,33 @@ const PlayerInfo = () => {
                     return item;
                 })
             );
+        } else if (spoil_type === DELAY) {
+            if (isDelaySpoil) {
+                setInfo((prev) =>
+                    prev.map((item) => {
+                        if (item.title === "Delay") {
+                            if (item.value >= MAX_DELAY_VALUE) {
+                                return item;
+                            }
+                            setLastInfo(item);
+                            triggerHide();
+                            return {
+                                ...item,
+                                value: item.value + 1,
+                            };
+                        }
+                        return item;
+                    })
+                );
+            } else {
+                isDelaySpoil = true;
+                setInfo((prev) => {
+                    if (prev.some((item) => item.title === "Delay")) {
+                        return prev; // Avoid duplicate "Delay" entries
+                    }
+                    return [...prev, DELAY_INFO];
+                });
+            }
         }
     };
 

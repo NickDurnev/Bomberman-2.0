@@ -15,7 +15,7 @@ import {
 import useOutsideClick from "@hooks/use-outside-click";
 import { cn } from "src/lib/utils";
 import { getRandomItem } from "@utils/utils";
-import { Button } from "@components/index";
+import { MapCard, MapData } from "@utils/types";
 import { colors } from "@utils/constants";
 
 interface CarouselProps {
@@ -23,18 +23,16 @@ interface CarouselProps {
     initialScroll?: number;
 }
 
-type Card = {
-    title: string;
-    maxPlayers?: number;
-    description?: string;
-    src?: string;
-};
-
 type CardProps = {
-    card: Card;
+    card: MapCard;
     index: number;
     mapName: string;
-    onSelect: (mapName: string) => void;
+    modalContent: (
+        card: MapCard,
+        mapName: string,
+        onSelect: (data: MapData) => void
+    ) => JSX.Element;
+    onSelect: (data: MapData) => void;
     layout?: boolean;
 };
 
@@ -172,6 +170,7 @@ export const Card = ({
     card,
     index,
     mapName,
+    modalContent,
     onSelect,
     layout = false,
 }: CardProps) => {
@@ -240,21 +239,7 @@ export const Card = ({
                             >
                                 {card.title}
                             </motion.p>
-                            <div className="py-10">
-                                <div className="flex flex-col gap-y-5 items-start justify-start bg-[#F5F5F7] dark:bg-neutral-800 p-8 md:p-14 text-left rounded-3xl mb-4">
-                                    <p className="text-neutral-700 dark:text-neutral-200 text-base md:text-2xl font-bold max-w-3xl">
-                                        Players: 1 - {card.maxPlayers}
-                                    </p>
-                                    <p className="text-neutral-600 dark:text-neutral-400 text-base md:text-2xl font-sans max-w-3xl">
-                                        {card.description}
-                                    </p>
-                                    <Button
-                                        text="Play"
-                                        className="mt-4 px-6 py-2 rounded-lg ml-auto mr-[32px]"
-                                        onClick={() => onSelect(mapName)}
-                                    />
-                                </div>
-                            </div>
+                            {modalContent(card, mapName, onSelect)}
                         </motion.div>
                     </div>
                 )}
