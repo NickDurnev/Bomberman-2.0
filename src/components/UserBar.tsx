@@ -33,52 +33,58 @@ export const UserBar = () => {
             )}
             <div className="flex items-center gap-8 justify-end p-6">
                 <ThemeBtn />
-                {isLoading && <Loader size={6} />}
-                {user ? (
-                    <>
-                        <Button
-                            imageUrl={user.picture}
-                            onClick={() => console.log("user:", user)}
-                            className="rounded-full p-2"
-                        />
-                        <Button
-                            icon={<CiLogout size={30} />}
-                            onClick={() =>
-                                logout({
-                                    logoutParams: {
-                                        returnTo: window.location.origin,
-                                    },
-                                })
-                            }
-                            className="rounded-full p-2"
-                        />
-                    </>
+                {isLoading ? (
+                    <Loader size={6} />
                 ) : (
                     <>
-                        <Button
-                            imageUrl="/assets/google.png"
-                            imageAlt="Star icon"
-                            onClick={() =>
-                                loginWithRedirect({
-                                    authorizationParams: {
-                                        connection: "google-oauth2",
-                                    },
-                                })
-                            }
-                            className="rounded-full p-2"
-                        />
-                        <Button
-                            imageUrl="/assets/github.svg"
-                            imageAlt="Star icon"
-                            onClick={() =>
-                                loginWithRedirect({
-                                    authorizationParams: {
-                                        connection: "github",
-                                    },
-                                })
-                            }
-                            className="rounded-full p-2"
-                        />
+                        {user ? (
+                            <>
+                                <Button
+                                    imageUrl={user.picture}
+                                    onClick={() => console.log("user:", user)}
+                                    className="rounded-full p-2"
+                                />
+                                <Button
+                                    icon={<CiLogout size={30} />}
+                                    onClick={() =>
+                                        logout({
+                                            logoutParams: {
+                                                returnTo:
+                                                    window.location.origin,
+                                            },
+                                        })
+                                    }
+                                    className="rounded-full p-2"
+                                />
+                            </>
+                        ) : (
+                            <>
+                                <Button
+                                    imageUrl="/assets/google.png"
+                                    imageAlt="Star icon"
+                                    onClick={() =>
+                                        loginWithRedirect({
+                                            authorizationParams: {
+                                                connection: "google-oauth2",
+                                            },
+                                        })
+                                    }
+                                    className="rounded-full p-2"
+                                />
+                                <Button
+                                    imageUrl="/assets/github.svg"
+                                    imageAlt="Star icon"
+                                    onClick={() =>
+                                        loginWithRedirect({
+                                            authorizationParams: {
+                                                connection: "github",
+                                            },
+                                        })
+                                    }
+                                    className="rounded-full p-2"
+                                />
+                            </>
+                        )}
                     </>
                 )}
             </div>
