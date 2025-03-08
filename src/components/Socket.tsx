@@ -6,6 +6,7 @@ import {
     addToLocalStorage,
     getDataFromLocalStorage,
 } from "@utils/local_storage";
+import { SOCKET_ID_KEY } from "@utils/constants";
 
 type Props = {
     children: React.ReactNode;
@@ -28,14 +29,14 @@ export const Socket = ({ children }: Props) => {
                 setTransport(transport.name);
             });
 
-            const storedSocketId = getDataFromLocalStorage("socket_id");
+            const storedSocketId = getDataFromLocalStorage(SOCKET_ID_KEY);
             let socketId = null;
             if (storedSocketId) {
                 socketId = storedSocketId;
             } else {
                 socketId = uuidv4();
                 addToLocalStorage({
-                    key: "socket_id",
+                    key: SOCKET_ID_KEY,
                     value: socketId,
                 });
             }

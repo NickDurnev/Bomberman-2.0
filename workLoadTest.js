@@ -1,12 +1,12 @@
 const { io } = require("socket.io-client");
 const { v4: uuidv4 } = require("uuid");
 
-const URL = process.env.URL || "https://app.bomberman.click";
+const URL = "https://app.bomberman.click";
 const TOTAL_CLIENTS = 5; // 10 players
-const EVENTS_INTERVAL_MS = 200; // Send events every 500ms
+const EVENTS_INTERVAL_MS = 100; // Send events every 500ms
 const DURATION_MS = 30000; // Run the test for 30 seconds
 
-const GAMEID = "898b44be-5906-4310-9e8d-8cbdd32b771c";
+const GAMEID = "440db4dd-b953-4e3b-843d-81676f59d91f";
 
 const emails = [
     "nikitaspec1@gmail.com",
@@ -60,8 +60,10 @@ const createClient = () => {
             }
         );
 
-        // Player enters pending game
-        socket.emit("enter pending game", { gameId: GAMEID });
+        setTimeout(() => {
+            // Player enters pending game
+            socket.emit("enter pending game", { gameId: GAMEID });
+        }, 5000);
 
         // Start sending position and bomb events every 500ms for 30 seconds
         setTimeout(() => {
@@ -71,6 +73,7 @@ const createClient = () => {
                 // Send player position update
                 socket.emit("update player position", {
                     playerId: socketId,
+                    gameId: GAMEID,
                     x: currentPosition.x,
                     y: currentPosition.y,
                 });
@@ -78,12 +81,12 @@ const createClient = () => {
                 currentBomb = getRandomBombPlacement();
 
                 // Send bomb event
-                socket.emit("create bomb", {
-                    playerId: socketId,
-                    gameId: GAMEID,
-                    col: currentBomb.col,
-                    row: currentBomb.row,
-                });
+                // socket.emit("create bomb", {
+                //     playerId: socketId,
+                //     gameId: GAMEID,
+                //     col: currentBomb.col,
+                //     row: currentBomb.row,
+                // });
 
                 console.log(`Player ${socketId} sent position & bomb!`);
             }, EVENTS_INTERVAL_MS);

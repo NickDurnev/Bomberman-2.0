@@ -29,7 +29,6 @@ export class Player extends Phaser.GameObjects.Sprite {
     readonly id: string;
     readonly gameId: string;
     private prevPosition: { x: number; y: number };
-    private playerText: Text;
     private delay: number;
     private power: number;
     private speed: number;
@@ -42,6 +41,7 @@ export class Player extends Phaser.GameObjects.Sprite {
     private rightKey: Phaser.Input.Keyboard.Key;
     private spaceKey: Phaser.Input.Keyboard.Key;
     readonly sprite: Phaser.GameObjects.Sprite;
+    playerText: Text;
     lastTeleportTime: number = 0;
     maskShape: Phaser.GameObjects.Graphics;
 

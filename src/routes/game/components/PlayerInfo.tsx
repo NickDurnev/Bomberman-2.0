@@ -15,6 +15,7 @@ import {
     INITIAL_SPEED,
     STEP_DELAY,
     STEP_SPEED,
+    SOCKET_ID_KEY,
 } from "@utils/constants";
 
 const DEFAULT_INFO = [
@@ -33,7 +34,7 @@ type Info = {
 
 const MAX_SPEED_VALUE = (MAX_SPEED - INITIAL_SPEED) / STEP_SPEED;
 const MAX_DELAY_VALUE = (INITIAL_DELAY - MIN_DELAY) / STEP_DELAY;
-const STORED_SOCKET_ID = getDataFromLocalStorage("socket_id");
+const STORED_SOCKET_ID = getDataFromLocalStorage(SOCKET_ID_KEY);
 
 const PlayerInfo = () => {
     const { gameId } = useParams();

@@ -16,7 +16,9 @@ type Props = {
 };
 
 export const AnimatedTooltip = ({ items, size }: Props) => {
-    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+    const [hoveredIndex, setHoveredIndex] = useState<number | string | null>(
+        null
+    );
     const springConfig = { stiffness: 100, damping: 5 };
     const x = useMotionValue(0); // going to set this value on mouse move
     // rotate the tooltip
@@ -38,7 +40,7 @@ export const AnimatedTooltip = ({ items, size }: Props) => {
         <>
             {items.map((item, index) => (
                 <div
-                    className="-mr-4  relative group"
+                    className="-mr-4 relative group"
                     key={`${index}-${item.name}`}
                     onMouseEnter={() => setHoveredIndex(item.id)}
                     onMouseLeave={() => setHoveredIndex(null)}

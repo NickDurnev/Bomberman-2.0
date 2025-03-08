@@ -82,7 +82,7 @@ export interface Player {
 export interface PlayerSlot {
     name: string;
     image: string;
-    id: PlayerId;
+    id: number;
 }
 
 //Stores

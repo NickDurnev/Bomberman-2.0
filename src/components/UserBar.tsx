@@ -2,7 +2,9 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { CiLogout } from "react-icons/ci";
 import { IoIosArrowRoundBack } from "react-icons/io";
+import { SOCKET_ID_KEY } from "@utils/constants";
 import clientSocket from "@utils/socket";
+import { deleteFromLocalStorage } from "@utils/local_storage";
 import { Button, ThemeBtn, Loader } from "@components/index";
 
 export const UserBar = () => {
@@ -18,6 +20,15 @@ export const UserBar = () => {
             clientSocket.emit("leave pending game");
         }
         navigate(-1);
+    };
+
+    const handleLogout = () => {
+        logout({
+            logoutParams: {
+                returnTo: window.location.origin,
+            },
+        });
+        deleteFromLocalStorage(SOCKET_ID_KEY);
     };
 
     return (
@@ -46,14 +57,7 @@ export const UserBar = () => {
                                 />
                                 <Button
                                     icon={<CiLogout size={30} />}
-                                    onClick={() =>
-                                        logout({
-                                            logoutParams: {
-                                                returnTo:
-                                                    window.location.origin,
-                                            },
-                                        })
-                                    }
+                                    onClick={handleLogout}
                                     className="rounded-full p-2"
                                 />
                             </>
