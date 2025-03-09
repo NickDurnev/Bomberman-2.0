@@ -4,9 +4,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 import { GameData } from "@utils/types";
 import clientSocket from "@utils/socket";
+import { SOCKET_ID_KEY } from "@utils/constants";
 import { getDataFromLocalStorage } from "@utils/local_storage";
-import { addUser } from "../../services/auth";
 
+import { addUser } from "../../services/auth";
 import {
     GameSlots,
     UserBar,
@@ -66,7 +67,7 @@ const Menu = () => {
                 name: user.name ?? "",
                 picture: user.picture ?? "",
                 locale: user.locale ?? "en-US",
-                socketID: getDataFromLocalStorage("socket_id"),
+                socketID: getDataFromLocalStorage(SOCKET_ID_KEY),
             });
         }
     };

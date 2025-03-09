@@ -1,4 +1,4 @@
-import { TILESET, LAYER, PORTAL_DELAY } from "@utils/constants";
+import { TILESET, LAYER, PORTAL_DELAY, SOCKET_ID_KEY } from "@utils/constants";
 import {
     Player,
     EnemyPlayer,
@@ -150,7 +150,7 @@ class Playing extends Phaser.Scene {
                 name: player.name,
             };
 
-            const storedSocketId = getDataFromLocalStorage("socket_id");
+            const storedSocketId = getDataFromLocalStorage(SOCKET_ID_KEY);
             if (player.id === storedSocketId) {
                 this.player = new Player(setup);
             } else {
@@ -377,7 +377,7 @@ class Playing extends Phaser.Scene {
         clientSocket.off("player disconnect", this.onPlayerDisconnect);
     }
 
-    private onPlayerDisconnect({ player_id }: { player_id: number }) {
+    private onPlayerDisconnect({ player_id }: { player_id: string }) {
         findAndDestroyById(player_id, this.enemies);
         if (this.enemies.getChildren().length >= 1) {
             return;

@@ -67,11 +67,18 @@ export const findAndDestroyById = function (
             "Error: entities is undefined or not a Phaser.GameObjects.Group",
             entities
         );
+        return;
     }
 
     const entity = findById(id, entities);
     if (!entity) {
         return;
+    }
+
+    if (entity instanceof EnemyPlayer || entity instanceof Player) {
+        if (entity.playerText) {
+            entity.playerText.destroy();
+        }
     }
 
     entity.destroy();
