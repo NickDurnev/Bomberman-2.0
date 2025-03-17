@@ -1,12 +1,13 @@
 const { io } = require("socket.io-client");
 const { v4: uuidv4 } = require("uuid");
 
-const URL = "https://app.bomberman.click";
-const TOTAL_CLIENTS = 5; // 10 players
-const EVENTS_INTERVAL_MS = 100; // Send events every 500ms
-const DURATION_MS = 30000; // Run the test for 30 seconds
+const URL = "http://localhost:4000";
+const TOTAL_CLIENTS = 5;
+const MOVE_INTERVAL_MS = 200;
+const BOMB_INTERVAL_MS = 500;
+const DURATION_MS = 60000; // Run the test for 30 seconds
 
-const GAMEID = "440db4dd-b953-4e3b-843d-81676f59d91f";
+const GAMEID = "9ba65fbd-cea3-457e-8626-636b446167aa";
 
 const emails = [
     "nikitaspec1@gmail.com",
@@ -14,6 +15,17 @@ const emails = [
     "nikitaspec3@gmail.com",
     "nikitaspec4@gmail.com",
     "nikitaspec5@gmail.com",
+];
+
+const bombsCoordinates = [
+    { col: 9, row: 6 },
+    { col: 19, row: 7 },
+    { col: 25, row: 5 },
+    { col: 8, row: 12 },
+    { col: 14, row: 12 },
+    { col: 23, row: 12 },
+    { col: 27, row: 12 },
+    { col: 27, row: 15 },
 ];
 
 // Function to generate a random direction for movement
@@ -25,16 +37,17 @@ const getRandomDirection = () => {
 };
 
 const getRandomBombPlacement = () => {
+    const randomIndex = Math.floor(Math.random() * bombsCoordinates.length);
     return {
-        col: Math.floor(Math.random() * 10) - 5,
-        row: Math.floor(Math.random() * 10) - 5,
+        col: bombsCoordinates[randomIndex].col,
+        row: bombsCoordinates[randomIndex].row,
     };
 };
 
 let clientCount = 0;
 
 // Function to create a new player client
-const createClient = () => {
+const createClient = (index) => {
     const socket = io(URL, { transports: ["websocket"] });
     const socketId = uuidv4(); // Generate playerId
 
@@ -51,10 +64,12 @@ const createClient = () => {
     socket.on("connect", () => {
         console.log(`Player ${socketId} connected!`);
 
+        console.log(" clientCount:", clientCount);
+
         // Player updates user socket id
         socket.emit(
             "updateUserSocketId",
-            { email: emails[clientCount], socket_id: socketId },
+            { email: emails[index], socket_id: socketId },
             (response) => {
                 console.log("Response from server:", response);
             }
@@ -62,7 +77,7 @@ const createClient = () => {
 
         setTimeout(() => {
             // Player enters pending game
-            socket.emit("enter pending game", { gameId: GAMEID });
+            socket.emit("enter pending game", GAMEID);
         }, 5000);
 
         // Start sending position and bomb events every 500ms for 30 seconds
@@ -79,20 +94,22 @@ const createClient = () => {
                 });
 
                 currentBomb = getRandomBombPlacement();
+            }, MOVE_INTERVAL_MS);
 
+            const interval2 = setInterval(() => {
+                currentBomb = getRandomBombPlacement();
                 // Send bomb event
-                // socket.emit("create bomb", {
-                //     playerId: socketId,
-                //     gameId: GAMEID,
-                //     col: currentBomb.col,
-                //     row: currentBomb.row,
-                // });
-
-                console.log(`Player ${socketId} sent position & bomb!`);
-            }, EVENTS_INTERVAL_MS);
+                socket.emit("create bomb", {
+                    playerId: socketId,
+                    gameId: GAMEID,
+                    col: currentBomb.col,
+                    row: currentBomb.row,
+                });
+            }, BOMB_INTERVAL_MS);
             // Stop sending events after 30 seconds
             setTimeout(() => {
                 clearInterval(interval);
+                clearInterval(interval2);
                 console.log(
                     `Player ${socketId} stopped sending events after 30 seconds.`
                 );
@@ -106,16 +123,11 @@ const createClient = () => {
     });
 
     clientCount++;
-
-    // Keep creating clients until reaching TOTAL_CLIENTS
-    if (clientCount < TOTAL_CLIENTS) {
-        createClient(); // No delay between client creations
-    }
 };
 
 // Start creating clients
 for (let i = 0; i < TOTAL_CLIENTS; i++) {
-    createClient(); // Create 10 clients simultaneously
+    createClient(i); // Create 10 clients simultaneously
 }
 
 let lastReport = new Date().getTime();
