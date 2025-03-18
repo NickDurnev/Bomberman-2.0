@@ -147,7 +147,7 @@ const RestartGameModal = () => {
                                                         <TableCell>
                                                             {victims.length !==
                                                                 0 && (
-                                                                <div className="flex flex-row items-center justify-center">
+                                                                <div className="flex flex-row items-center justify-start">
                                                                     <AnimatedTooltip
                                                                         items={
                                                                             victims

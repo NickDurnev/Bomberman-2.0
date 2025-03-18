@@ -1,13 +1,14 @@
 const { io } = require("socket.io-client");
 const { v4: uuidv4 } = require("uuid");
 
+// const URL = "https://app.bomberman.click";
 const URL = "http://localhost:4000";
-const TOTAL_CLIENTS = 5;
+const TOTAL_CLIENTS = 10;
 const MOVE_INTERVAL_MS = 200;
 const BOMB_INTERVAL_MS = 500;
 const DURATION_MS = 60000; // Run the test for 30 seconds
 
-const GAMEID = "5f368858-437f-4a8f-8a88-c7e97bda0616";
+const GAMEID = "9c23f760-1a53-4dc9-9fc0-a5e3f2b37d8a";
 
 const emails = [
     "nikitaspec1@gmail.com",
@@ -15,6 +16,11 @@ const emails = [
     "nikitaspec3@gmail.com",
     "nikitaspec4@gmail.com",
     "nikitaspec5@gmail.com",
+    "nikitaspec6@gmail.com",
+    "nikitaspec7@gmail.com",
+    "nikitaspec8@gmail.com",
+    "nikitaspec9@gmail.com",
+    "nikitaspec10@gmail.com",
 ];
 
 const bombsCoordinates = [

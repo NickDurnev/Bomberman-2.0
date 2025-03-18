@@ -8,39 +8,39 @@ import {
 import { Button } from "@components/index";
 
 export const ThemeBtn = () => {
-    const [isDark, setIsDark] = useState(
-        getDataFromLocalStorage("theme") === "dark"
+    const [isLight, setIsLight] = useState(
+        getDataFromLocalStorage("theme") === "light"
     );
     const html = document.documentElement;
 
     useEffect(() => {
-        if (isDark) {
-            html.classList.add("dark");
-            addToLocalStorage({ key: "theme", value: "dark" });
-        } else {
+        if (isLight) {
             html.classList.remove("dark");
             addToLocalStorage({ key: "theme", value: "light" });
+        } else {
+            html.classList.add("dark");
+            addToLocalStorage({ key: "theme", value: "dark" });
         }
-    }, [isDark]);
+    }, [isLight]);
 
     return (
         <Button
             icon={
-                isDark ? (
-                    <IoSunny
-                        size={30}
-                        color="#ddd991"
-                        className="motion-preset-pop motion-loop-once"
-                    />
-                ) : (
+                isLight ? (
                     <FaMoon
                         size={30}
                         color="#e2e1e1"
                         className="motion-preset-pop motion-loop-once"
                     />
+                ) : (
+                    <IoSunny
+                        size={30}
+                        color="#ddd991"
+                        className="motion-preset-pop motion-loop-once"
+                    />
                 )
             }
-            onClick={() => setIsDark((prev) => !prev)}
+            onClick={() => setIsLight((prev) => !prev)}
             className="rounded-full p-2"
         />
     );
