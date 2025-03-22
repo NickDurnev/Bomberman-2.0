@@ -3,12 +3,12 @@ const { v4: uuidv4 } = require("uuid");
 
 // const URL = "https://app.bomberman.click";
 const URL = "http://localhost:4000";
-const TOTAL_CLIENTS = 10;
+const TOTAL_CLIENTS = 12;
 const MOVE_INTERVAL_MS = 200;
 const BOMB_INTERVAL_MS = 500;
 const DURATION_MS = 60000; // Run the test for 30 seconds
 
-const GAMEID = "9c23f760-1a53-4dc9-9fc0-a5e3f2b37d8a";
+const GAMEID = "cc5b22f5-9185-438a-936e-44ffa31a39be";
 
 const emails = [
     "nikitaspec1@gmail.com",
@@ -21,6 +21,10 @@ const emails = [
     "nikitaspec8@gmail.com",
     "nikitaspec9@gmail.com",
     "nikitaspec10@gmail.com",
+    "nikitaspec11@gmail.com",
+    "nikitaspec12@gmail.com",
+    // "nikitaspec13@gmail.com",
+    // "nikitaspec14@gmail.com",
 ];
 
 const bombsCoordinates = [
@@ -227,10 +231,28 @@ const bombsCoordinates = [
 ];
 
 // Function to generate a random direction for movement
-const getRandomDirection = () => {
+const getRandomDirection = (currentPosition) => {
+    // Define movement step size (smaller for smoother movement)
+    const STEP_SIZE = 20;
+
+    // Generate random angle between 0 and 2π
+    const angle = Math.random() * 2 * Math.PI;
+
+    // Calculate new position based on angle and step size
+    const newX = currentPosition.x + Math.cos(angle) * STEP_SIZE;
+    const newY = currentPosition.y + Math.sin(angle) * STEP_SIZE;
+
+    // Ensure players stay within bounds (assuming game area is 1000x1000)
+    const BOUNDS = {
+        minX: 0,
+        maxX: 1000,
+        minY: 0,
+        maxY: 1000,
+    };
+
     return {
-        x: Math.floor(Math.random() * (500 - 400 + 1)) + 400, // Random number between 400 and 500
-        y: Math.floor(Math.random() * (500 - 400 + 1)) + 400, // Random number between 400 and 500
+        x: Math.max(BOUNDS.minX, Math.min(BOUNDS.maxX, newX)),
+        y: Math.max(BOUNDS.minY, Math.min(BOUNDS.maxY, newY)),
     };
 };
 
@@ -247,9 +269,14 @@ let clientCount = 0;
 // Function to create a new player client
 const createClient = (index) => {
     const socket = io(URL, { transports: ["websocket"] });
-    const socketId = uuidv4(); // Generate playerId
+    const socketId = uuidv4();
 
     let currentPosition = {
+        x: 500,
+        y: 500,
+    };
+
+    let previousPosition = {
         x: 500,
         y: 500,
     };
@@ -259,12 +286,18 @@ const createClient = (index) => {
         row: 5,
     };
 
+    // Add movement state
+    let isMoving = false;
+    let lastMoveTime = Date.now();
+    let stuckCounter = 0;
+    const STUCK_THRESHOLD = 3; // Number of attempts before considering player stuck
+    const MIN_MOVEMENT_DISTANCE = 5; // Minimum distance to consider as movement
+
     socket.on("connect", () => {
         console.log(`Player ${socketId} connected!`);
 
         console.log(" clientCount:", clientCount);
 
-        // Player updates user socket id
         socket.emit(
             "updateUserSocketId",
             { email: emails[index], socket_id: socketId },
@@ -274,22 +307,65 @@ const createClient = (index) => {
         );
 
         setTimeout(() => {
-            // Player enters pending game
             socket.emit("enter pending game", GAMEID);
         }, 5000);
 
-        // Start sending position and bomb events every 500ms for 30 seconds
         setTimeout(() => {
             const startTime = Date.now();
             const interval = setInterval(() => {
-                currentPosition = getRandomDirection();
-                // Send player position update
-                socket.emit("update player position", {
-                    playerId: socketId,
-                    gameId: GAMEID,
-                    x: currentPosition.x,
-                    y: currentPosition.y,
-                });
+                const now = Date.now();
+                // Only move if enough time has passed since last move
+                if (now - lastMoveTime >= MOVE_INTERVAL_MS) {
+                    // Randomly decide if player should move or stop
+                    isMoving = Math.random() > 0.3; // 70% chance to move
+
+                    if (isMoving) {
+                        // Calculate distance moved since last position
+                        const distanceMoved = Math.sqrt(
+                            Math.pow(
+                                currentPosition.x - previousPosition.x,
+                                2
+                            ) +
+                                Math.pow(
+                                    currentPosition.y - previousPosition.y,
+                                    2
+                                )
+                        );
+
+                        // If player hasn't moved significantly, increment stuck counter
+                        if (distanceMoved < MIN_MOVEMENT_DISTANCE) {
+                            stuckCounter++;
+                            if (stuckCounter >= STUCK_THRESHOLD) {
+                                // Force a new direction by adding a random offset to current position
+                                const randomOffset = {
+                                    x: (Math.random() - 0.5) * 100,
+                                    y: (Math.random() - 0.5) * 100,
+                                };
+                                currentPosition = {
+                                    x: currentPosition.x + randomOffset.x,
+                                    y: currentPosition.y + randomOffset.y,
+                                };
+                                stuckCounter = 0;
+                            }
+                        } else {
+                            stuckCounter = 0;
+                        }
+
+                        // Update previous position before getting new direction
+                        previousPosition = { ...currentPosition };
+
+                        // Get new direction
+                        currentPosition = getRandomDirection(currentPosition);
+
+                        socket.emit("update player position", {
+                            playerId: socketId,
+                            gameId: GAMEID,
+                            x: currentPosition.x,
+                            y: currentPosition.y,
+                        });
+                    }
+                    lastMoveTime = now;
+                }
             }, MOVE_INTERVAL_MS);
 
             const interval2 = setInterval(() => {

@@ -59,9 +59,11 @@ const PlayerWinModal = () => {
                                         colors={["#8852AC"]}
                                     />
                                 </h3>
-                                <h4 className="text-2xl font-bold tracking-wider text-center">
-                                    Eliminated:
-                                </h4>
+                                {victims.length !== 0 && (
+                                    <h4 className="text-2xl font-bold tracking-wider text-center">
+                                        Eliminated:
+                                    </h4>
+                                )}
                                 <div className="flex flex-row items-center justify-center mb-10 w-full">
                                     {victims.length !== 0 && (
                                         <AnimatedTooltip

@@ -207,7 +207,7 @@ const RestartGameModal = () => {
                                     animated
                                     animatedIcon={"💣"}
                                     onClick={startTimer}
-                                    // disabled={!canStartGame}
+                                    disabled={!canStartGame}
                                 />
                                 <Button
                                     text="Main Menu"
