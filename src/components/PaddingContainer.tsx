@@ -9,6 +9,10 @@ export const PaddingContainer = ({
     useEffect(() => {
         const html = document.documentElement;
         const theme = getDataFromLocalStorage("theme");
+        if (!theme) {
+            html.classList.add("dark");
+            return;
+        }
         if (theme === "dark") {
             html.classList.add("dark");
         } else {

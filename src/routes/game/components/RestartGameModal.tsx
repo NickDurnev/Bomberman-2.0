@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import clientSocket from "@utils/socket";
@@ -104,6 +104,10 @@ const RestartGameModal = () => {
     const players = gameInfo ? Object.values(gameInfo.players) : [];
     const canStartGame = players.length > 1;
 
+    const getRandomKillPhrase = useCallback(() => {
+        return getRandomItem(noKillPhrases);
+    }, []);
+
     return (
         <div className="py-40  flex items-center justify-center">
             <Modal>
@@ -143,7 +147,7 @@ const RestartGameModal = () => {
                                                         <TableCell>
                                                             {victims.length !==
                                                                 0 && (
-                                                                <div className="flex flex-row items-center justify-center">
+                                                                <div className="flex flex-row items-center justify-start">
                                                                     <AnimatedTooltip
                                                                         items={
                                                                             victims
@@ -156,9 +160,7 @@ const RestartGameModal = () => {
                                                             )}
                                                             {victims.length ===
                                                                 0 &&
-                                                                getRandomItem(
-                                                                    noKillPhrases
-                                                                )}
+                                                                getRandomKillPhrase()}
                                                         </TableCell>
                                                     </TableRow>
                                                 );
@@ -205,7 +207,7 @@ const RestartGameModal = () => {
                                     animated
                                     animatedIcon={"💣"}
                                     onClick={startTimer}
-                                    // disabled={!canStartGame}
+                                    disabled={!canStartGame}
                                 />
                                 <Button
                                     text="Main Menu"

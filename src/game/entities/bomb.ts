@@ -30,6 +30,7 @@ export class Bomb extends Phaser.GameObjects.Sprite {
 
         // Enable physics
         this.game.physics.add.existing(this);
+        this.setDepth(10);
         this.getBody().setSize(TILE_SIZE - 8, TILE_SIZE - 8);
 
         this.getBody().setImmovable(true);

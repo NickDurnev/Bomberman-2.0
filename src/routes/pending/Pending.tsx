@@ -106,7 +106,7 @@ const PendingGame = () => {
                             animated
                             animatedIcon={"💣"}
                             onClick={startTimer}
-                            // disabled={!canStartGame}
+                            disabled={!canStartGame}
                         />
                         <Button
                             text="Leave Game"
