@@ -1,14 +1,14 @@
 const { io } = require("socket.io-client");
 const { v4: uuidv4 } = require("uuid");
 
-// const URL = "https://app.bomberman.click";
-const URL = "http://localhost:4000";
+const URL = "https://app.bomberman.click";
+// const URL = "http://localhost:4000";
 const TOTAL_CLIENTS = 12;
 const MOVE_INTERVAL_MS = 200;
 const BOMB_INTERVAL_MS = 500;
 const DURATION_MS = 60000; // Run the test for 30 seconds
 
-const GAMEID = "cc5b22f5-9185-438a-936e-44ffa31a39be";
+const GAMEID = "c4ec72af-c471-45d6-b00f-b5650fb2fecf";
 
 const emails = [
     "nikitaspec1@gmail.com",
