@@ -14,42 +14,10 @@ class Preload extends Phaser.Scene {
         // Create the loading bar that fills as assets are loaded
         const progressBar = this.add.rectangle(512 - 230, 384, 4, 28, 0xffffff);
 
-        const loadQueue: Array<{ id: string; skin: string }> = [];
-        let activeRequests = 0;
-        const MAX_CONCURRENT_REQUESTS = 1;
-
-        const processQueue = (scene: Phaser.Scene) => {
-            if (
-                activeRequests >= MAX_CONCURRENT_REQUESTS ||
-                loadQueue.length === 0
-            ) {
-                return;
-            }
-
-            const nextItem = loadQueue.shift();
-
-            // Ensure nextItem is defined before accessing its properties
-            if (nextItem && !activeRequests) {
-                const { id, skin } = nextItem;
-
-                activeRequests++;
-
-                scene.load.image(id, skin);
-                scene.load.once("complete", () => {
-                    activeRequests--;
-                    processQueue(scene); // Process the next item in the queue
-                });
-                scene.load.start();
-            }
-        };
-
-        // Add players to the load queue
+        // Load player skins directly
         game.players.forEach((player: any) => {
-            loadQueue.push({ id: player.id, skin: player.skin });
+            this.load.image(player.id, player.skin);
         });
-
-        // Start processing the queue
-        processQueue(this);
 
         // Update the progress bar width based on the load progress
         this.load.on("progress", (progress: number) => {
