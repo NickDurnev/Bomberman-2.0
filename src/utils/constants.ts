@@ -81,3 +81,10 @@ export const noKillPhrases = [
     "My aim is... a work in progress 🎯",
 ];
 
+export const BROWSERS = {
+    chrome: "chrome",
+    edge: "microsoftEdge",
+    safari: "safari",
+    other: "other",
+};
+
