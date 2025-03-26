@@ -64,7 +64,7 @@ const PendingGame = () => {
     };
 
     const players = gameInfo ? Object.values(gameInfo.players) : [];
-    const canStartGame = players.length > 1;
+    // const canStartGame = players.length > 1;
 
     return (
         <>
@@ -106,7 +106,7 @@ const PendingGame = () => {
                             animated
                             animatedIcon={"💣"}
                             onClick={startTimer}
-                            disabled={!canStartGame}
+                            // disabled={!canStartGame}
                         />
                         <Button
                             text="Leave Game"
