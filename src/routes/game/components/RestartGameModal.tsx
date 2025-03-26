@@ -102,7 +102,7 @@ const RestartGameModal = () => {
     };
 
     const players = gameInfo ? Object.values(gameInfo.players) : [];
-    const canStartGame = players.length > 1;
+    // const canStartGame = players.length > 1;
 
     const getRandomKillPhrase = useCallback(() => {
         return getRandomItem(noKillPhrases);
@@ -207,7 +207,7 @@ const RestartGameModal = () => {
                                     animated
                                     animatedIcon={"💣"}
                                     onClick={startTimer}
-                                    disabled={!canStartGame}
+                                    // disabled={!canStartGame}
                                 />
                                 <Button
                                     text="Main Menu"

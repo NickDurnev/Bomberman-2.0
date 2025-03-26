@@ -6,6 +6,11 @@ class Preload extends Phaser.Scene {
     }
 
     init(game: any) {
+        if (!game) {
+            console.error("No game data provided to Preload scene");
+            return;
+        }
+
         this.currentGame = game;
         // Draw a simple progress bar outline
         const progressBarOutline = this.add.rectangle(512, 384, 468, 32);
@@ -14,20 +19,33 @@ class Preload extends Phaser.Scene {
         // Create the loading bar that fills as assets are loaded
         const progressBar = this.add.rectangle(512 - 230, 384, 4, 28, 0xffffff);
 
-        // Load player skins directly
-        game.players.forEach((player: any) => {
-            this.load.image(player.id, player.skin);
-        });
+        // Load player skins directly, with proper checks
+        if (game.players && Array.isArray(game.players)) {
+            game.players.forEach((player: any) => {
+                if (player && player.id && player.skin) {
+                    this.load.image(player.id, player.skin);
+                } else {
+                    console.warn("Invalid player data:", player);
+                }
+            });
+        } else {
+            console.warn("No valid players array in game data");
+        }
 
         // Update the progress bar width based on the load progress
         this.load.on("progress", (progress: number) => {
             progressBar.width = 4 + 460 * progress;
         });
+
+        // Add error handling for load failures
+        this.load.on("loaderror", (file: any) => {
+            console.error("Failed to load asset:", file.key);
+        });
+
         this.load.start();
     }
 
     preload() {
-        console.log("PRELOAD");
         // Set the base path for loading assets
         this.load.baseURL = "/";
 

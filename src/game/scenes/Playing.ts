@@ -59,60 +59,71 @@ class Playing extends Phaser.Scene {
     }
 
     update() {
-        this.physics.collide(this.player, this.blockLayer);
-        // this.physics.collide(this.player, this.enemies);
-        this.physics.collide(this.player, this.bombs);
+        // Only set up collisions if the player exists and is active
+        if (this.player && this.player.active) {
+            this.physics.collide(this.player, this.blockLayer);
+            this.physics.collide(this.player, this.bombs);
+        }
 
-        this.player.update();
+        // Update player if it exists
+        if (this.player) {
+            this.player.update();
+        }
 
-        this.physics.overlap(
-            this.player,
-            this.spoils,
-            (obj1: any, obj2: any) => {
-                if (obj1 instanceof Player && obj2 instanceof Spoil) {
-                    this.onPlayerVsSpoil(obj1, obj2);
-                }
-            },
-            undefined,
-            this
-        );
+        // Set up overlaps only if the player exists and is active
+        if (this.player && this.player.active) {
+            this.physics.overlap(
+                this.player,
+                this.spoils,
+                (obj1: any, obj2: any) => {
+                    if (obj1 instanceof Player && obj2 instanceof Spoil) {
+                        this.onPlayerVsSpoil(obj1, obj2);
+                    }
+                },
+                undefined,
+                this
+            );
 
-        this.physics.overlap(
-            this.player,
-            this.portals,
-            (obj1: any, obj2: any) => {
-                if (obj1 instanceof Player && obj2 instanceof Portal) {
-                    this.onPlayerVsPortal(obj1, obj2);
-                }
-            },
-            undefined,
-            this
-        );
+            this.physics.overlap(
+                this.player,
+                this.portals,
+                (obj1: any, obj2: any) => {
+                    if (obj1 instanceof Player && obj2 instanceof Portal) {
+                        this.onPlayerVsPortal(obj1, obj2);
+                    }
+                },
+                undefined,
+                this
+            );
 
-        this.physics.overlap(
-            this.bombs,
-            this.blasts,
-            (obj1: any, obj2: any) => {
-                if (obj1 instanceof Bomb && obj2 instanceof FireBlast) {
-                    this.onBombVsBlast(obj1);
-                }
-            },
-            undefined,
-            this
-        );
+            this.physics.overlap(
+                this.player,
+                this.blasts,
+                (obj1: any, obj2: any) => {
+                    if (obj1 instanceof Player && obj2 instanceof FireBlast) {
+                        const playerId = obj2.getPlayerId();
+                        this.onPlayerVsBlast(obj1, playerId);
+                    }
+                },
+                undefined,
+                this
+            );
+        }
 
-        this.physics.overlap(
-            this.player,
-            this.blasts,
-            (obj1: any, obj2: any) => {
-                if (obj1 instanceof Player && obj2 instanceof FireBlast) {
-                    const playerId = obj2.getPlayerId();
-                    this.onPlayerVsBlast(obj1, playerId);
-                }
-            },
-            undefined,
-            this
-        );
+        // Set up bomb-blast overlap if both groups exist
+        if (this.bombs && this.blasts) {
+            this.physics.overlap(
+                this.bombs,
+                this.blasts,
+                (obj1: any, obj2: any) => {
+                    if (obj1 instanceof Bomb && obj2 instanceof FireBlast) {
+                        this.onBombVsBlast(obj1);
+                    }
+                },
+                undefined,
+                this
+            );
+        }
     }
 
     public getGameId() {
