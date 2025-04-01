@@ -33,7 +33,6 @@ const SelectMap: React.FC = () => {
     const gameName = useGameStore((state: GameStore) => state.gameName);
 
     const confirmStageSelection = (data: MapData) => {
-        console.log(" MapData:", data);
         clientSocket.emit("create game", { ...data, gameName }, joinToNewGame);
     };
 

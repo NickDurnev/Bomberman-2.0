@@ -17,7 +17,7 @@ export const getUserStats = async (params: Record<string, string | number>) => {
         if (!res.ok) {
             return { total: 0, stats: [] };
         }
-        console.log("res:", res);
+
         const { data } = await res.json();
 
         return data;

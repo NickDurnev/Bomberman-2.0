@@ -1,4 +1,4 @@
-import { Physics } from "phaser";
+import Phaser from "phaser";
 import { TILE_SIZE, EXPLOSION_TIME } from "@utils/constants";
 
 type ConstructorParams = {
@@ -60,8 +60,8 @@ export class Bomb extends Phaser.GameObjects.Sprite {
         this.play("bomb");
     }
 
-    protected getBody(): Physics.Arcade.Body {
-        return this.body as Physics.Arcade.Body;
+    protected getBody(): Phaser.Physics.Arcade.Body {
+        return this.body as Phaser.Physics.Arcade.Body;
     }
 
     public getPlayerId(): string {

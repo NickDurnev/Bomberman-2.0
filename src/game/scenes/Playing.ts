@@ -134,7 +134,7 @@ class Playing extends Phaser.Scene {
         this.map = this.make.tilemap({
             key: this.currentGame.mapName ?? "default_map",
         });
-        console.log("this.map:", this.map);
+
         const tileset = this.map.addTilesetImage(TILESET);
 
         this.blockLayer = this.map.createLayer(LAYER, tileset!)!;
@@ -343,13 +343,6 @@ class Playing extends Phaser.Scene {
         this.tombstones.add(new Tombstone(this, tombstone));
         findAndDestroyById(tombstone.player_id, this.enemies);
     }
-
-    // private onPlayerWin(player?: Player) {
-    //     clientSocket.emit("leave game");
-    //     console.log(player);
-    //     this.game.destroy(true);
-    //     this.scene.start("GameOver");
-    // }
 
     private onEndGame() {
         clientSocket.emit("leave game");
