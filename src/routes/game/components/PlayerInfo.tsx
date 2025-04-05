@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { IoHomeOutline } from "react-icons/io5";
 import clsx from "clsx";
 import clientSocket from "@utils/socket";
 import { pickedSpoilSocketData } from "@utils/types";
@@ -17,6 +18,7 @@ import {
     STEP_SPEED,
     SOCKET_ID_KEY,
 } from "@utils/constants";
+import { Button } from "@components/index";
 
 const DEFAULT_INFO = [
     { title: "Speed", value: 1, color: "#37bf2e" },
@@ -38,6 +40,7 @@ const STORED_SOCKET_ID = getDataFromLocalStorage(SOCKET_ID_KEY);
 
 const PlayerInfo = () => {
     const { gameId } = useParams();
+    const navigate = useNavigate();
     const [info, setInfo] = useState(DEFAULT_INFO);
     const [lastInfo, setLastInfo] = useState<Info | null>(null);
     const [hidden, setHidden] = useState(false);
@@ -154,53 +157,67 @@ const PlayerInfo = () => {
         setTimeout(() => setLastInfo(null), 1500); // Remove from DOM after transition
     };
 
+    const backToMenu = () => {
+        clientSocket.emit("player disconnect", { player_id: STORED_SOCKET_ID });
+        navigate("/");
+    };
+
     return (
-        <ul className="flex gap-x-8 items-center p-2 absolute top-[34px] left-[140px]">
-            {info.map(({ title, value }) => (
-                <li
-                    key={title}
-                    className="flex items-center gap-x-2 bg-black transition motion-preset-pop motion-loop-once rounded-lg px-3 py-1"
-                >
-                    <div className="rounded-full">
-                        <img
-                            src={`/assets/${title.toLowerCase()}_icon.png`}
-                            alt={title}
-                            className="w-[25px] h-[23px] rounded-full object-contain"
-                        />
-                    </div>
-                    <p className="text-white text-sm">x{value}</p>
-                </li>
-            ))}
-            {lastInfo && (
-                <li
-                    key="notification"
-                    className={clsx(
-                        "flex items-center gap-x-2 bg-transparent transition-opacity duration-500 rounded-lg px-3",
-                        hidden ? "opacity-0" : "opacity-100"
-                    )}
-                >
-                    <p
-                        className="text-lg font-bold"
-                        style={{
-                            color: lastInfo.color,
-                        }}
+        <>
+            <ul className="flex gap-x-8 items-center p-2 absolute top-[34px] left-[140px]">
+                {info.map(({ title, value }) => (
+                    <li
+                        key={title}
+                        className="flex items-center gap-x-2 bg-black transition motion-preset-pop motion-loop-once rounded-lg px-3 py-1"
                     >
-                        +1 {lastInfo.title}
-                    </p>
-                </li>
-            )}
-            {isDead && (
-                <li
-                    key="notification"
-                    className={clsx(
-                        "flex items-center gap-x-2 bg-transparent transition-opacity duration-500 rounded-lg px-3",
-                        hidden ? "opacity-0" : "opacity-100"
-                    )}
-                >
-                    <p className="text-lg font-bold text-white">You died</p>
-                </li>
-            )}
-        </ul>
+                        <div className="rounded-full">
+                            <img
+                                src={`/assets/${title.toLowerCase()}_icon.png`}
+                                alt={title}
+                                className="w-[25px] h-[23px] rounded-full object-contain"
+                            />
+                        </div>
+                        <p className="text-white text-sm">x{value}</p>
+                    </li>
+                ))}
+                {lastInfo && (
+                    <li
+                        key="notification"
+                        className={clsx(
+                            "flex items-center gap-x-2 bg-transparent transition-opacity duration-500 rounded-lg px-3",
+                            hidden ? "opacity-0" : "opacity-100"
+                        )}
+                    >
+                        <p
+                            className="text-lg font-bold"
+                            style={{
+                                color: lastInfo.color,
+                            }}
+                        >
+                            +1 {lastInfo.title}
+                        </p>
+                    </li>
+                )}
+                {isDead && (
+                    <li
+                        key="notification"
+                        className={clsx(
+                            "flex items-center gap-x-2 bg-transparent transition-opacity duration-500 rounded-lg px-3",
+                            hidden ? "opacity-0" : "opacity-100"
+                        )}
+                    >
+                        <p className="text-lg font-bold text-white">You died</p>
+                    </li>
+                )}
+            </ul>
+            <div className="flex gap-x-8 items-center p-[6px] absolute top-[34px] right-[140px]">
+                <Button
+                    icon={<IoHomeOutline size={17} />}
+                    onClick={backToMenu}
+                    className="rounded-full p-2"
+                />
+            </div>
+        </>
     );
 };
 
