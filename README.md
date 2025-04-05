@@ -1,196 +1,135 @@
-# Phaser React TypeScript Template
+# Bomberman 2.0
 
-This is a Phaser 3 project template that uses the React framework and Vite for bundling. It includes a bridge for React to Phaser game communication, hot-reloading for quick development workflow and scripts to generate production-ready builds.
+A modern web-based multiplayer remake of the classic Bomberman game, built with Phaser 3, React, TypeScript, and Socket.IO.
 
-**[This Template is also available as a JavaScript version.](https://github.com/phaserjs/template-react)**
+![Bomberman 2.0 Logo](public/assets/bomb_logo.png)
 
-### Versions
+## Overview
 
-This template has been updated for:
+Bomberman 2.0 is a real-time multiplayer game where players navigate a grid-based map, placing bombs to destroy obstacles and eliminate opponents. The last player standing wins the match!
 
-- [Phaser 3.80.1](https://github.com/phaserjs/phaser)
-- [React 18.2.0](https://github.com/facebook/react)
-- [Vite 5.1.4](https://github.com/vitejs/vite)
-- [TypeScript 5.3.3](https://github.com/microsoft/TypeScript)
+### Key Features
 
-![screenshot](screenshot.png)
+-   **Multiplayer Gameplay**: Play with friends in real-time using Socket.IO for communication
+-   **Classic Mechanics**: Place bombs, collect power-ups, and be the last one standing
+-   **Modern Tech Stack**: Built with Phaser 3, React, TypeScript, and TailwindCSS
+-   **Responsive Design**: Play on desktop or mobile devices
+-   **User Authentication**: Sign in with Auth0 to save your progress and stats
 
-## Requirements
+## Game Mechanics
 
-[Node.js](https://nodejs.org) is required to install dependencies and run scripts via `npm`.
+-   **Movement**: Navigate the grid-based map with arrow keys or WASD
+-   **Bomb Placement**: Press spacebar to place bombs
+-   **Power-ups**:
 
-## Available Commands
+    -   Bomb Count: Increase the number of bombs you can place simultaneously
+    -   Bomb Power: Increase the blast radius of your bombs
+    -   Speed: Move faster around the map
+    -   Delay: Reduce the time between bomb placements
 
-| Command | Description |
-|---------|-------------|
-| `npm install` | Install project dependencies |
-| `npm run dev` | Launch a development web server |
-| `npm run build` | Create a production build in the `dist` folder |
+-   **Map Objects**:
+    -   Destructible walls: Can be destroyed by bombs to reveal paths or power-ups
+    -   Indestructible walls: Form the permanent structure of the map
+    -   Portals: Teleport to another location on the map
 
-## Writing Code
+## Tech Stack
 
-After cloning the repo, run `npm install` from your project directory. Then, you can start the local development server by running `npm run dev`.
+-   **Frontend**:
 
-The local development server runs on `http://localhost:8080` by default. Please see the Vite documentation if you wish to change this, or add SSL support.
+    -   React 18 with TypeScript
+    -   TailwindCSS for styling
+    -   Zustand for state management
+    -   React Router for navigation
+    -   Auth0 for authentication
 
-Once the server is running you can edit any of the files in the `src` folder. Vite will automatically recompile your code and then reload the browser.
+-   **Game Engine**:
 
-## Template Project Structure
+    -   Phaser 3.80.1 - A powerful HTML5 game framework
+    -   Custom entity system for game objects
+    -   Scene management for game states
 
-We have provided a default project structure to get you started. This is as follows:
+-   **Networking**:
 
-- `index.html` - A basic HTML page to contain the game.
-- `src` - Contains the React client source code.
-- `src/main.tsx` - The main **React** entry point. This bootstraps the React application.
-- `src/vite-env.d.ts` - Global TypeScript declarations, provide types information.
-- `src/App.tsx` - The main React component.
-- `src/game/PhaserGame.tsx` - The React component that initializes the Phaser Game and serve like a bridge between React and Phaser.
-- `src/game/EventBus.ts` - A simple event bus to communicate between React and Phaser.
-- `src/game` - Contains the game source code.
-- `src/game/main.tsx` - The main **game** entry point. This contains the game configuration and start the game.
-- `src/game/scenes/` - The Phaser Scenes are in this folder.
-- `public/style.css` - Some simple CSS rules to help with page layout.
-- `public/assets` - Contains the static assets used by the game.
+    -   Socket.IO for real-time communication
+    -   Custom event handling for game synchronization
 
-## React Bridge
+-   **Build Tools**:
+    -   Vite for fast development and optimized builds
+    -   ESLint and TypeScript for code quality
 
-The `PhaserGame.tsx` component is the bridge between React and Phaser. It initializes the Phaser game and passes events between the two.
+## Project Structure
 
-To communicate between React and Phaser, you can use the **EventBus.js** file. This is a simple event bus that allows you to emit and listen for events from both React and Phaser.
+-   `src/game` - Contains the game source code
 
-```js
-// In React
-import { EventBus } from './EventBus';
+    -   `entities/` - Game objects like Player, Bombs, Explosions, etc.
+    -   `scenes/` - Phaser scenes (Preload, Playing, GameOver)
+    -   `main.ts` - Game configuration and initialization
+    -   `EventBus.ts` - Communication between React and Phaser
+    -   `PhaserGame.tsx` - React component that wraps the Phaser game
 
-// Emit an event
-EventBus.emit('event-name', data);
+-   `public/assets` - Game assets (sprites, sounds, maps)
 
-// In Phaser
-// Listen for an event
-EventBus.on('event-name', (data) => {
-    // Do something with the data
-});
+## Getting Started
+
+### Prerequisites
+
+-   Node.js 16+ and npm
+
+### Installation
+
+1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/yourusername/bomberman-2.0.git
+    cd bomberman-2.0
+    ```
+
+2. Install dependencies:
+
+    ```bash
+    npm install
+    ```
+
+3. Start the development server:
+
+    ```bash
+    npm run dev
+    ```
+
+4. Open your browser and navigate to `http://localhost:8080`
+
+### Building for Production
+
+```bash
+npm run build
 ```
 
-In addition to this, the `PhaserGame` component exposes the Phaser game instance along with the most recently active Phaser Scene using React forwardRef.
+The production-ready files will be in the `dist` directory.
 
-Once exposed, you can access them like any regular react reference.
+## Multiplayer Setup
 
-## Phaser Scene Handling
+The game connects to a Socket.IO server for multiplayer functionality. For a full experience, you'll need to set up the server component (not included in this repository).
 
-In Phaser, the Scene is the lifeblood of your game. It is where you sprites, game logic and all of the Phaser systems live. You can also have multiple scenes running at the same time. This template provides a way to obtain the current active scene from React.
+## Debugging
 
-You can get the current Phaser Scene from the component event `"current-active-scene"`. In order to do this, you need to emit the event `"current-scene-ready"` from the Phaser Scene class. This event should be emitted when the scene is ready to be used. You can see this done in all of the Scenes in our template.
+Use the browser console to view debug messages. The game includes error handling for common issues like asset loading failures and missing player data.
 
-**Important**: When you add a new Scene to your game, make sure you expose to React by emitting the `"current-scene-ready"` event via the `EventBus`, like this:
+## Contributing
 
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-```ts
-class MyScene extends Phaser.Scene
-{
-    constructor ()
-    {
-        super('MyScene');
-    }
+## License
 
-    create ()
-    {
-        // Your Game Objects and logic here
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-        // At the end of create method:
-        EventBus.emit('current-scene-ready', this);
-    }
-}
-```
+## Acknowledgments
 
-You don't have to emit this event if you don't need to access the specific scene from React. Also, you don't have to emit it at the end of `create`, you can emit it at any point. For example, should your Scene be waiting for a network request or API call to complete, it could emit the event once that data is ready.
+-   Original Bomberman game by Hudson Soft
+-   Phaser 3 game framework
+-   React and the entire frontend ecosystem
+-   The open-source community for inspiration and resources
 
-### React Component Example
+---
 
-Here's an example of how to access Phaser data for use in a React Component:
+© 2024 Bomberman 2.0
 
-```ts
-import { useRef } from 'react';
-import { IRefPhaserGame } from "./game/PhaserGame";
-
-// In a parent component
-const ReactComponent = () => {
-
-    const phaserRef = useRef<IRefPhaserGame>(); // you can access to this ref from phaserRef.current
-
-    const onCurrentActiveScene = (scene: Phaser.Scene) => {
-    
-        // This is invoked
-
-    }
-
-    return (
-        ...
-        <PhaserGame ref={phaserRef} currentActiveScene={onCurrentActiveScene} />
-        ...
-    );
-
-}
-```
-
-In the code above, you can get a reference to the current Phaser Game instance and the current Scene by creating a reference with `useRef()` and assign to PhaserGame component.
-
-From this state reference, the game instance is available via `phaserRef.current.game` and the most recently active Scene via `phaserRef.current.scene`.
-
-The `onCurrentActiveScene` callback will also be invoked whenever the the Phaser Scene changes, as long as you emit the event via the EventBus, as outlined above.
-
-## Handling Assets
-
-Vite supports loading assets via JavaScript module `import` statements.
-
-This template provides support for both embedding assets and also loading them from a static folder. To embed an asset, you can import it at the top of the JavaScript file you are using it in:
-
-```js
-import logoImg from './assets/logo.png'
-```
-
-To load static files such as audio files, videos, etc place them into the `public/assets` folder. Then you can use this path in the Loader calls within Phaser:
-
-```js
-preload ()
-{
-    //  This is an example of an imported bundled image.
-    //  Remember to import it at the top of this file
-    this.load.image('logo', logoImg);
-
-    //  This is an example of loading a static image
-    //  from the public/assets folder:
-    this.load.image('background', 'assets/bg.png');
-}
-```
-
-When you issue the `npm run build` command, all static assets are automatically copied to the `dist/assets` folder.
-
-## Deploying to Production
-
-After you run the `npm run build` command, your code will be built into a single bundle and saved to the `dist` folder, along with any other assets your project imported, or stored in the public assets folder.
-
-In order to deploy your game, you will need to upload *all* of the contents of the `dist` folder to a public facing web server.
-
-## Customizing the Template
-
-### Vite
-
-If you want to customize your build, such as adding plugin (i.e. for loading CSS or fonts), you can modify the `vite/config.*.mjs` file for cross-project changes, or you can modify and/or create new configuration files and target them in specific npm tasks inside of `package.json`. Please see the [Vite documentation](https://vitejs.dev/) for more information.
-
-## Join the Phaser Community!
-
-We love to see what developers like you create with Phaser! It really motivates us to keep improving. So please join our community and show-off your work 😄
-
-**Visit:** The [Phaser website](https://phaser.io) and follow on [Phaser Twitter](https://twitter.com/phaser_)<br />
-**Play:** Some of the amazing games [#madewithphaser](https://twitter.com/search?q=%23madewithphaser&src=typed_query&f=live)<br />
-**Learn:** [API Docs](https://newdocs.phaser.io), [Support Forum](https://phaser.discourse.group/) and [StackOverflow](https://stackoverflow.com/questions/tagged/phaser-framework)<br />
-**Discord:** Join us on [Discord](https://discord.gg/phaser)<br />
-**Code:** 2000+ [Examples](https://labs.phaser.io)<br />
-**Read:** The [Phaser World](https://phaser.io/community/newsletter) Newsletter<br />
-
-Created by [Phaser Studio](mailto:support@phaser.io). Powered by coffee, anime, pixels and love.
-
-The Phaser logo and characters are &copy; 2011 - 2024 Phaser Studio Inc.
-
-All rights reserved.

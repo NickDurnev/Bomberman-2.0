@@ -38,7 +38,6 @@ const GameForm = () => {
     };
 
     const handleHostGame = ({ isAvailable }: { isAvailable: boolean }) => {
-        console.log("isAvailable:", isAvailable);
         if (isAvailable) {
             clientSocket.emit("leave lobby");
             navigate("/map");

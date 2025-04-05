@@ -46,7 +46,7 @@ const RestartGameModal = () => {
         if (prevGameInfo && newGameId) {
             setTimeout(() => {
                 clientSocket.emit("enter pending game", newGameId);
-            }, 200);
+            }, 1000);
             const data = JSON.parse(prevGameInfo);
             setPrevGameInfo(data);
             setGameId(newGameId);

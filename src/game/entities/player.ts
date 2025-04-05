@@ -180,7 +180,6 @@ export class Player extends Phaser.GameObjects.Sprite {
             if (now > this.lastBombTime) {
                 const delay =
                     100 + ((MAX_SPEED - this.speed) / STEP_SPEED) * 10;
-                console.log(" delay:", delay);
                 this.lastBombTime = now + delay;
 
                 clientSocket.emit("create bomb", {

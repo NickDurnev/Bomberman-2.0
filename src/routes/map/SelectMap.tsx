@@ -33,7 +33,6 @@ const SelectMap: React.FC = () => {
     const gameName = useGameStore((state: GameStore) => state.gameName);
 
     const confirmStageSelection = (data: MapData) => {
-        console.log(" MapData:", data);
         clientSocket.emit("create game", { ...data, gameName }, joinToNewGame);
     };
 
@@ -47,7 +46,7 @@ const SelectMap: React.FC = () => {
         onSelect: (data: MapData) => void
     ) => {
         return (
-            <div className="py-10">
+            <div className="py-10 overflow-hidden">
                 <div className="flex flex-col gap-y-5 items-start justify-start bg-[#F5F5F7] dark:bg-neutral-800 p-8 md:p-14 text-left rounded-3xl mb-4">
                     <p className="text-neutral-700 dark:text-neutral-200 text-base md:text-2xl font-bold max-w-3xl">
                         Players: 1 - {card.maxPlayers}
@@ -75,7 +74,7 @@ const SelectMap: React.FC = () => {
     return (
         <>
             <UserBar />
-            <div className="w-full h-full py-4">
+            <div className="w-full h-full py-4 overflow-x-hidden">
                 <h2 className="max-w-7xl pl-14 mx-auto text-xl md:text-5xl font-bold text-neutral-800 dark:text-neutral-200 font-sans">
                     Select map
                 </h2>

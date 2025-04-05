@@ -46,13 +46,17 @@ const Menu = () => {
     }, [user]);
 
     const handleDisplayPendingGames = (availableGames: GameData[]) => {
+        if (availableGames.length) {
+            setSlotsWithGame((prev) => [
+                ...prev.filter((game) => {
+                    return !availableGames.some((g) => g?.id === game?.id);
+                }),
+                availableGames[availableGames.length - 1],
+            ]);
+        } else {
+            setSlotsWithGame([]);
+        }
         console.log("availableGames:", availableGames);
-        setSlotsWithGame((prev) => [
-            ...prev.filter((game) => {
-                return !availableGames.some((g) => g?.id === game?.id);
-            }),
-            availableGames[availableGames.length - 1],
-        ]);
     };
 
     const handleJoinGame = (game_id: string) => {

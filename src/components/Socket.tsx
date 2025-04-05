@@ -44,9 +44,7 @@ export const Socket = ({ children }: Props) => {
             socket.emit(
                 "updateUserSocketId",
                 { email: user?.email, socket_id: socketId },
-                (response: any) => {
-                    console.log("Response from server:", response);
-                }
+                () => {}
             );
         }
         function onDisconnect() {
