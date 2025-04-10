@@ -1,12 +1,12 @@
-# Bomberman 2.0
+# Bomberman
 
 A modern web-based multiplayer remake of the classic Bomberman game, built with Phaser 3, React, TypeScript, and Socket.IO.
 
-![Bomberman 2.0 Logo](public/assets/bomb_logo.png)
+![Bomberman Logo](public/assets/bomb_logo.png)
 
 ## Overview
 
-Bomberman 2.0 is a real-time multiplayer game where players navigate a grid-based map, placing bombs to destroy obstacles and eliminate opponents. The last player standing wins the match!
+Bomberman is a real-time multiplayer game where players navigate a grid-based map, placing bombs to destroy obstacles and eliminate opponents. The last player standing wins the match!
 
 ### Key Features
 
@@ -131,5 +131,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-© 2024 Bomberman 2.0
+© 2025 Bomberman
 
