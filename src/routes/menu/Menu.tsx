@@ -81,7 +81,7 @@ const Menu = () => {
             <UserBar />
             <div className="pt-20">
                 <TextGenerateEffect
-                    words="Bomberman 2.0"
+                    words="Bomberman"
                     duration={2.0}
                     className="text-8xl font-extrabold text-foreground tracking-wider text-center"
                 />

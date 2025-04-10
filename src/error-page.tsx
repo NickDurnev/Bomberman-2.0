@@ -1,7 +1,15 @@
-import { useRouteError } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate, useRouteError } from "react-router-dom";
 
 export default function ErrorPage() {
     const error: any = useRouteError();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        setTimeout(() => {
+            navigate("/");
+        }, 3000);
+    }, []);
 
     return (
         <div className="h-screen flex flex-col items-center justify-center gap-y-5">
