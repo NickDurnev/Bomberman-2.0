@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import clientSocket from "@utils/socket";
 import { Player, PlayerWin, PlayerSlot } from "@utils/types";
-import { noKillPhrases } from "@utils/constants";
-import { getPlayerVictims, getRandomItem } from "@utils/utils";
+import { getPlayerVictims } from "@utils/utils";
 import {
     Modal,
     ModalContent,
@@ -73,7 +72,7 @@ const PlayerWinModal = () => {
                                     )}
                                     {victims.length === 0 && (
                                         <p className="text-xl font-semibold text-center">
-                                            {getRandomItem(noKillPhrases)}
+                                            {winner.noKillPhrase}
                                         </p>
                                     )}
                                 </div>

@@ -1,10 +1,9 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import clientSocket from "@utils/socket";
 import { EndGame, GameData as Game } from "@utils/types";
-import { noKillPhrases } from "@utils/constants";
-import { getPlayerVictims, getRandomItem } from "@utils/utils";
+import { getPlayerVictims } from "@utils/utils";
 import {
     Button,
     Modal,
@@ -104,10 +103,6 @@ const RestartGameModal = () => {
     const players = gameInfo ? Object.values(gameInfo.players) : [];
     // const canStartGame = players.length > 1;
 
-    const getRandomKillPhrase = useCallback(() => {
-        return getRandomItem(noKillPhrases);
-    }, []);
-
     return (
         <div className="py-40  flex items-center justify-center">
             <Modal>
@@ -160,7 +155,7 @@ const RestartGameModal = () => {
                                                             )}
                                                             {victims.length ===
                                                                 0 &&
-                                                                getRandomKillPhrase()}
+                                                                player.noKillPhrase}
                                                         </TableCell>
                                                     </TableRow>
                                                 );
