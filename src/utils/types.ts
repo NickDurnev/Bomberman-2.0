@@ -75,6 +75,7 @@ export interface Player {
     };
     isAlive: boolean;
     isTop3: boolean;
+    noKillPhrase: string;
     power: number;
     kills: string[];
 }

@@ -69,18 +69,6 @@ export const colors = [
     "#604483",
 ];
 
-export const noKillPhrases = [
-    "I just tried to survive 🏃‍♂️",
-    "Just pacifist mode ☮️",
-    "I was busy looting 📦",
-    "Stealth is my playstyle 🕵️‍♂️",
-    "They all ran away from me! 😭",
-    "I spared them... for now 😈",
-    "Violence isn't always the answer 🤷‍♂️",
-    "I let my teammates handle it 💪",
-    "My aim is... a work in progress 🎯",
-];
-
 export const BROWSERS = {
     chrome: "chrome",
     edge: "microsoftEdge",
