@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Emoji } from "react-apple-emojis";
 
 import { GameStore } from "@utils/types";
 import clientSocket from "@utils/socket";
@@ -61,7 +62,7 @@ const GameForm = () => {
                 text="New Game"
                 onClick={checkGameName}
                 animated
-                animatedIcon={"🎮"}
+                animatedIcon={<Emoji name="video-game" width={20} />}
                 disabled={isBtnDisabled || !isAuthenticated}
             />
         </>

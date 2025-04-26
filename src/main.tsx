@@ -3,6 +3,8 @@ import { Toaster } from "sonner";
 import ReactDOM from "react-dom/client";
 import { Auth0Provider } from "@auth0/auth0-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { EmojiProvider, Emoji } from "react-apple-emojis";
+import emojiData from "react-apple-emojis/src/data.json";
 
 import { useBrowser } from "./hooks/use-browser";
 import ErrorPage from "./error-page";
@@ -91,7 +93,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <AuthProvider>
             <Socket>
                 <PaddingContainer>
-                    <RouterProvider router={router} />
+                    <EmojiProvider data={emojiData}>
+                        <RouterProvider router={router} />
+                    </EmojiProvider>
                 </PaddingContainer>
             </Socket>
         </AuthProvider>
@@ -106,4 +110,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         />
     </React.StrictMode>
 );
+
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { IoIosAlert } from "react-icons/io";
+import { Emoji } from "react-apple-emojis";
 
 import clientSocket from "@utils/socket";
 import {
@@ -64,7 +65,7 @@ const PendingGame = () => {
     };
 
     const players = gameInfo ? Object.values(gameInfo.players) : [];
-    // const canStartGame = players.length > 1;
+    const canStartGame = players.length > 1;
 
     return (
         <>
@@ -104,14 +105,14 @@ const PendingGame = () => {
                         <Button
                             text="Start Game"
                             animated
-                            animatedIcon={"💣"}
+                            animatedIcon={<Emoji name="bomb" width={20} />}
                             onClick={startTimer}
-                            // disabled={!canStartGame}
+                            disabled={!canStartGame}
                         />
                         <Button
                             text="Leave Game"
                             animated
-                            animatedIcon={"🚪"}
+                            animatedIcon={<Emoji name="door" width={20} />}
                             onClick={leaveGameAction}
                         />
                     </div>

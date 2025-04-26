@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import { Emoji } from "react-apple-emojis";
+
 import clientSocket from "@utils/socket";
 import { EndGame, GameData as Game } from "@utils/types";
 import { getPlayerVictims } from "@utils/utils";
@@ -101,7 +103,7 @@ const RestartGameModal = () => {
     };
 
     const players = gameInfo ? Object.values(gameInfo.players) : [];
-    // const canStartGame = players.length > 1;
+    const canStartGame = players.length > 1;
 
     return (
         <div className="py-40  flex items-center justify-center">
@@ -200,14 +202,18 @@ const RestartGameModal = () => {
                                 <Button
                                     text="Restart Game"
                                     animated
-                                    animatedIcon={"💣"}
+                                    animatedIcon={
+                                        <Emoji name="bomb" width={20} />
+                                    }
                                     onClick={startTimer}
-                                    // disabled={!canStartGame}
+                                    disabled={!canStartGame}
                                 />
                                 <Button
                                     text="Main Menu"
                                     animated
-                                    animatedIcon={"🚪"}
+                                    animatedIcon={
+                                        <Emoji name="door" width={20} />
+                                    }
                                     onClick={leaveGameAction}
                                 />
                             </div>

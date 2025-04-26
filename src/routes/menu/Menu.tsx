@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { Emoji } from "react-apple-emojis";
 
 import { GameData } from "@utils/types";
 import clientSocket from "@utils/socket";
@@ -92,7 +93,7 @@ const Menu = () => {
                     text="Stats"
                     onClick={() => navigate("/stats")}
                     animated
-                    animatedIcon={"📊"}
+                    animatedIcon={<Emoji name="bar-chart" width={20} />}
                 />
                 <GameSlots data={slotsWithGame} onJoinGame={handleJoinGame} />
             </div>
