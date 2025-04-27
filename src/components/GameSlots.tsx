@@ -1,21 +1,26 @@
 import { useAuth0 } from "@auth0/auth0-react";
+import { motion } from "framer-motion";
+import { Emoji } from "react-apple-emojis";
+
 import { GameSlotsProps } from "@utils/types";
 import { colors } from "@utils/constants";
 import { getRandomItem } from "@utils/utils";
-import { motion } from "framer-motion";
 
 export function GameSlots({ data, onJoinGame }: GameSlotsProps) {
     const { isAuthenticated } = useAuth0();
 
     return (
         <div className="flex flex-col items-center justify-center">
-            <h4 className="text-lg md:text-2xl text-neutral-600 dark:text-neutral-100 font-bold text-center mb-8">
-                Find a game for{" "}
-                <span className="px-1 py-0.5 rounded-md bg-gray-100 dark:bg-neutral-800 dark:border-neutral-700 border border-gray-200">
-                    Fun
-                </span>{" "}
-                now! 💣
-            </h4>
+            <div className="flex items-start gap-x-2">
+                <h4 className="text-lg md:text-2xl text-neutral-600 dark:text-neutral-100 font-bold text-center mb-8">
+                    Find a game for{" "}
+                    <span className="px-1 py-0.5 rounded-md bg-gray-100 dark:bg-neutral-800 dark:border-neutral-700 border border-gray-200">
+                        Fun
+                    </span>{" "}
+                    now!
+                </h4>
+                <Emoji name="bomb" className="pt-2" width={20} />
+            </div>
             {isAuthenticated ? (
                 <div className="flex justify-center items-center">
                     {data?.map((game) => {
