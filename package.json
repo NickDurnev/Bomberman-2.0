@@ -24,7 +24,8 @@
         "dev": "vite --config vite/config.dev.mjs",
         "build": "vite build --config vite/config.prod.mjs",
         "start": "vite preview --config vite/config.prod.mjs --port 3000",
-        "test": "node workLoadTest.js"
+        "test": "node workLoadTest.js",
+        "prepare": "husky"
     },
     "dependencies": {
         "@auth0/auth0-react": "^2.2.4",
@@ -43,6 +44,7 @@
         "motion": "^12.0.6",
         "phaser": "^3.80.1",
         "phaser3-rex-plugins": "^1.80.10",
+        "prettier": "^3.5.3",
         "react": "^18.2.0",
         "react-apple-emojis": "^2.4.1",
         "react-countdown-circle-timer": "^3.2.1",
@@ -69,6 +71,7 @@
         "eslint": "^8.57.0",
         "eslint-plugin-react-hooks": "^4.6.2",
         "eslint-plugin-react-refresh": "^0.4.7",
+        "husky": "^9.1.7",
         "postcss": "^8.4.47",
         "tailwindcss": "^3.4.14",
         "terser": "^5.28.1",
