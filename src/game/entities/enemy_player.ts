@@ -28,6 +28,7 @@ export class EnemyPlayer extends Phaser.GameObjects.Sprite {
         // Enable physics on this object
         this.game.add.existing(this);
         this.game.physics.add.existing(this);
+        this.setDepth(9);
 
         setPlayerAvatar(this, id);
 
@@ -90,11 +91,10 @@ export class EnemyPlayer extends Phaser.GameObjects.Sprite {
             this.x,
             this.y - TILE_SIZE * 1.2,
             name,
-            style
+            style,
         );
 
         this.playerText.setX(this.x - this.playerText.width / 2);
-        this.playerText.setDepth(10);
+        this.playerText.setDepth(9);
     }
 }
-

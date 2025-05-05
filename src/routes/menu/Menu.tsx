@@ -37,7 +37,7 @@ const Menu = () => {
         return () => {
             clientSocket.off(
                 "display pending games",
-                handleDisplayPendingGames
+                handleDisplayPendingGames,
             );
         };
     }, [pathname]);
@@ -57,7 +57,6 @@ const Menu = () => {
         } else {
             setSlotsWithGame([]);
         }
-        console.log("availableGames:", availableGames);
     };
 
     const handleJoinGame = (game_id: string) => {
@@ -102,4 +101,3 @@ const Menu = () => {
 };
 
 export default Menu;
-
