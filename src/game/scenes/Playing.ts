@@ -20,6 +20,7 @@ import {
     findById,
     findAndDestroyByCoordinates,
     findAndDestroyById,
+    getIntersectionArea,
 } from "@utils/utils";
 import { getDataFromLocalStorage } from "@utils/local_storage";
 
@@ -81,7 +82,7 @@ class Playing extends Phaser.Scene {
                     }
                 },
                 undefined,
-                this
+                this,
             );
 
             this.physics.overlap(
@@ -93,7 +94,7 @@ class Playing extends Phaser.Scene {
                     }
                 },
                 undefined,
-                this
+                this,
             );
 
             this.physics.overlap(
@@ -101,12 +102,29 @@ class Playing extends Phaser.Scene {
                 this.blasts,
                 (obj1: any, obj2: any) => {
                     if (obj1 instanceof Player && obj2 instanceof FireBlast) {
-                        const playerId = obj2.getPlayerId();
-                        this.onPlayerVsBlast(obj1, playerId);
+                        const intersectionArea = getIntersectionArea(
+                            obj1 as any,
+                            obj2 as any,
+                        );
+
+                        if (
+                            obj1.body &&
+                            "width" in obj1.body &&
+                            "height" in obj1.body
+                        ) {
+                            const playerArea =
+                                obj1.body.width * obj1.body.height;
+
+                            // Only trigger if at least 10% of the player is overlapping
+                            if (intersectionArea >= playerArea / 10) {
+                                const playerId = obj2.getPlayerId();
+                                this.onPlayerVsBlast(obj1, playerId);
+                            }
+                        }
                     }
                 },
                 undefined,
-                this
+                this,
             );
         }
 
@@ -121,7 +139,7 @@ class Playing extends Phaser.Scene {
                     }
                 },
                 undefined,
-                this
+                this,
             );
         }
     }
@@ -151,7 +169,7 @@ class Playing extends Phaser.Scene {
 
     private createPlayers() {
         for (const player of Object.values(
-            this.currentGame.players
+            this.currentGame.players,
         ) as PlayerData[]) {
             const setup: PlayerConfig = {
                 game: this,
@@ -182,7 +200,7 @@ class Playing extends Phaser.Scene {
         clientSocket.on("show tombstone", this.onShowTombstone.bind(this));
         clientSocket.on(
             "player disconnect",
-            this.onPlayerDisconnect.bind(this)
+            this.onPlayerDisconnect.bind(this),
         );
     }
 
@@ -276,7 +294,7 @@ class Playing extends Phaser.Scene {
                 col,
                 row,
                 playerId,
-            })
+            }),
         );
     }
 
@@ -310,7 +328,7 @@ class Playing extends Phaser.Scene {
                     cell.col, // X-coordinate (column) in the tilemap
                     cell.row, // Y-coordinate (row) in the tilemap
                     true, // Optional: Recalculate faces after placement (set to true or false as needed)
-                    this.blockLayer // Specify the layer to place the tile in
+                    this.blockLayer, // Specify the layer to place the tile in
                 );
             }
         });
@@ -391,4 +409,3 @@ class Playing extends Phaser.Scene {
 }
 
 export default Playing;
-
