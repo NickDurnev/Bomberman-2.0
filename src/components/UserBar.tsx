@@ -75,7 +75,7 @@ export const UserBar = () => {
                                     }
                                     className="rounded-full p-2"
                                 />
-                                <Button
+                                {/* <Button
                                     imageUrl="/assets/github.svg"
                                     imageAlt="Star icon"
                                     onClick={() =>
@@ -86,7 +86,7 @@ export const UserBar = () => {
                                         })
                                     }
                                     className="rounded-full p-2"
-                                />
+                                /> */}
                             </>
                         )}
                     </>
@@ -95,4 +95,3 @@ export const UserBar = () => {
         </div>
     );
 };
-

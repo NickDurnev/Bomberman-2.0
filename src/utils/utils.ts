@@ -11,7 +11,7 @@ interface GameObject extends Phaser.GameObjects.GameObject {
 export const findByCoordinates = function (
     col: number,
     row: number,
-    entities: Phaser.GameObjects.Group
+    entities: Phaser.GameObjects.Group,
 ): GameObject | null {
     if (!entities) {
         return null;
@@ -31,7 +31,7 @@ export const findByCoordinates = function (
 export const findAndDestroyByCoordinates = function (
     col: number,
     row: number,
-    entities: Phaser.GameObjects.Group
+    entities: Phaser.GameObjects.Group,
 ): void {
     const entity = findByCoordinates(col, row, entities);
     if (!entity) {
@@ -43,7 +43,7 @@ export const findAndDestroyByCoordinates = function (
 
 export const findById = function (
     id: number | string,
-    entities: Phaser.GameObjects.Group
+    entities: Phaser.GameObjects.Group,
 ): GameObject | null {
     if (!entities) {
         return null;
@@ -60,12 +60,12 @@ export const findById = function (
 
 export const findAndDestroyById = function (
     id: number | string,
-    entities: Phaser.GameObjects.Group
+    entities: Phaser.GameObjects.Group,
 ): void {
     if (!entities || !(entities instanceof Phaser.GameObjects.Group)) {
         console.error(
             "Error: entities is undefined or not a Phaser.GameObjects.Group",
-            entities
+            entities,
         );
         return;
     }
@@ -120,7 +120,7 @@ export const setPlayerAvatar = (player: Player | EnemyPlayer, id: string) => {
         .setCircle(
             player.getBody().halfWidth,
             0,
-            player.getBody().halfHeight - player.getBody().halfWidth
+            player.getBody().halfHeight - player.getBody().halfWidth,
         );
 
     // Resize the sprite to fit TILE_SIZE
@@ -141,10 +141,10 @@ export const setPlayerAvatar = (player: Player | EnemyPlayer, id: string) => {
 
 export const getPlayerVictims = (
     prevGameInfo: GameData,
-    killer: PlayerType
+    killer: PlayerType,
 ) => {
     const victims = prevGameInfo.players.filter((player) =>
-        killer.kills.includes(player.id)
+        killer.kills.includes(player.id),
     );
     const normalizedVictims = victims.map(({ name, skin }, index) => {
         return {
@@ -170,3 +170,21 @@ export const debounce = (func: Procedure, delay: number) => {
     };
 };
 
+export const getIntersectionArea = (
+    a: Phaser.GameObjects.GameObject & { body: Phaser.Physics.Arcade.Body },
+    b: Phaser.GameObjects.GameObject & { body: Phaser.Physics.Arcade.Body },
+) => {
+    const rectA = a.body;
+    const rectB = b.body;
+
+    const xOverlap = Math.max(
+        0,
+        Math.min(rectA.right, rectB.right) - Math.max(rectA.left, rectB.left),
+    );
+    const yOverlap = Math.max(
+        0,
+        Math.min(rectA.bottom, rectB.bottom) - Math.max(rectA.top, rectB.top),
+    );
+
+    return xOverlap * yOverlap;
+};
