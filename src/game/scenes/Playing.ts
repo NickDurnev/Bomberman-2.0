@@ -1,4 +1,10 @@
-import { TILESET, LAYER, PORTAL_DELAY, SOCKET_ID_KEY } from "@utils/constants";
+import {
+    TILESET,
+    LAYER,
+    PORTAL_DELAY,
+    PORTAL_DELAY_STEP,
+    SOCKET_ID_KEY,
+} from "@utils/constants";
 import {
     Player,
     EnemyPlayer,
@@ -217,15 +223,31 @@ class Playing extends Phaser.Scene {
             playerId: player.id,
             gameId: player.gameId,
         });
+
+        // Make player and their text invisible and disable physics interactions
+        player.setVisible(false);
+        player.playerText.setVisible(false); // <-- Hide the player text
+        player.getBody().enable = false;
+        player.setActive(false);
+
+        // Set a timer to re-enable visibility and physics after teleportation
+        this.time.delayedCall(PORTAL_DELAY_STEP, () => {
+            player.setVisible(true);
+            player.playerText.setVisible(true); // <-- Show the player text
+            player.getBody().enable = true;
+            player.setActive(true);
+        });
     }
 
     private onPlayerVsSpoil(player: Player, spoil: Spoil) {
-        clientSocket.emit("pick up spoil", {
-            spoil_id: spoil.id,
-            playerId: player.id,
-            gameId: player.gameId,
-        });
-        spoil.destroy();
+        if (player.active) {
+            clientSocket.emit("pick up spoil", {
+                spoil_id: spoil.id,
+                playerId: player.id,
+                gameId: player.gameId,
+            });
+            spoil.destroy();
+        }
     }
 
     private onPlayerVsBlast(player: Player, killerId: string) {
@@ -257,6 +279,8 @@ class Playing extends Phaser.Scene {
     }
 
     private onTeleportPlayer({ player_id, x, y }: PlayerPositionData) {
+        console.log(" player_id:", player_id);
+        console.log(" this.player.id:", this.player.id);
         if (this.player.id === player_id) {
             this.player.goTo({ x, y });
         } else {

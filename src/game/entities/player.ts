@@ -95,7 +95,7 @@ export class Player extends Phaser.GameObjects.Sprite {
             if (this.playerText) {
                 this.playerText.setPosition(
                     this.x - this.playerText.width / 2,
-                    this.y - TILE_SIZE * 1.2
+                    this.y - TILE_SIZE * 1.2,
                 );
             }
 
@@ -111,19 +111,19 @@ export class Player extends Phaser.GameObjects.Sprite {
 
     private defineKeyboard() {
         this.upKey = this.game.input.keyboard!.addKey(
-            Phaser.Input.Keyboard.KeyCodes.UP
+            Phaser.Input.Keyboard.KeyCodes.UP,
         );
         this.downKey = this.game.input.keyboard!.addKey(
-            Phaser.Input.Keyboard.KeyCodes.DOWN
+            Phaser.Input.Keyboard.KeyCodes.DOWN,
         );
         this.leftKey = this.game.input.keyboard!.addKey(
-            Phaser.Input.Keyboard.KeyCodes.LEFT
+            Phaser.Input.Keyboard.KeyCodes.LEFT,
         );
         this.rightKey = this.game.input.keyboard!.addKey(
-            Phaser.Input.Keyboard.KeyCodes.RIGHT
+            Phaser.Input.Keyboard.KeyCodes.RIGHT,
         );
         this.spaceKey = this.game.input.keyboard!.addKey(
-            Phaser.Input.Keyboard.KeyCodes.SPACE
+            Phaser.Input.Keyboard.KeyCodes.SPACE,
         );
     }
 
@@ -139,7 +139,7 @@ export class Player extends Phaser.GameObjects.Sprite {
             this.x,
             this.y - TILE_SIZE * 1.2,
             name,
-            style
+            style,
         );
 
         this.playerText.setX(this.x - this.playerText.width / 2);
@@ -309,17 +309,16 @@ export class Player extends Phaser.GameObjects.Sprite {
     removeKeyboard() {
         this.game.input.keyboard?.removeKey(Phaser.Input.Keyboard.KeyCodes.UP);
         this.game.input.keyboard?.removeKey(
-            Phaser.Input.Keyboard.KeyCodes.DOWN
+            Phaser.Input.Keyboard.KeyCodes.DOWN,
         );
         this.game.input.keyboard?.removeKey(
-            Phaser.Input.Keyboard.KeyCodes.LEFT
+            Phaser.Input.Keyboard.KeyCodes.LEFT,
         );
         this.game.input.keyboard?.removeKey(
-            Phaser.Input.Keyboard.KeyCodes.RIGHT
+            Phaser.Input.Keyboard.KeyCodes.RIGHT,
         );
         this.game.input.keyboard?.removeKey(
-            Phaser.Input.Keyboard.KeyCodes.SPACE
+            Phaser.Input.Keyboard.KeyCodes.SPACE,
         );
     }
 }
-

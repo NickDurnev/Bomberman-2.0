@@ -65,7 +65,7 @@ const PendingGame = () => {
     };
 
     const players = gameInfo ? Object.values(gameInfo.players) : [];
-    const canStartGame = players.length > 1;
+    const canStartGame = true;
 
     return (
         <>
@@ -153,4 +153,3 @@ const PendingGame = () => {
 };
 
 export default PendingGame;
-
