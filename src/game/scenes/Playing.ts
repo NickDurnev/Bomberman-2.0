@@ -224,14 +224,16 @@ class Playing extends Phaser.Scene {
             gameId: player.gameId,
         });
 
-        // Make player invisible and disable physics interactions
+        // Make player and their text invisible and disable physics interactions
         player.setVisible(false);
+        player.playerText.setVisible(false); // <-- Hide the player text
         player.getBody().enable = false;
         player.setActive(false);
 
         // Set a timer to re-enable visibility and physics after teleportation
         this.time.delayedCall(PORTAL_DELAY_STEP, () => {
             player.setVisible(true);
+            player.playerText.setVisible(true); // <-- Show the player text
             player.getBody().enable = true;
             player.setActive(true);
         });
