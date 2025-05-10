@@ -240,27 +240,23 @@ class Playing extends Phaser.Scene {
     }
 
     private onPlayerVsSpoil(player: Player, spoil: Spoil) {
-        if (player.active) {
-            clientSocket.emit("pick up spoil", {
-                spoil_id: spoil.id,
-                playerId: player.id,
-                gameId: player.gameId,
-            });
-            spoil.destroy();
-        }
+        clientSocket.emit("pick up spoil", {
+            spoil_id: spoil.id,
+            playerId: player.id,
+            gameId: player.gameId,
+        });
+        spoil.destroy();
     }
 
     private onPlayerVsBlast(player: Player, killerId: string) {
-        if (player.active) {
-            clientSocket.emit("player died", {
-                col: player.currentCol(),
-                row: player.currentRow(),
-                playerId: player.id,
-                killerId,
-                gameId: player.gameId,
-            });
-            player.becomesDead();
-        }
+        clientSocket.emit("player died", {
+            col: player.currentCol(),
+            row: player.currentRow(),
+            playerId: player.id,
+            killerId,
+            gameId: player.gameId,
+        });
+        player.becomesDead();
     }
 
     private onBombVsBlast(bomb: Bomb) {
@@ -279,8 +275,6 @@ class Playing extends Phaser.Scene {
     }
 
     private onTeleportPlayer({ player_id, x, y }: PlayerPositionData) {
-        console.log(" player_id:", player_id);
-        console.log(" this.player.id:", this.player.id);
         if (this.player.id === player_id) {
             this.player.goTo({ x, y });
         } else {
