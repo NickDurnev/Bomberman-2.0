@@ -25,6 +25,7 @@ import clientSocket from "@utils/socket";
 import {
     findById,
     findAndDestroyByCoordinates,
+    findByCoordinates,
     findAndDestroyById,
     getIntersectionArea,
 } from "@utils/utils";
@@ -152,6 +153,10 @@ class Playing extends Phaser.Scene {
 
     public getGameId() {
         return this.currentGame.id;
+    }
+
+    public checkBombByColumnAndRow(column: number, row: number) {
+        return findByCoordinates(column, row, this.bombs);
     }
 
     private createMap() {
