@@ -175,6 +175,14 @@ export class Player extends Phaser.GameObjects.Sprite {
             if (this.activeBombs >= this.bombs) {
                 return;
             }
+            const isBombAlreadyInSell = this.game.checkBombByColumnAndRow(
+                this.currentCol(),
+                this.currentRow(),
+            );
+
+            if (isBombAlreadyInSell) {
+                return;
+            }
             const now = this.game.time.now;
 
             if (now > this.lastBombTime) {
