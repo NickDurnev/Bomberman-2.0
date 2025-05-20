@@ -1,6 +1,6 @@
-import { EventBus } from "../EventBus";
-import { Scene } from "phaser";
+import Phaser, { Scene } from "phaser";
 import clientSocket from "@utils/socket";
+import { EventBus } from "../EventBus";
 import Playing from "./Playing";
 
 class GameOver extends Scene {

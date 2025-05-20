@@ -1,40 +1,42 @@
+import Phaser from "phaser";
+
 import {
-    TILESET,
+    Bomb,
+    EnemyPlayer,
+    FireBlast,
+    Player,
+    Portal,
+    Spoil,
+    Tombstone,
+} from "@game/entities";
+import {
     LAYER,
     PORTAL_DELAY,
     PORTAL_DELAY_STEP,
     SOCKET_ID_KEY,
+    TILESET,
 } from "@utils/constants";
-import {
-    Player,
-    EnemyPlayer,
-    Portal,
-    Tombstone,
-    Bomb,
-    FireBlast,
-    Spoil,
-} from "@game/entities";
-import {
-    PlayerConfig,
-    pickedSpoilSocketData,
-    ICell,
-    ITombStone,
-    PlayerPositionData,
-} from "@utils/types";
+import { getDataFromLocalStorage } from "@utils/local_storage";
 import clientSocket from "@utils/socket";
 import {
-    findById,
+    ICell,
+    ITombStone,
+    PlayerConfig,
+    PlayerPositionData,
+    pickedSpoilSocketData,
+} from "@utils/types";
+import {
     findAndDestroyByCoordinates,
-    findByCoordinates,
     findAndDestroyById,
+    findByCoordinates,
+    findById,
     getIntersectionArea,
 } from "@utils/utils";
-import { getDataFromLocalStorage } from "@utils/local_storage";
 
 type PlayerData = Pick<PlayerConfig, "id" | "name" | "spawn" | "skin">;
 
 class Playing extends Phaser.Scene {
-    private currentGame: any; // Define the type according to your game object structure
+    private currentGame: any;
     private player: Player;
     private portals: Phaser.GameObjects.Group;
     private tombstones: Phaser.GameObjects.Group;
