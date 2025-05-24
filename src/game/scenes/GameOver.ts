@@ -1,6 +1,8 @@
-import { EventBus } from "../EventBus";
-import { Scene } from "phaser";
 import clientSocket from "@utils/socket";
+import Phaser, { Scene } from "phaser";
+
+import { GameData } from "@utils/types";
+import { EventBus } from "../EventBus";
 import Playing from "./Playing";
 
 class GameOver extends Scene {
@@ -39,7 +41,7 @@ class GameOver extends Scene {
         clientSocket.on("launch game", this.launchGame.bind(this));
     }
 
-    launchGame(game: any): void {
+    launchGame(game: GameData): void {
         this.scene.remove("Playing");
         this.scene.add("Playing", Playing, true, game);
     }

@@ -1,6 +1,8 @@
+import Phaser from "phaser";
+
+import { EnemyPlayer, Player } from "@game/entities";
+import { TILE_SIZE } from "@utils/constants";
 import { Coordinates, GameData, Player as PlayerType } from "@utils/types";
-import { TILE_SIZE } from "./constants";
-import { Player, EnemyPlayer } from "@game/entities";
 interface GameObject extends Phaser.GameObjects.GameObject {
     id: number;
     x: number;
@@ -157,12 +159,15 @@ export const getPlayerVictims = (
     return normalizedVictims;
 };
 
-type Procedure = (...args: any[]) => void;
+type Procedure<T extends unknown[]> = (...args: T) => void;
 
-export const debounce = (func: Procedure, delay: number) => {
+export const debounce = <T extends unknown[]>(
+    func: Procedure<T>,
+    delay: number,
+) => {
     let timeoutId: ReturnType<typeof setTimeout>;
 
-    return (...args: any[]) => {
+    return (...args: T) => {
         clearTimeout(timeoutId);
         timeoutId = setTimeout(() => {
             func(...args);

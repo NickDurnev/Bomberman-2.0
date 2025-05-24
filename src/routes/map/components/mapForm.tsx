@@ -4,17 +4,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { MapData } from "@utils/types";
 import {
-    Switch,
-    ShadButton,
     Form,
     FormControl,
     FormDescription,
     FormField,
     FormItem,
     FormLabel,
+    ShadButton,
+    Switch,
 } from "@components/index";
+import { MapData } from "@utils/types";
 
 const FormSchema = z.object({
     isPortalsEnabled: z.boolean().default(false).optional(),
@@ -51,7 +51,7 @@ export default function MapForm({ mapName, onSelect }: Props) {
                 className="w-full space-y-6"
             >
                 <div>
-                    <h3 className="mb-4 text-lg font-medium">
+                    <h3 className="mb-4 font-medium text-lg">
                         Additional features
                     </h3>
                     <div className="space-y-4">

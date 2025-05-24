@@ -1,12 +1,17 @@
-import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import socket from "../utils/socket";
+
+import { SOCKET_ID_KEY } from "@utils/constants";
 import {
     addToLocalStorage,
     getDataFromLocalStorage,
 } from "@utils/local_storage";
-import { SOCKET_ID_KEY } from "@utils/constants";
+import socket from "@utils/socket";
+
+interface Transport {
+    name: string;
+}
 
 type Props = {
     children: React.ReactNode;
@@ -25,7 +30,7 @@ export const Socket = ({ children }: Props) => {
         function onConnect() {
             setIsConnected(true);
             setTransport(socket.io.engine.transport.name);
-            socket.io.engine.on("upgrade", (transport: any) => {
+            socket.io.engine.on("upgrade", (transport: Transport) => {
                 setTransport(transport.name);
             });
 
@@ -41,11 +46,10 @@ export const Socket = ({ children }: Props) => {
                 });
             }
             setSocketId(socketId);
-            socket.emit(
-                "updateUserSocketId",
-                { email: user?.email, socket_id: socketId },
-                () => {}
-            );
+            socket.emit("updateUserSocketId", {
+                email: user?.email,
+                socket_id: socketId,
+            });
         }
         function onDisconnect() {
             setIsConnected(false);
@@ -57,7 +61,7 @@ export const Socket = ({ children }: Props) => {
             socket.off("connect", onConnect);
             socket.off("disconnect", onDisconnect);
         };
-    }, [user]);
+    }, [user, socketId, transport, isConnected]);
 
     return <>{children}</>;
 };

@@ -1,18 +1,18 @@
-import { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import React, { useEffect, useState } from "react";
+import { Emoji } from "react-apple-emojis";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Emoji } from "react-apple-emojis";
 
-import { GameStore } from "@utils/types";
-import clientSocket from "@utils/socket";
+import { Button, Input } from "@components/index";
 import { useGameStore } from "@hooks/stores";
-import { Input, Button } from "@components/index";
+import clientSocket from "@utils/socket";
+import { GameStore } from "@utils/types";
 
 const GameForm = () => {
     const { isAuthenticated } = useAuth0();
     const changeGameName = useGameStore(
-        (state: GameStore) => state.changeGameName
+        (state: GameStore) => state.changeGameName,
     );
     const [name, setName] = useState("");
     const [isBtnDisabled, setIsBtnDisabled] = useState(true);
@@ -49,7 +49,7 @@ const GameForm = () => {
 
     return (
         <>
-            <div className="text-4xl font-extrabold tracking-wider text-center motion-preset-expand motion-loop-once">
+            <div className="motion-preset-expand motion-loop-once text-center font-extrabold text-4xl tracking-wider">
                 <Input
                     placeholder="Game Name"
                     onChange={handleChange}

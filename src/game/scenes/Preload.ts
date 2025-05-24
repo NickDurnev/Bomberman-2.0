@@ -1,11 +1,15 @@
+import Phaser from "phaser";
+
+import { GameData, Player } from "@utils/types";
+
 class Preload extends Phaser.Scene {
-    private currentGame: any; // Define the type according to your game object structure
+    private currentGame: GameData;
 
     constructor() {
         super("Preload");
     }
 
-    init(game: any) {
+    init(game: GameData) {
         if (!game) {
             console.error("No game data provided to Preload scene");
             return;
@@ -21,7 +25,7 @@ class Preload extends Phaser.Scene {
 
         // Load player skins directly, with proper checks
         if (game.players && Array.isArray(game.players)) {
-            game.players.forEach((player: any) => {
+            game.players.forEach((player: Player) => {
                 if (player && player.id && player.skin) {
                     this.load.image(player.id, player.skin);
                 } else {
@@ -38,7 +42,7 @@ class Preload extends Phaser.Scene {
         });
 
         // Add error handling for load failures
-        this.load.on("loaderror", (file: any) => {
+        this.load.on("loaderror", (file: Phaser.Loader.File) => {
             console.error("Failed to load asset:", file.key);
         });
 
@@ -53,7 +57,7 @@ class Preload extends Phaser.Scene {
         this.load.image("tiles", "assets/maps/tileset.png");
         this.load.tilemapTiledJSON(
             "default_map",
-            "assets/maps/default_map.json"
+            "assets/maps/default_map.json",
         );
         this.load.tilemapTiledJSON("small_map", "assets/maps/small_map.json");
 
@@ -61,17 +65,17 @@ class Preload extends Phaser.Scene {
         this.load.spritesheet(
             "explosion_center",
             "assets/images/game/explosion_center.png",
-            { frameWidth: 35, frameHeight: 35 }
+            { frameWidth: 35, frameHeight: 35 },
         );
         this.load.spritesheet(
             "explosion_horizontal",
             "assets/images/game/explosion_horizontal.png",
-            { frameWidth: 35, frameHeight: 35 }
+            { frameWidth: 35, frameHeight: 35 },
         );
         this.load.spritesheet(
             "explosion_vertical",
             "assets/images/game/explosion_vertical.png",
-            { frameWidth: 35, frameHeight: 35 }
+            { frameWidth: 35, frameHeight: 35 },
         );
         this.load.spritesheet(
             "explosion_up",
@@ -79,27 +83,27 @@ class Preload extends Phaser.Scene {
             {
                 frameWidth: 35,
                 frameHeight: 35,
-            }
+            },
         );
         this.load.spritesheet(
             "explosion_right",
             "assets/images/game/explosion_right.png",
-            { frameWidth: 35, frameHeight: 35 }
+            { frameWidth: 35, frameHeight: 35 },
         );
         this.load.spritesheet(
             "explosion_down",
             "assets/images/game/explosion_down.png",
-            { frameWidth: 35, frameHeight: 35 }
+            { frameWidth: 35, frameHeight: 35 },
         );
         this.load.spritesheet(
             "explosion_left",
             "assets/images/game/explosion_left.png",
-            { frameWidth: 35, frameHeight: 35 }
+            { frameWidth: 35, frameHeight: 35 },
         );
         this.load.spritesheet(
             "spoil_tileset",
             "assets/images/game/spoil_tileset.png",
-            { frameWidth: 35, frameHeight: 35 }
+            { frameWidth: 35, frameHeight: 35 },
         );
         this.load.spritesheet("tombstone", "assets/images/game/tombstone.png", {
             frameWidth: 35,
@@ -115,7 +119,7 @@ class Preload extends Phaser.Scene {
             {
                 frameWidth: 35,
                 frameHeight: 35,
-            }
+            },
         );
 
         //Default avatars

@@ -1,28 +1,29 @@
-import { Physics } from "phaser";
+import Phaser, { Physics } from "phaser";
+
+import Playing from "@game/scenes/Playing";
+import { Text } from "@helpers/elements";
 import {
-    PING,
-    TILE_SIZE,
-    MAX_SPEED,
-    STEP_SPEED,
-    INITIAL_SPEED,
-    MIN_DELAY,
-    STEP_DELAY,
+    BOMBS,
+    DELAY,
+    INITIAL_BOMBS,
     INITIAL_DELAY,
     INITIAL_POWER,
-    INITIAL_BOMBS,
-    STEP_BOMBS,
-    STEP_POWER,
-    SPEED,
-    POWER,
-    DELAY,
-    BOMBS,
+    INITIAL_SPEED,
+    MAX_SPEED,
+    MIN_DELAY,
+    PING,
     PORTAL_DELAY_STEP,
+    POWER,
+    SPEED,
+    STEP_BOMBS,
+    STEP_DELAY,
+    STEP_POWER,
+    STEP_SPEED,
+    TILE_SIZE,
 } from "@utils/constants";
-import { setPlayerAvatar } from "@utils/utils";
-import { ISpoilType, PlayerConfig, Coordinates } from "@utils/types";
-import Playing from "@game/scenes/Playing";
 import clientSocket from "@utils/socket";
-import { Text } from "@helpers/elements";
+import { Coordinates, ISpoilType, PlayerConfig } from "@utils/types";
+import { setPlayerAvatar } from "@utils/utils";
 
 export class Player extends Phaser.GameObjects.Sprite {
     readonly game: Playing;

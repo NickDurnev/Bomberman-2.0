@@ -1,40 +1,43 @@
+import Phaser from "phaser";
+
 import {
-    TILESET,
+    Bomb,
+    EnemyPlayer,
+    FireBlast,
+    Player,
+    Portal,
+    Spoil,
+    Tombstone,
+} from "@game/entities";
+import {
     LAYER,
     PORTAL_DELAY,
     PORTAL_DELAY_STEP,
     SOCKET_ID_KEY,
+    TILESET,
 } from "@utils/constants";
-import {
-    Player,
-    EnemyPlayer,
-    Portal,
-    Tombstone,
-    Bomb,
-    FireBlast,
-    Spoil,
-} from "@game/entities";
-import {
-    PlayerConfig,
-    pickedSpoilSocketData,
-    ICell,
-    ITombStone,
-    PlayerPositionData,
-} from "@utils/types";
+import { getDataFromLocalStorage } from "@utils/local_storage";
 import clientSocket from "@utils/socket";
 import {
-    findById,
+    GameData,
+    ICell,
+    ITombStone,
+    PlayerConfig,
+    PlayerPositionData,
+    pickedSpoilSocketData,
+} from "@utils/types";
+import {
     findAndDestroyByCoordinates,
-    findByCoordinates,
     findAndDestroyById,
+    findByCoordinates,
+    findById,
     getIntersectionArea,
 } from "@utils/utils";
-import { getDataFromLocalStorage } from "@utils/local_storage";
 
 type PlayerData = Pick<PlayerConfig, "id" | "name" | "spawn" | "skin">;
 
 class Playing extends Phaser.Scene {
-    private currentGame: any; // Define the type according to your game object structure
+    private currentGame: GameData;
     private player: Player;
     private portals: Phaser.GameObjects.Group;
     private tombstones: Phaser.GameObjects.Group;
@@ -49,7 +52,7 @@ class Playing extends Phaser.Scene {
         super("Playing");
     }
 
-    init(game: any) {
+    init(game: GameData) {
         this.currentGame = game;
     }
 
@@ -83,7 +86,7 @@ class Playing extends Phaser.Scene {
             this.physics.overlap(
                 this.player,
                 this.spoils,
-                (obj1: any, obj2: any) => {
+                (obj1, obj2) => {
                     if (obj1 instanceof Player && obj2 instanceof Spoil) {
                         this.onPlayerVsSpoil(obj1, obj2);
                     }
@@ -95,7 +98,7 @@ class Playing extends Phaser.Scene {
             this.physics.overlap(
                 this.player,
                 this.portals,
-                (obj1: any, obj2: any) => {
+                (obj1, obj2) => {
                     if (obj1 instanceof Player && obj2 instanceof Portal) {
                         this.onPlayerVsPortal(obj1, obj2);
                     }
@@ -107,7 +110,7 @@ class Playing extends Phaser.Scene {
             this.physics.overlap(
                 this.player,
                 this.blasts,
-                (obj1: any, obj2: any) => {
+                (obj1, obj2) => {
                     if (obj1 instanceof Player && obj2 instanceof FireBlast) {
                         const intersectionArea = getIntersectionArea(
                             obj1 as any,
@@ -140,7 +143,7 @@ class Playing extends Phaser.Scene {
             this.physics.overlap(
                 this.bombs,
                 this.blasts,
-                (obj1: any, obj2: any) => {
+                (obj1, obj2) => {
                     if (obj1 instanceof Bomb && obj2 instanceof FireBlast) {
                         this.onBombVsBlast(obj1);
                     }
@@ -328,7 +331,7 @@ class Playing extends Phaser.Scene {
     }: {
         bomb_id: number;
         playerId: string;
-        blastedCells: any[];
+        blastedCells: ICell[];
     }) {
         if (this.player.id === playerId) {
             this.player.decreaseActiveBombs();

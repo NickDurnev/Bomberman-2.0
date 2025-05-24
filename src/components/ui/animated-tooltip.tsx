@@ -1,13 +1,14 @@
 "use client";
-import { useState } from "react";
 import clsx from "clsx";
 import {
-    motion,
-    useTransform,
     AnimatePresence,
+    motion,
     useMotionValue,
     useSpring,
+    useTransform,
 } from "framer-motion";
+import React, { useState } from "react";
+
 import { PlayerSlot } from "@utils/types";
 
 type Props = {
@@ -17,22 +18,22 @@ type Props = {
 
 export const AnimatedTooltip = ({ items, size }: Props) => {
     const [hoveredIndex, setHoveredIndex] = useState<number | string | null>(
-        null
+        null,
     );
     const springConfig = { stiffness: 100, damping: 5 };
     const x = useMotionValue(0); // going to set this value on mouse move
     // rotate the tooltip
     const rotate = useSpring(
         useTransform(x, [-100, 100], [-45, 45]),
-        springConfig
+        springConfig,
     );
     // translate the tooltip
     const translateX = useSpring(
         useTransform(x, [-100, 100], [-50, 50]),
-        springConfig
+        springConfig,
     );
-    const handleMouseMove = (event: any) => {
-        const halfWidth = event.target.offsetWidth / 2;
+    const handleMouseMove = (event: React.MouseEvent<HTMLImageElement>) => {
+        const halfWidth = event.currentTarget.offsetWidth / 2;
         x.set(event.nativeEvent.offsetX - halfWidth); // set the x value, which is then used in transform and rotate
     };
 
@@ -40,7 +41,7 @@ export const AnimatedTooltip = ({ items, size }: Props) => {
         <>
             {items.map((item, index) => (
                 <div
-                    className="-mr-4 relative group"
+                    className="-mr-4 group relative"
                     key={`${index}-${item.name}`}
                     onMouseEnter={() => setHoveredIndex(item.id)}
                     onMouseLeave={() => setHoveredIndex(null)}
@@ -65,11 +66,11 @@ export const AnimatedTooltip = ({ items, size }: Props) => {
                                     rotate: rotate,
                                     whiteSpace: "nowrap",
                                 }}
-                                className="absolute -top-16 -left-1/2 translate-x-1/2 flex text-xs  flex-col items-center justify-center rounded-md bg-black z-50 shadow-xl px-4 py-2"
+                                className="-top-16 -left-1/2 absolute z-50 flex translate-x-1/2 flex-col items-center justify-center rounded-md bg-black px-4 py-2 text-xs shadow-xl"
                             >
-                                <div className="absolute inset-x-10 z-30 w-[20%] -bottom-px bg-gradient-to-r from-transparent via-emerald-500 to-transparent h-px " />
-                                <div className="absolute left-10 w-[40%] z-30 -bottom-px bg-gradient-to-r from-transparent via-sky-500 to-transparent h-px " />
-                                <div className="font-bold text-white relative z-30 text-base">
+                                <div className="-bottom-px absolute inset-x-10 z-30 h-px w-[20%] bg-gradient-to-r from-transparent via-emerald-500 to-transparent " />
+                                <div className="-bottom-px absolute left-10 z-30 h-px w-[40%] bg-gradient-to-r from-transparent via-sky-500 to-transparent " />
+                                <div className="relative z-30 font-bold text-base text-white">
                                     {item.name}
                                 </div>
                             </motion.div>
@@ -82,9 +83,9 @@ export const AnimatedTooltip = ({ items, size }: Props) => {
                         src={item.image}
                         alt={item.name}
                         className={clsx(
-                            "object-cover !m-0 !p-0 object-top rounded-full h-14 w-14 border-2 group-hover:scale-105 group-hover:z-30 border-white  relative transition duration-500",
+                            "!m-0 !p-0 relative h-14 w-14 rounded-full border-2 border-white object-cover object-top transition duration-500 group-hover:z-30 group-hover:scale-105",
                             size === "small" && "h-8 w-8",
-                            size === "large" && "h-16 w-16"
+                            size === "large" && "h-16 w-16",
                         )}
                     />
                 </div>

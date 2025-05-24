@@ -10,8 +10,8 @@ export const Loader = ({ size = 10 }: Props) => {
             <svg
                 aria-hidden="true"
                 className={clsx(
-                    "text-gray-200 animate-spin dark:text-gray-600 fill-accent",
-                    size && `w-${size} h-${size}`
+                    "animate-spin fill-accent text-gray-200 dark:text-gray-600",
+                    size && `w-${size}h-${size}`,
                 )}
                 viewBox="0 0 100 101"
                 fill="none"

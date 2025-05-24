@@ -1,5 +1,5 @@
-import { useEffect, ReactNode } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "./Loader";
 
@@ -13,12 +13,13 @@ export const AuthCheck = ({ children }: { children: ReactNode }) => {
         }
     }, [isAuthenticated, isLoading, navigate]);
 
-    if (isLoading)
+    if (isLoading) {
         return (
-            <div className="p-24 w-full flex items-center justify-center">
+            <div className="flex w-full items-center justify-center p-24">
                 <Loader />
             </div>
         );
+    }
 
     return <>{children}</>;
 };
