@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { Emoji } from "react-apple-emojis";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { IoIosAlert } from "react-icons/io";
-import { Emoji } from "react-apple-emojis";
+import { useNavigate, useParams } from "react-router-dom";
 
-import clientSocket from "@utils/socket";
-import {
-    TUTORIAL,
-    POINTS_PER_KILL,
-    POINTS_PER_WIN,
-    POINTS_PER_TOP3,
-} from "@utils/constants";
-import { GameData as Game } from "@utils/types";
 import { Button, PlayersSlots, UserBar } from "@components/index";
+import {
+    POINTS_PER_KILL,
+    POINTS_PER_TOP3,
+    POINTS_PER_WIN,
+    TUTORIAL,
+} from "@utils/constants";
+import clientSocket from "@utils/socket";
+import { GameData as Game } from "@utils/types";
 
 interface GameData {
     current_game: Game;
@@ -47,7 +47,7 @@ const PendingGame = () => {
     };
 
     const handleLaunchGame = () => {
-        navigate("/game/" + gameId);
+        navigate(`/game/${gameId}`);
     };
 
     const leaveGameAction = () => {
@@ -70,15 +70,15 @@ const PendingGame = () => {
     return (
         <>
             <UserBar />
-            <div className="w-full h-full py-10 flex flex-col gap-y-10">
+            <div className="flex h-full w-full flex-col gap-y-10 py-10">
                 <div>
-                    <h1 className="text-5xl font-extrabold tracking-wider text-center motion-preset-expand motion-loop-once">
+                    <h1 className="motion-preset-expand motion-loop-once text-center font-extrabold text-5xl tracking-wider">
                         {gameInfo?.name ?? "Game"}
                     </h1>
                 </div>
                 {isTimerRunning ? (
                     <div className="flex flex-col gap-y-8">
-                        <h3 className="text-3xl font-bold tracking-wider text-center motion-preset-expand motion-loop-once">
+                        <h3 className="motion-preset-expand motion-loop-once text-center font-bold text-3xl tracking-wider">
                             Game will start in
                         </h3>
                         <div className="flex justify-center">
@@ -93,7 +93,7 @@ const PendingGame = () => {
                                 }}
                             >
                                 {({ remainingTime }) => (
-                                    <div className="text-4xl font-bold">
+                                    <div className="font-bold text-4xl">
                                         {remainingTime}
                                     </div>
                                 )}
@@ -101,7 +101,7 @@ const PendingGame = () => {
                         </div>
                     </div>
                 ) : (
-                    <div className="mt-6 flex flex-col justify-center items-center mx-auto gap-y-8">
+                    <div className="mx-auto mt-6 flex flex-col items-center justify-center gap-y-8">
                         <Button
                             text="Start Game"
                             animated
@@ -123,7 +123,7 @@ const PendingGame = () => {
                         players={players}
                     />
                 )}
-                <div className="flex justify-center items-start gap-x-2 w-1/2 mx-auto p-2 bg-modal text-white rounded-lg motion-preset-expand motion-loop-once">
+                <div className="motion-preset-expand motion-loop-once mx-auto flex w-1/2 items-start justify-center gap-x-2 rounded-lg bg-modal p-2 text-white">
                     <IoIosAlert size={40} />
                     <div>
                         <p className="font-medium">{TUTORIAL.actions}</p>

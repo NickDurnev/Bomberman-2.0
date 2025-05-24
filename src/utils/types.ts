@@ -1,4 +1,5 @@
 import Playing from "@game/scenes/Playing";
+import Phaser from "phaser";
 
 export interface IUser {
     email: string;
@@ -54,6 +55,11 @@ export interface GameData {
     players: Player[];
     shadow_map: number[][];
     spoils: object;
+    portals: object;
+    tombstones: object;
+    createdAt: number;
+    isDelaySpoilEnabled: boolean;
+    isPortalsEnabled: boolean;
 }
 
 export interface GameSlotsProps {

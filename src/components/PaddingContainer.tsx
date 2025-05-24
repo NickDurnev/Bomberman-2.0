@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
+
 import { getDataFromLocalStorage } from "@utils/local_storage";
 
 export const PaddingContainer = ({
@@ -20,6 +21,6 @@ export const PaddingContainer = ({
         }
     }, []);
 
-    return <div className="w-[1366px] mx-auto">{children}</div>;
+    return <div className="mx-auto w-[1366px]">{children}</div>;
 };
 

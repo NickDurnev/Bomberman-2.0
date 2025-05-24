@@ -29,9 +29,9 @@ export const Button = ({
             onClick={onClick}
             disabled={disabled}
             className={clsx(
-                "inline-flex items-center gap-2 bg-accent text-white hover:bg-secondary transition motion-preset-pop motion-loop-once group/modal-btn overflow-hidden",
+                "motion-preset-pop motion-loop-once group/modal-btn inline-flex items-center gap-2 overflow-hidden bg-accent text-white transition hover:bg-secondary",
                 className ?? "rounded-lg px-4 py-2",
-                disabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
+                disabled ? "cursor-not-allowed opacity-50" : "hover:scale-105",
             )}
         >
             {icon && icon}
@@ -39,23 +39,23 @@ export const Button = ({
                 <img
                     src={imageUrl}
                     alt={imageAlt}
-                    className="w-[30px] h-[30px] rounded-full object-contain"
+                    className="h-[30px] w-[30px] rounded-full object-contain"
                 />
             )}
             {text && (
                 <span
                     className={clsx(
-                        "font-medium text-lg letter",
+                        "letter font-medium text-lg",
                         animated &&
                             !disabled &&
-                            "group-hover/modal-btn:translate-x-40 text-center transition duration-500"
+                            "text-center transition duration-500 group-hover/modal-btn:translate-x-40",
                     )}
                 >
                     {text}
                 </span>
             )}
             {animatedIcon && animated && !disabled && (
-                <div className="-translate-x-40 group-hover/modal-btn:translate-x-0 flex items-center justify-center absolute inset-0 transition duration-500 text-white z-20">
+                <div className="-translate-x-40 absolute inset-0 z-20 flex items-center justify-center text-white transition duration-500 group-hover/modal-btn:translate-x-0">
                     {animatedIcon}
                 </div>
             )}

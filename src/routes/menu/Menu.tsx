@@ -1,20 +1,20 @@
-import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Emoji } from "react-apple-emojis";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import { GameData } from "@utils/types";
-import clientSocket from "@utils/socket";
 import { SOCKET_ID_KEY } from "@utils/constants";
 import { getDataFromLocalStorage } from "@utils/local_storage";
+import clientSocket from "@utils/socket";
+import { GameData } from "@utils/types";
 
-import { addUser } from "../../services/auth";
 import {
-    GameSlots,
-    UserBar,
     Button,
+    GameSlots,
     TextGenerateEffect,
+    UserBar,
 } from "@components/index";
+import { addUser } from "../../services/auth";
 import GameForm from "./components/GameForm";
 
 const Menu = () => {
@@ -61,7 +61,7 @@ const Menu = () => {
 
     const handleJoinGame = (game_id: string) => {
         clientSocket.emit("leave lobby");
-        navigate("/pending/" + game_id);
+        navigate(`/pending/${game_id}`);
     };
 
     const addUserToDB = async () => {
@@ -77,16 +77,16 @@ const Menu = () => {
     };
 
     return (
-        <div id="app" className="w-full h-screen mx-auto">
+        <div id="app" className="mx-auto h-screen w-full">
             <UserBar />
             <div className="pt-20">
                 <TextGenerateEffect
                     words="Bomberman"
                     duration={2.0}
-                    className="text-8xl font-extrabold text-foreground tracking-wider text-center"
+                    className="text-center font-extrabold text-8xl text-foreground tracking-wider"
                 />
             </div>
-            <div className="mt-20 flex flex-col justify-center items-center mx-auto gap-y-8">
+            <div className="mx-auto mt-20 flex flex-col items-center justify-center gap-y-8">
                 <GameForm />
                 <Button
                     text="Stats"

@@ -1,11 +1,11 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Button, Loader, ThemeBtn } from "@components/index";
+import { SOCKET_ID_KEY } from "@utils/constants";
+import { deleteFromLocalStorage } from "@utils/local_storage";
+import clientSocket from "@utils/socket";
 import { CiLogout } from "react-icons/ci";
 import { IoIosArrowRoundBack } from "react-icons/io";
-import { SOCKET_ID_KEY } from "@utils/constants";
-import clientSocket from "@utils/socket";
-import { deleteFromLocalStorage } from "@utils/local_storage";
-import { Button, ThemeBtn, Loader } from "@components/index";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const UserBar = () => {
     const { loginWithRedirect, logout, user, isLoading } = useAuth0();
@@ -42,7 +42,7 @@ export const UserBar = () => {
                     className="rounded-full p-2"
                 />
             )}
-            <div className="flex items-center gap-8 justify-end p-6">
+            <div className="flex items-center justify-end gap-8 p-6">
                 <ThemeBtn />
                 {isLoading ? (
                     <Loader size={6} />

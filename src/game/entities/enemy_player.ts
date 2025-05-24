@@ -1,4 +1,5 @@
-import { Physics } from "phaser";
+import Phaser, { Physics } from "phaser";
+
 import { TILE_SIZE, PING } from "@utils/constants";
 import { setPlayerAvatar } from "@utils/utils";
 import { Coordinates, PlayerConfig } from "@utils/types";

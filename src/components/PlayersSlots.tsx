@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Emoji } from "react-apple-emojis";
 
-import { PlayerSlot, Player } from "@utils/types";
+import { Player, PlayerSlot } from "@utils/types";
 import { AnimatedTooltip } from "./ui/animated-tooltip";
 
 type Props = {
@@ -52,18 +52,18 @@ export const PlayersSlots = ({
     }, [max_players, players]);
 
     return (
-        <div className="px-24 motion-preset-expand motion-loop-once">
-            <div className="flex items-start gap-x-2 justify-center">
-                <h4 className="text-lg md:text-2xl text-neutral-600 dark:text-neutral-100 font-bold text-center mb-8">
+        <div className="motion-preset-expand motion-loop-once px-24">
+            <div className="flex items-start justify-center gap-x-2">
+                <h4 className="mb-8 text-center font-bold text-lg text-neutral-600 md:text-2xl dark:text-neutral-100">
                     Need as minimum{" "}
-                    <span className="px-1 py-0.5 rounded-md bg-gray-100 dark:bg-neutral-800 dark:border-neutral-700 border border-gray-200">
+                    <span className="rounded-md border border-gray-200 bg-gray-100 px-1 py-0.5 dark:border-neutral-700 dark:bg-neutral-800">
                         2
                     </span>{" "}
                     players!
                 </h4>
                 <Emoji name="bomb" className="pt-2" width={20} />
             </div>
-            <div className="flex flex-row items-center justify-center mb-10 w-full">
+            <div className="mb-10 flex w-full flex-row items-center justify-center">
                 <AnimatedTooltip items={playersArray} size={size} />
             </div>
         </div>

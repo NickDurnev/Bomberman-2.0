@@ -1,4 +1,3 @@
-import { useState, useCallback } from "react";
 import {
     ColumnDef,
     flexRender,
@@ -6,23 +5,24 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
+import React, { useCallback, useState } from "react";
 
-import { debounce } from "@utils/utils";
 import {
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+    Input,
+    Loader,
+    ShadButton,
     Table,
     TableBody,
     TableCell,
     TableHead,
     TableHeader,
     TableRow,
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
-    DropdownMenuCheckboxItem,
-    Input,
-    ShadButton,
-    Loader,
 } from "@components/index";
+import { debounce } from "@utils/utils";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -53,7 +53,7 @@ export function DataTable<TData, TValue>({
         debounce((value: string) => {
             setName(value);
         }, 400),
-        []
+        [],
     );
 
     return (
@@ -100,7 +100,7 @@ export function DataTable<TData, TValue>({
                 </DropdownMenu>
             </div>
             {isLoading ? (
-                <div className="p-10 w-full flex items-center justify-center">
+                <div className="flex w-full items-center justify-center p-10">
                     <Loader />
                 </div>
             ) : (
@@ -117,7 +117,7 @@ export function DataTable<TData, TValue>({
                                                     : flexRender(
                                                           header.column
                                                               .columnDef.header,
-                                                          header.getContext()
+                                                          header.getContext(),
                                                       )}
                                             </TableHead>
                                         );
@@ -138,7 +138,7 @@ export function DataTable<TData, TValue>({
                                             <TableCell key={cell.id}>
                                                 {flexRender(
                                                     cell.column.columnDef.cell,
-                                                    cell.getContext()
+                                                    cell.getContext(),
                                                 )}
                                             </TableCell>
                                         ))}

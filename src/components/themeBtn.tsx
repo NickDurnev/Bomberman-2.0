@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-import { FaMoon } from "react-icons/fa";
-import { IoSunny } from "react-icons/io5";
+import { Button } from "@components/index";
 import {
     addToLocalStorage,
     getDataFromLocalStorage,
 } from "@utils/local_storage";
-import { Button } from "@components/index";
+import { useEffect, useState } from "react";
+import { FaMoon } from "react-icons/fa";
+import { IoSunny } from "react-icons/io5";
 
 export const ThemeBtn = () => {
     const [isLight, setIsLight] = useState(
-        getDataFromLocalStorage("theme") === "light"
+        getDataFromLocalStorage("theme") === "light",
     );
     const html = document.documentElement;
 

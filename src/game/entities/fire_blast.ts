@@ -1,4 +1,5 @@
-import { Physics } from "phaser";
+import Phaser, { Physics } from "phaser";
+
 import { TILE_SIZE } from "@utils/constants";
 import { ICell } from "@utils/types";
 

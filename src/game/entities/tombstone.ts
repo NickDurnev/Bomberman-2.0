@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+
 import { TILE_SIZE } from "@utils/constants";
 import { ITombStone } from "@utils/types";
 

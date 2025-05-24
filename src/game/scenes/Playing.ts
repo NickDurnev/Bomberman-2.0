@@ -19,6 +19,7 @@ import {
 import { getDataFromLocalStorage } from "@utils/local_storage";
 import clientSocket from "@utils/socket";
 import {
+    GameData,
     ICell,
     ITombStone,
     PlayerConfig,
@@ -36,7 +37,7 @@ import {
 type PlayerData = Pick<PlayerConfig, "id" | "name" | "spawn" | "skin">;
 
 class Playing extends Phaser.Scene {
-    private currentGame: any;
+    private currentGame: GameData;
     private player: Player;
     private portals: Phaser.GameObjects.Group;
     private tombstones: Phaser.GameObjects.Group;
@@ -51,7 +52,7 @@ class Playing extends Phaser.Scene {
         super("Playing");
     }
 
-    init(game: any) {
+    init(game: GameData) {
         this.currentGame = game;
     }
 
@@ -85,7 +86,7 @@ class Playing extends Phaser.Scene {
             this.physics.overlap(
                 this.player,
                 this.spoils,
-                (obj1: any, obj2: any) => {
+                (obj1, obj2) => {
                     if (obj1 instanceof Player && obj2 instanceof Spoil) {
                         this.onPlayerVsSpoil(obj1, obj2);
                     }
@@ -97,7 +98,7 @@ class Playing extends Phaser.Scene {
             this.physics.overlap(
                 this.player,
                 this.portals,
-                (obj1: any, obj2: any) => {
+                (obj1, obj2) => {
                     if (obj1 instanceof Player && obj2 instanceof Portal) {
                         this.onPlayerVsPortal(obj1, obj2);
                     }
@@ -109,7 +110,7 @@ class Playing extends Phaser.Scene {
             this.physics.overlap(
                 this.player,
                 this.blasts,
-                (obj1: any, obj2: any) => {
+                (obj1, obj2) => {
                     if (obj1 instanceof Player && obj2 instanceof FireBlast) {
                         const intersectionArea = getIntersectionArea(
                             obj1 as any,
@@ -142,7 +143,7 @@ class Playing extends Phaser.Scene {
             this.physics.overlap(
                 this.bombs,
                 this.blasts,
-                (obj1: any, obj2: any) => {
+                (obj1, obj2) => {
                     if (obj1 instanceof Bomb && obj2 instanceof FireBlast) {
                         this.onBombVsBlast(obj1);
                     }
@@ -330,7 +331,7 @@ class Playing extends Phaser.Scene {
     }: {
         bomb_id: number;
         playerId: string;
-        blastedCells: any[];
+        blastedCells: ICell[];
     }) {
         if (this.player.id === playerId) {
             this.player.decreaseActiveBombs();

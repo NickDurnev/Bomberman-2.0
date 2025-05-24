@@ -1,15 +1,15 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import clientSocket from "@utils/socket";
-import { GameStore, MapCard, MapData } from "@utils/types";
+import { Card, Carousel, UserBar } from "@components/index";
 import { useGameStore } from "@hooks/stores";
 import { AVAILABLE_MAPS } from "@utils/constants";
-import { Carousel, Card, UserBar } from "@components/index";
+import clientSocket from "@utils/socket";
+import { GameStore, MapCard, MapData } from "@utils/types";
 
-import MapForm from "./components/mapForm";
 import default_map_data from "public/assets/maps/default_map.json";
 import small_map_data from "public/assets/maps/small_map.json";
+import MapForm from "./components/mapForm";
 
 const data = [
     {
@@ -37,21 +37,21 @@ const SelectMap: React.FC = () => {
     };
 
     const joinToNewGame = ({ game_id }: { game_id: string }) => {
-        navigate("/pending/" + game_id);
+        navigate(`/pending/${game_id}`);
     };
 
     const ModalContent = (
         card: MapCard,
         mapName: string,
-        onSelect: (data: MapData) => void
+        onSelect: (data: MapData) => void,
     ) => {
         return (
-            <div className="py-10 overflow-hidden">
-                <div className="flex flex-col gap-y-5 items-start justify-start bg-[#F5F5F7] dark:bg-neutral-800 p-8 md:p-14 text-left rounded-3xl mb-4">
-                    <p className="text-neutral-700 dark:text-neutral-200 text-base md:text-2xl font-bold max-w-3xl">
+            <div className="overflow-hidden py-10">
+                <div className="mb-4 flex flex-col items-start justify-start gap-y-5 rounded-3xl bg-[#F5F5F7] p-8 text-left md:p-14 dark:bg-neutral-800">
+                    <p className="max-w-3xl font-bold text-base text-neutral-700 md:text-2xl dark:text-neutral-200">
                         Players: 1 - {card.maxPlayers}
                     </p>
-                    <p className="text-neutral-600 dark:text-neutral-400 text-base md:text-2xl font-sans max-w-3xl">
+                    <p className="max-w-3xl font-sans text-base text-neutral-600 md:text-2xl dark:text-neutral-400">
                         {card.description}
                     </p>
                     <MapForm mapName={mapName} onSelect={onSelect} />
@@ -74,8 +74,8 @@ const SelectMap: React.FC = () => {
     return (
         <>
             <UserBar />
-            <div className="w-full h-full py-4 overflow-x-hidden">
-                <h2 className="max-w-7xl pl-14 mx-auto text-xl md:text-5xl font-bold text-neutral-800 dark:text-neutral-200 font-sans">
+            <div className="h-full w-full overflow-x-hidden py-4">
+                <h2 className="mx-auto max-w-7xl pl-14 font-bold font-sans text-neutral-800 text-xl md:text-5xl dark:text-neutral-200">
                     Select map
                 </h2>
                 <Carousel items={cards} />

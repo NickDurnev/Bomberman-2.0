@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
-import { toast } from "sonner";
-import { UserStats } from "@utils/types";
 import { ShadButton, UserBar } from "@components/index";
 import { getUserStats } from "@utils/statsAPI";
-import { columns } from "./components/statsColumn";
+import { UserStats } from "@utils/types";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { DataTable } from "./components/dataTable";
+import { columns } from "./components/statsColumn";
 
 const Stats = () => {
     const [data, setData] = useState<UserStats[]>([]);
@@ -39,6 +39,7 @@ const Stats = () => {
             setData(data);
             setTotal(total);
         } catch (error) {
+            console.log(error);
             toast("Something went wrong");
         } finally {
             setIsLoading(false);
@@ -48,8 +49,8 @@ const Stats = () => {
     return (
         <>
             <UserBar />
-            <div className="w-full h-full py-20 flex flex-col gap-y-10">
-                <div className="w-3/4 mx-auto">
+            <div className="flex h-full w-full flex-col gap-y-10 py-20">
+                <div className="mx-auto w-3/4">
                     <>
                         <DataTable
                             columns={columns}

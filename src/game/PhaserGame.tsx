@@ -1,6 +1,9 @@
+import Phaser from "phaser";
 import { useEffect, useRef } from "react";
+
+import clientSocket from "@utils/socket";
+import { GameData } from "@utils/types";
 import { config } from "./main";
-import clientSocket from "../utils/socket";
 
 export interface IRefPhaserGame {
     game: Phaser.Game | null;
@@ -22,7 +25,7 @@ export function PhaserGame({ gameId }: Readonly<IProps>) {
         if (game.current) {
             game.current?.destroy(true);
         }
-        clientSocket.emit("get current game", gameId, (gameData: any) => {
+        clientSocket.emit("get current game", gameId, (gameData: GameData) => {
             if (gameData) {
                 game.current = new Phaser.Game(config);
                 game.current.scene.start("Preload", gameData);

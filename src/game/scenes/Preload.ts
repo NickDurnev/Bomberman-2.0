@@ -1,13 +1,15 @@
 import Phaser from "phaser";
 
+import { GameData, Player } from "@utils/types";
+
 class Preload extends Phaser.Scene {
-    private currentGame: any;
+    private currentGame: GameData;
 
     constructor() {
         super("Preload");
     }
 
-    init(game: any) {
+    init(game: GameData) {
         if (!game) {
             console.error("No game data provided to Preload scene");
             return;
@@ -23,7 +25,7 @@ class Preload extends Phaser.Scene {
 
         // Load player skins directly, with proper checks
         if (game.players && Array.isArray(game.players)) {
-            game.players.forEach((player: any) => {
+            game.players.forEach((player: Player) => {
                 if (player && player.id && player.skin) {
                     this.load.image(player.id, player.skin);
                 } else {
@@ -40,7 +42,7 @@ class Preload extends Phaser.Scene {
         });
 
         // Add error handling for load failures
-        this.load.on("loaderror", (file: any) => {
+        this.load.on("loaderror", (file: Phaser.Loader.File) => {
             console.error("Failed to load asset:", file.key);
         });
 
