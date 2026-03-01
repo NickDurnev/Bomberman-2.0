@@ -1,4 +1,4 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "@contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { Emoji } from "react-apple-emojis";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -18,7 +18,7 @@ import { addUser } from "../../services/auth";
 import GameForm from "./components/GameForm";
 
 const Menu = () => {
-    const { user } = useAuth0();
+    const { user } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
 

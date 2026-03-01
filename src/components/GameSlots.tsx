@@ -1,4 +1,4 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "@contexts/AuthContext";
 import { motion } from "framer-motion";
 import { Emoji } from "react-apple-emojis";
 
@@ -7,7 +7,7 @@ import { GameSlotsProps } from "@utils/types";
 import { getRandomItem } from "@utils/utils";
 
 export function GameSlots({ data, onJoinGame }: GameSlotsProps) {
-    const { isAuthenticated } = useAuth0();
+    const { isAuthenticated } = useAuth();
 
     return (
         <div className="flex flex-col items-center justify-center">

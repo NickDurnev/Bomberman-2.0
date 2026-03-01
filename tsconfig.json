@@ -20,6 +20,7 @@
             "@lib/*": ["./src/lib/*"],
             "@helpers/*": ["./src/helpers/*"],
             "@components/*": ["./src/components/*"],
+            "@contexts/*": ["./src/contexts/*"],
             "@game/*": ["./src/game/*"],
             "@hooks/*": ["./src/hooks/*"]
         },

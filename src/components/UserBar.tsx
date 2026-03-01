@@ -1,5 +1,5 @@
-import { useAuth0 } from "@auth0/auth0-react";
 import { Button, Loader, ThemeBtn } from "@components/index";
+import { useAuth } from "@contexts/AuthContext";
 import { SOCKET_ID_KEY } from "@utils/constants";
 import { deleteFromLocalStorage } from "@utils/local_storage";
 import clientSocket from "@utils/socket";
@@ -8,7 +8,7 @@ import { IoIosArrowRoundBack } from "react-icons/io";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export const UserBar = () => {
-    const { loginWithRedirect, logout, user, isLoading } = useAuth0();
+    const { login, logout, user, isLoading } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
     const { pathname } = location;
@@ -23,11 +23,7 @@ export const UserBar = () => {
     };
 
     const handleLogout = () => {
-        logout({
-            logoutParams: {
-                returnTo: window.location.origin,
-            },
-        });
+        logout();
         deleteFromLocalStorage(SOCKET_ID_KEY);
     };
 
@@ -66,13 +62,7 @@ export const UserBar = () => {
                                 <Button
                                     imageUrl="/assets/google.png"
                                     imageAlt="Star icon"
-                                    onClick={() =>
-                                        loginWithRedirect({
-                                            authorizationParams: {
-                                                connection: "google-oauth2",
-                                            },
-                                        })
-                                    }
+                                    onClick={() => login()}
                                     className="rounded-full p-2"
                                 />
                                 {/* <Button

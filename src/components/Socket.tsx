@@ -1,4 +1,4 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "@contexts/AuthContext";
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -18,7 +18,7 @@ type Props = {
 };
 
 export const Socket = ({ children }: Props) => {
-    const { user } = useAuth0();
+    const { user } = useAuth();
     const [isConnected, setIsConnected] = useState(false);
     const [transport, setTransport] = useState("N/A");
     const [socketId, setSocketId] = useState<string | null>(null);

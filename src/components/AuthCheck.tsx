@@ -1,11 +1,11 @@
-import { useAuth0 } from "@auth0/auth0-react";
 import { ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@contexts/AuthContext";
 import { Loader } from "./Loader";
 
 export const AuthCheck = ({ children }: { children: ReactNode }) => {
     const navigate = useNavigate();
-    const { isAuthenticated, isLoading } = useAuth0();
+    const { isAuthenticated, isLoading } = useAuth();
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) {

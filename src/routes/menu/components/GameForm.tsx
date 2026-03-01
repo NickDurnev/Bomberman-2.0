@@ -1,4 +1,4 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "@contexts/AuthContext";
 import React, { useEffect, useState } from "react";
 import { Emoji } from "react-apple-emojis";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ import clientSocket from "@utils/socket";
 import { GameStore } from "@utils/types";
 
 const GameForm = () => {
-    const { isAuthenticated } = useAuth0();
+    const { isAuthenticated } = useAuth();
     const changeGameName = useGameStore(
         (state: GameStore) => state.changeGameName,
     );
