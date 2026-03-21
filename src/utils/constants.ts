@@ -1,6 +1,7 @@
 export const TILE_SIZE = 35;
 
 export const SOCKET_ID_KEY = "socket_id";
+export const GOOGLE_USER_STORAGE_KEY = "google_user";
 
 export const AVAILABLE_MAPS = ["default_map", "small_map"];
 export const TILESET = "tiles";

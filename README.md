@@ -14,7 +14,7 @@ Bomberman is a real-time multiplayer game where players navigate a grid-based ma
 -   **Classic Mechanics**: Place bombs, collect power-ups, and be the last one standing
 -   **Modern Tech Stack**: Built with Phaser 3, React, TypeScript, and TailwindCSS
 -   **Responsive Design**: Play on desktop or mobile devices
--   **User Authentication**: Sign in with Auth0 to save your progress and stats
+-   **User Authentication**: Sign in with Google (@react-oauth/google) to save your progress and stats
 
 ## Game Mechanics
 
@@ -40,7 +40,7 @@ Bomberman is a real-time multiplayer game where players navigate a grid-based ma
     -   TailwindCSS for styling
     -   Zustand for state management
     -   React Router for navigation
-    -   Auth0 for authentication
+    -   Google OAuth (@react-oauth/google) for authentication
 
 -   **Game Engine**:
 
