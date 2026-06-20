@@ -47,6 +47,7 @@ class Playing extends Phaser.Scene {
     private enemies: Phaser.GameObjects.Group;
     private blockLayer: Phaser.Tilemaps.TilemapLayer;
     private map: Phaser.Tilemaps.Tilemap;
+    private socketHandlers: Array<[string, (...args: any[]) => void]> = [];
 
     constructor() {
         super("Playing");
@@ -60,6 +61,12 @@ class Playing extends Phaser.Scene {
         this.createMap();
         this.createPlayers();
         this.setEventHandlers();
+
+        // Guarantee socket listeners are removed on every teardown path —
+        // including scene.remove() (GameOver.launchGame) which does not call
+        // onEndGame(). Without this, listeners leak across rounds.
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.shutdown, this);
+        this.events.once(Phaser.Scenes.Events.DESTROY, this.shutdown, this);
 
         this.time.addEvent({
             delay: 400,
@@ -203,19 +210,22 @@ class Playing extends Phaser.Scene {
     }
 
     private setEventHandlers() {
-        this.onMovePlayer.bind(this);
-        clientSocket.on("move player", this.onMovePlayer.bind(this));
-        clientSocket.on("teleport player", this.onTeleportPlayer.bind(this));
-        clientSocket.on("end game", this.onEndGame.bind(this));
-        // clientSocket.on("player win", this.onPlayerWin.bind(this));
-        clientSocket.on("show bomb", this.onShowBomb.bind(this));
-        clientSocket.on("detonate bomb", this.onDetonateBomb.bind(this));
-        clientSocket.on("spoil was picked", this.onSpoilWasPicked.bind(this));
-        clientSocket.on("show tombstone", this.onShowTombstone.bind(this));
-        clientSocket.on(
-            "player disconnect",
-            this.onPlayerDisconnect.bind(this),
-        );
+        // Bind once and keep the references, so shutdown() can remove the
+        // exact same function objects (socket.off matches by reference).
+        this.socketHandlers = [
+            ["move player", this.onMovePlayer.bind(this)],
+            ["teleport player", this.onTeleportPlayer.bind(this)],
+            ["end game", this.onEndGame.bind(this)],
+            ["show bomb", this.onShowBomb.bind(this)],
+            ["detonate bomb", this.onDetonateBomb.bind(this)],
+            ["spoil was picked", this.onSpoilWasPicked.bind(this)],
+            ["show tombstone", this.onShowTombstone.bind(this)],
+            ["player disconnect", this.onPlayerDisconnect.bind(this)],
+        ];
+
+        for (const [event, handler] of this.socketHandlers) {
+            clientSocket.on(event, handler);
+        }
     }
 
     private onPlayerVsPortal(player: Player, portal: Portal) {
@@ -416,13 +426,10 @@ class Playing extends Phaser.Scene {
     }
 
     shutdown() {
-        clientSocket.off("move player", this.onMovePlayer);
-        clientSocket.off("end game", this.onEndGame);
-        clientSocket.off("show bomb", this.onShowBomb);
-        clientSocket.off("detonate bomb", this.onDetonateBomb);
-        clientSocket.off("spoil was picked", this.onSpoilWasPicked);
-        clientSocket.off("show tombstone", this.onShowTombstone);
-        clientSocket.off("player disconnect", this.onPlayerDisconnect);
+        for (const [event, handler] of this.socketHandlers) {
+            clientSocket.off(event, handler);
+        }
+        this.socketHandlers = [];
     }
 
     private onPlayerDisconnect({ player_id }: { player_id: string }) {

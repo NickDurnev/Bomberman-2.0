@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { IoHomeOutline } from "react-icons/io5";
 import clsx from "clsx";
-import clientSocket from "@utils/socket";
+import clientSocket, { getOrCreateSocketId } from "@utils/socket";
 import { pickedSpoilSocketData } from "@utils/types";
-import { getDataFromLocalStorage } from "@utils/local_storage";
 import {
     SPEED,
     POWER,
@@ -16,7 +15,6 @@ import {
     INITIAL_SPEED,
     STEP_DELAY,
     STEP_SPEED,
-    SOCKET_ID_KEY,
 } from "@utils/constants";
 import { Button } from "@components/index";
 
@@ -36,7 +34,6 @@ type Info = {
 
 const MAX_SPEED_VALUE = (MAX_SPEED - INITIAL_SPEED) / STEP_SPEED;
 const MAX_DELAY_VALUE = (INITIAL_DELAY - MIN_DELAY) / STEP_DELAY;
-const STORED_SOCKET_ID = getDataFromLocalStorage(SOCKET_ID_KEY);
 
 const PlayerInfo = () => {
     const { gameId } = useParams();
@@ -64,13 +61,13 @@ const PlayerInfo = () => {
     }, [gameId]);
 
     const updateInfo = ({ player_id, spoil_type }: pickedSpoilSocketData) => {
-        if (player_id === STORED_SOCKET_ID) {
+        if (player_id === getOrCreateSocketId()) {
             processInfo(spoil_type);
         }
     };
 
     const playerDied = ({ player_id }: { player_id: string }) => {
-        if (player_id === STORED_SOCKET_ID) {
+        if (player_id === getOrCreateSocketId()) {
             setIsDead(true);
         }
     };
@@ -158,7 +155,9 @@ const PlayerInfo = () => {
     };
 
     const backToMenu = () => {
-        clientSocket.emit("player disconnect", { player_id: STORED_SOCKET_ID });
+        clientSocket.emit("player disconnect", {
+            player_id: getOrCreateSocketId(),
+        });
         navigate("/");
     };
 

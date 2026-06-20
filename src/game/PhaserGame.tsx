@@ -19,6 +19,10 @@ export function PhaserGame({ gameId }: Readonly<IProps>) {
 
     useEffect(() => {
         launchGame();
+        return () => {
+            game.current?.destroy(true);
+            game.current = null;
+        };
     }, [gameId]);
 
     const launchGame = () => {
