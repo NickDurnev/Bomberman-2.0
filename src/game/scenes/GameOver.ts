@@ -16,6 +16,8 @@ class GameOver extends Scene {
 
     create() {
         this.setEventHandlers();
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
+        this.events.once(Phaser.Scenes.Events.DESTROY, this.cleanup, this);
         this.camera = this.cameras.main;
         this.camera.setBackgroundColor(0x252525);
 
@@ -37,8 +39,14 @@ class GameOver extends Scene {
         EventBus.emit("current-scene-ready", this);
     }
 
+    private boundLaunchGame = this.launchGame.bind(this);
+
     private setEventHandlers() {
-        clientSocket.on("launch game", this.launchGame.bind(this));
+        clientSocket.on("launch game", this.boundLaunchGame);
+    }
+
+    private cleanup() {
+        clientSocket.off("launch game", this.boundLaunchGame);
     }
 
     launchGame(game: GameData): void {
