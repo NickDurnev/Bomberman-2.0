@@ -35,12 +35,11 @@ const RestartGameModal = () => {
     const { open, setOpen } = useModal();
 
     useEffect(() => {
+        const onStartTimer = () => setIsTimerRunning(true);
         clientSocket.on("end game", onEndGame);
         clientSocket.on("update game", handleUpdateGame);
         clientSocket.on("launch game", handleLaunchGame);
-        clientSocket.on("start timer", () => {
-            setIsTimerRunning(true);
-        });
+        clientSocket.on("start timer", onStartTimer);
 
         const prevGameInfo = sessionStorage.getItem("prevGameInfo");
         const newGameId = sessionStorage.getItem("new_game_id");
@@ -59,11 +58,9 @@ const RestartGameModal = () => {
 
         return () => {
             clientSocket.off("end game", onEndGame);
-            clientSocket.on("update game", handleUpdateGame);
-            clientSocket.on("launch game", handleLaunchGame);
-            clientSocket.off("start timer", () => {
-                setIsTimerRunning(false);
-            });
+            clientSocket.off("update game", handleUpdateGame);
+            clientSocket.off("launch game", handleLaunchGame);
+            clientSocket.off("start timer", onStartTimer);
         };
     }, []);
 
