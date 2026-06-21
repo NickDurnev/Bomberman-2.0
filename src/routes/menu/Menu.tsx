@@ -3,9 +3,7 @@ import { useEffect, useState } from "react";
 import { Emoji } from "react-apple-emojis";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { SOCKET_ID_KEY } from "@utils/constants";
-import { getDataFromLocalStorage } from "@utils/local_storage";
-import clientSocket from "@utils/socket";
+import clientSocket, { getOrCreateSocketId } from "@utils/socket";
 import { GameData } from "@utils/types";
 
 import {
@@ -68,10 +66,14 @@ const Menu = () => {
         if (user) {
             await addUser({
                 email: user.email ?? "",
-                name: user.name ?? "",
+                // Guarantee a non-empty name — an empty name is rejected by the
+                // server and would silently prevent the account from being created.
+                name: user.name?.trim() || user.email?.split("@")[0] || "Player",
                 picture: user.picture ?? "",
                 locale: user.locale ?? "en-US",
-                socketID: getDataFromLocalStorage(SOCKET_ID_KEY),
+                // Always a valid id (never null), so the signup is never rejected
+                // for a missing socketID.
+                socketID: getOrCreateSocketId(),
             });
         }
     };
