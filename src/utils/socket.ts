@@ -23,6 +23,8 @@ export const getOrCreateSocketId = (): string => {
 
 const storedUser = getDataFromLocalStorage(GOOGLE_USER_STORAGE_KEY) as {
     email?: string;
+    name?: string;
+    picture?: string;
 } | null;
 
 // Send identity in the handshake so it is known to the server the instant the
@@ -33,6 +35,8 @@ const clientSocket = io(BASE_URL!, {
     auth: {
         socketId: getOrCreateSocketId(),
         email: storedUser?.email,
+        name: storedUser?.name,
+        picture: storedUser?.picture,
     },
 });
 
