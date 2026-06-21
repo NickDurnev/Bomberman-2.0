@@ -55,6 +55,8 @@ export const Socket = ({ children }: Props) => {
         const emitIdentity = () => {
             socket.emit("updateUserSocketId", {
                 email: user.email,
+                name: user.name,
+                picture: user.picture,
                 socket_id: getOrCreateSocketId(),
             });
         };
