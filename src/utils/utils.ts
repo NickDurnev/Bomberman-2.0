@@ -92,7 +92,12 @@ export const getRandomItem = (items: string[]) => {
 };
 
 export const setPlayerAvatar = (player: Player | EnemyPlayer, id: string) => {
-    if (player.game.textures.get(id)) {
+    // textures.get(id) always returns a truthy object (the __MISSING texture
+    // when the skin failed to load), so it can't be used to detect a missing
+    // skin — that left players with a broken/empty skin rendering as a black
+    // square. Use textures.exists(id), which is false when the load failed, so
+    // we correctly fall back to a generated avatar.
+    if (player.game.textures.exists(id)) {
         player.setTexture(id);
 
         // Get texture size
