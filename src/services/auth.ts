@@ -11,9 +11,15 @@ export const addUser = async (user: IUser) => {
                 "Content-Type": "application/json",
             },
         });
-        return await response.json();
+        const data = await response.json();
+        // Surface server-side rejections instead of silently discarding them —
+        // a swallowed 422 here is why a player could end up never created in the DB.
+        if (!response.ok) {
+            console.error("addUser failed:", response.status, data);
+        }
+        return data;
     } catch (e) {
-        console.log(e);
+        console.error("addUser request error:", e);
     }
 };
 
