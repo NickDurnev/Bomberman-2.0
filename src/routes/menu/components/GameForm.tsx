@@ -51,6 +51,7 @@ const GameForm = () => {
         <>
             <div className="motion-preset-expand motion-loop-once text-center font-extrabold text-4xl tracking-wider">
                 <Input
+                    name="gameName"
                     placeholder="Game Name"
                     onChange={handleChange}
                     value={name}
