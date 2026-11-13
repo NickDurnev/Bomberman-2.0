@@ -21,6 +21,6 @@ export const PaddingContainer = ({
         }
     }, []);
 
-    return <div className="mx-auto w-[1366px]">{children}</div>;
+    return <div className="mx-auto w-full max-w-[1366px]">{children}</div>;
 };
 
