@@ -51,9 +51,9 @@ Do not start the game, the database, or any server. Do not connect to any databa
 
 Read these first; they define what "correct" means here:
 
-- `docs/socket-contract.md`: the event table between `<!-- socket-contract:begin -->` and `<!-- socket-contract:end -->`, the handshake `auth`, rooms, "Check limits", "Authority rule", "Listener rule" (with its list of known violations on `dev`), "Changing the contract".
+- `docs/socket-contract.md`: the event table between `<!-- socket-contract:begin -->` and `<!-- socket-contract:end -->`, the handshake `auth`, rooms, "Check limits", "Authority rule", "Listener rule", "Changing the contract".
 - `docs/entities.md`: server class ↔ client class, owners, "Shared constants".
-- `docs/architecture.md` ("Server authority", "Where state lives", "Known discrepancies") and `docs/known-traps.md`.
+- `docs/architecture.md` ("Server authority", "Where state lives") and `docs/known-traps.md`.
 - `.claude/rules/game-architecture.md`: the invariants no change may break.
 
 Then read the whole diff on both sides. For each changed file, read the full file at the target ref, not just the hunks. For every event name the diff touches, `grep` **both** submodules at the target ref to find every emitter and every handler. Never type an event name into a command. Set `fe_ref` and `be_ref` to the SHA (or `origin/dev`) of each submodule (`fe_ref=$(git -C Bomberman-2.0 rev-parse --verify '<ref>^{commit}')`), then run this snippet. It takes the names from the diff, rejects a name with a character outside `A-Za-z0-9 _:-`, and passes each safe name to `git grep -F` as a variable (works in `bash` and `zsh`). Each `UNSAFE EVENT NAME` line is a finding. For `uncommitted`, use `git -C <sub> diff HEAD` in place of the ref diff and `git -C <sub> grep -n -F -e "$event" -- src` (no ref). For an event that is not a string literal (a constant), find its uses by reading the constant's file.
@@ -76,7 +76,7 @@ rm -f "$ev"; }
 
 If it prints `EVENT CHECK: ... not run`, put the event check under "Unverified suspicions".
 
-Known violations already on `dev` (listed in the Listener rule) are not findings for this change unless the change touches them or adds another. Mention a touched one under "Unverified suspicions" or as a finding if the change makes it worse.
+Violations that already exist on `origin/dev` are not findings for this change unless the change touches them or adds another. Mention a touched one under "Unverified suspicions" or as a finding if the change makes it worse.
 
 ## Step 4: Try to break it
 
