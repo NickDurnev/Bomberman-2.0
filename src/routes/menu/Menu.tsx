@@ -85,7 +85,7 @@ const Menu = () => {
                 <TextGenerateEffect
                     words="Bomberman"
                     duration={2.0}
-                    className="text-center font-extrabold text-8xl text-foreground tracking-wider"
+                    className="text-center font-extrabold text-5xl text-foreground tracking-wider sm:text-7xl md:text-8xl"
                 />
             </div>
             <div className="mx-auto mt-20 flex flex-col items-center justify-center gap-y-8">
