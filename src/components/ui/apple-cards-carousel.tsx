@@ -264,7 +264,6 @@ export const Card = ({
                     <BlurImage
                         src={card.src}
                         alt={card.title}
-                        fill
                         className="absolute inset-0 z-10 h-full object-cover"
                     />
                 ) : (
@@ -283,8 +282,8 @@ export const Card = ({
 type ImageProps = {
     src: string;
     alt: string;
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
     className?: string;
 };
 
@@ -311,7 +310,6 @@ export const BlurImage = ({
                 height={height}
                 loading="lazy"
                 decoding="async"
-                blurDataURL={typeof src === "string" ? src : undefined}
                 alt={alt ?? "Background of a beautiful view"}
                 {...rest}
             />

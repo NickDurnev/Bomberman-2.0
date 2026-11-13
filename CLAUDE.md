@@ -22,7 +22,7 @@ Never commit with a NEW failure. `<changed files>` means only the files you chan
 2. Types: `npx tsc --noEmit`. Compare the errors with the same command on `origin/dev`.
 3. Build: `npm run build`
 
-`dev` currently has existing Biome and `tsc` errors. Your change must add no NEW errors versus `origin/dev`. Do not fix unrelated errors in the same PR.
+`dev` currently has existing Biome errors (no known `tsc` errors). Your change must add no NEW errors versus `origin/dev`. Do not fix unrelated errors in the same PR.
 
 There is no unit-test script. The `test` script is a load test (`workLoadTest.js`), not a unit test.
 
