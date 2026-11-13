@@ -23,13 +23,14 @@ class Preload extends Phaser.Scene {
         // Create the loading bar that fills as assets are loaded
         const progressBar = this.add.rectangle(512 - 230, 384, 4, 28, 0xffffff);
 
-        // Load player skins directly, with proper checks
+        // Load player skins directly, with proper checks. An empty skin is a
+        // player without a photo: setPlayerAvatar gives it a random avatar.
         if (game.players && Array.isArray(game.players)) {
             game.players.forEach((player: Player) => {
-                if (player && player.id && player.skin) {
-                    this.load.image(player.id, player.skin);
-                } else {
+                if (!player?.id) {
                     console.warn("Invalid player data:", player);
+                } else if (player.skin) {
+                    this.load.image(player.id, player.skin);
                 }
             });
         } else {
