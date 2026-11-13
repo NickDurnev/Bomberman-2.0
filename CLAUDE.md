@@ -20,6 +20,10 @@ Stack: React 18, Phaser 3, TypeScript, Vite, Tailwind, Biome.
 2. Types: `npx tsc --noEmit`
 3. Build: `npm run build`
 
+`dev` currently has existing Biome (and, frontend, `tsc`) errors. Your change must add no NEW errors: check the files you changed (`npx biome check <changed files>`) and compare `tsc` output with `origin/dev`. Do not fix unrelated errors in the same PR.
+
+There is no unit-test script. The `test` script is a load test (`workLoadTest.js`), not a unit test.
+
 ## Workflow
 
 - Open PRs to `dev`.
