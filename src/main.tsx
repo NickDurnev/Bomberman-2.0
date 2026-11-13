@@ -25,49 +25,61 @@ import "./index.css";
 
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID ?? "";
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: (
+        <BackgroundLines>
+          <Menu />
+        </BackgroundLines>
+      ),
+      errorElement: <ErrorPage />,
+    },
+    {
+      path: "/map",
+      element: (
+        <AuthCheck>
+          <SelectMap />
+        </AuthCheck>
+      ),
+      errorElement: <ErrorPage />,
+    },
+    {
+      path: "/pending/:gameId",
+      element: (
+        <AuthCheck>
+          <Pending />
+        </AuthCheck>
+      ),
+      errorElement: <ErrorPage />,
+    },
+    {
+      path: "/game/:gameId",
+      element: (
+        <AuthCheck>
+          <Game />
+        </AuthCheck>
+      ),
+      errorElement: <ErrorPage />,
+    },
+    {
+      path: "/stats",
+      element: <Stats />,
+      errorElement: <ErrorPage />,
+    },
+  ],
   {
-    path: "/",
-    element: (
-      <BackgroundLines>
-        <Menu />
-      </BackgroundLines>
-    ),
-    errorElement: <ErrorPage />,
+    // Opt in to the React Router v7 behaviour (silences the future flag warnings).
+    future: {
+      v7_relativeSplatPath: true,
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+      v7_partialHydration: true,
+      v7_skipActionErrorRevalidation: true,
+    },
   },
-  {
-    path: "/map",
-    element: (
-      <AuthCheck>
-        <SelectMap />
-      </AuthCheck>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/pending/:gameId",
-    element: (
-      <AuthCheck>
-        <Pending />
-      </AuthCheck>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/game/:gameId",
-    element: (
-      <AuthCheck>
-        <Game />
-      </AuthCheck>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/stats",
-    element: <Stats />,
-    errorElement: <ErrorPage />,
-  },
-]);
+);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -76,7 +88,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Socket>
           <PaddingContainer>
             <EmojiProvider data={emojiData}>
-              <RouterProvider router={router} />
+              <RouterProvider
+                router={router}
+                future={{ v7_startTransition: true }}
+              />
             </EmojiProvider>
           </PaddingContainer>
         </Socket>
