@@ -16,6 +16,17 @@ type Props = {
     size?: "small" | "medium" | "large";
 };
 
+// A player without a photo has an empty image URL. Pick one of the game's
+// fallback avatars (avatar-1..12, as in setPlayerAvatar) from the name, so the
+// same player keeps the same avatar across renders.
+const fallbackAvatar = (name: string) => {
+    let hash = 0;
+    for (const char of name) {
+        hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+    }
+    return `/assets/images/avatars/avatar-${(hash % 12) + 1}.png`;
+};
+
 export const AnimatedTooltip = ({ items, size }: Props) => {
     const [hoveredIndex, setHoveredIndex] = useState<number | string | null>(
         null,
@@ -80,7 +91,15 @@ export const AnimatedTooltip = ({ items, size }: Props) => {
                         onMouseMove={handleMouseMove}
                         height={100}
                         width={100}
-                        src={item.image}
+                        src={item.image || fallbackAvatar(item.name)}
+                        onError={(e) => {
+                            // A photo URL that fails to load (expired, blocked)
+                            // also gets the fallback. Set it once, no loop.
+                            const fallback = fallbackAvatar(item.name);
+                            if (!e.currentTarget.src.endsWith(fallback)) {
+                                e.currentTarget.src = fallback;
+                            }
+                        }}
                         alt={item.name}
                         className={clsx(
                             "!m-0 !p-0 relative h-14 w-14 rounded-full border-2 border-white object-cover object-top transition duration-500 group-hover:z-30 group-hover:scale-105",
