@@ -60,6 +60,9 @@ export function DataTable<TData, TValue>({
         <div>
             <div className="flex items-center py-4">
                 <Input
+                    name="name"
+                    // Searches other players: no autofill with the user's name.
+                    autoComplete="off"
                     placeholder="Enter name..."
                     value={input}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
