@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Emoji } from "react-apple-emojis";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { IoIosAlert } from "react-icons/io";
@@ -24,21 +24,28 @@ const PendingGame = () => {
     const [gameInfo, setGameInfo] = useState<Game | null>(null);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
 
+    // The cleanup does not leave the game (unmount also happens on launch), so
+    // an effect re-run (StrictMode) must not enter the same game twice.
+    const enteredGameId = useRef<string | undefined>(undefined);
+
     useEffect(() => {
+        const handleStartTimer = () => {
+            setIsTimerRunning(true);
+        };
+
         clientSocket.on("update game", handleUpdateGame);
         clientSocket.on("launch game", handleLaunchGame);
-        clientSocket.on("start timer", () => {
-            setIsTimerRunning(true);
-        });
+        clientSocket.on("start timer", handleStartTimer);
 
-        clientSocket.emit("enter pending game", gameId);
+        if (enteredGameId.current !== gameId) {
+            enteredGameId.current = gameId;
+            clientSocket.emit("enter pending game", gameId);
+        }
 
         return () => {
             clientSocket.off("update game", handleUpdateGame);
             clientSocket.off("launch game", handleLaunchGame);
-            clientSocket.off("start timer", () => {
-                setIsTimerRunning(false);
-            });
+            clientSocket.off("start timer", handleStartTimer);
         };
     }, [gameId]);
 
