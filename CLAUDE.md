@@ -11,16 +11,18 @@ Stack: React 18, Phaser 3, TypeScript, Vite, Tailwind, Biome.
 | `npm run dev` | Vite dev server |
 | `npm run build` | Production build |
 | `npm run start` | Preview the production build on :3000 |
-| `npm run lint:fix` / `npm run format:fix` | Biome lint / format with fixes |
+| `npm run lint:fix` / `npm run format:fix` | Biome lint / format with fixes on the whole repo. Do not use them before a commit (see below) |
 | `npm run format` | Biome format check |
 
 ## Checks before a commit
 
-1. Biome: `npx biome lint .` and `npx biome format .`
-2. Types: `npx tsc --noEmit`
+Never commit with a NEW failure. `<changed files>` means only the files you changed yourself.
+
+1. Biome: `npx biome check --write <changed files>`. Never run Biome with `--write` on the whole repo: it rewrites many unrelated files.
+2. Types: `npx tsc --noEmit`. Compare the errors with the same command on `origin/dev`.
 3. Build: `npm run build`
 
-`dev` currently has existing Biome (and, frontend, `tsc`) errors. Your change must add no NEW errors: check the files you changed (`npx biome check <changed files>`) and compare `tsc` output with `origin/dev`. Do not fix unrelated errors in the same PR.
+`dev` currently has existing Biome and `tsc` errors. Your change must add no NEW errors versus `origin/dev`. Do not fix unrelated errors in the same PR.
 
 There is no unit-test script. The `test` script is a load test (`workLoadTest.js`), not a unit test.
 

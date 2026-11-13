@@ -147,9 +147,9 @@ When it does:
    done
    rm -f "$ev"
    ```
-2. Compare both sides with the row in `docs/socket-contract.md`: name, direction, payload keys, emitter and handler files. A mismatch is an Issue. A new or changed event with no matching doc change is an Issue (invariant 9). The doc lives in the workspace repo, so the fix is a workspace PR. Say so.
+2. Compare both sides with the row in `docs/socket-contract.md`: name, direction, payload keys, emitter and handler files. A mismatch is an Issue. A new or changed event with no matching doc change is an Issue (invariant 9). The doc lives in the workspace repo, not in this PR: the fix is a docs change made in the workspace working tree and committed to workspace `main` (the `sync-docs` skill). Say so.
 3. If the PR body links a PR in the other repo ("Requires ..."), review the two as one change.
-4. If the `game-contract-reviewer` agent is available (workspace layout), dispatch it with **only the target**: the PR URL, or the branch name. Do not pass your summary, your findings or the PR body. Merge its findings: CRITICAL, HIGH and MEDIUM go to Issues, LOW to Suggestions, its unverified suspicions to Unverified. If the agent is not available, say so under Unverified.
+4. Dispatch the `game-contract-reviewer` agent only in the workspace layout (Step 1). It needs both submodules on disk. Give it **only the target**: the PR URL, or the branch name. Do not pass your summary, your findings or the PR body. Merge its findings: CRITICAL, HIGH and MEDIUM go to Issues, LOW to Suggestions, its unverified suspicions to Unverified. In any other layout, do not dispatch it (its copy in a child repo stops at once there); put "contract review agent not run: not in the workspace layout" under Unverified.
 
 ### Check 3: Conventions
 
@@ -310,7 +310,7 @@ Also say whether the root and child repo status and branches are unchanged.
 Creating the routine is not part of this skill. These facts decide where the skill must live.
 
 - **Submodules in cloud sessions: not documented, so do not depend on them.** The Claude Code docs say a cloud session (and every scheduled task, formerly a routine) starts from "a fresh clone of your repository" and that "each repository you add is cloned on every run". They say nothing about git submodules. The GitHub proxy also limits API requests and source archives to "the repositories attached to the session", even for public repositories. A routine on the root repo can therefore not count on `Bomberman-2.0/` and `Bomberman-2.0-Backend/` being on disk. Sources (read 2026-11-13): <https://code.claude.com/docs/en/cloud-environments> ("What carries over from your setup", "GitHub proxy"), <https://code.claude.com/docs/en/routines> ("Repositories and branch permissions").
-- **Root skills do not load inside a child repo.** Tested after Task 6: `claude -p` started in `Bomberman-2.0-Backend/` loads the root `CLAUDE.md` and rules, but lists no root project skills.
+- **Root skills do not load inside a child repo.** `claude -p` started in `Bomberman-2.0-Backend/` loads the root `CLAUDE.md` and rules, but lists no root project skills.
 - **Consequence:** a copy of this skill must live in each child repo (`.claude/skills/pr-review/SKILL.md`), so a routine on a child repo can run it. Keep the copies equal to this file. In a child repo, the skill uses the "Single repo" layout of Step 1 and reads the workspace docs and the other repo from GitHub.
 - **Never start the routine at the PR head.** A session loads `CLAUDE.md`, `.claude/settings.json` hooks, `.mcp.json` and this skill from the commit it starts on. A GitHub pull-request trigger starts the run at the PR head commit when the PR repo is the task's first repository. A malicious PR could then rewrite this skill or add a SessionStart hook, and run with the routine's GitHub credentials before any guard here applies. So:
   - Use a **schedule trigger** on a trusted branch (`dev` of the child repo, or `main` of the workspace). Its prompt lists the open PRs and reviews each one: `/pr-review <PR URL> --auto` per PR. The skill reads each PR head only through `git fetch origin pull/<n>/head` (Step 2), never by checking it out.
@@ -318,4 +318,4 @@ Creating the routine is not part of this skill. These facts decide where the ski
   - Step 2 "Safe start" stops a run that started on an untrusted commit.
 - **Attach every repo the review reads:** both child repos and `NickDurnev/Bomberman-2.0-Workspace` (docs and rules). The GitHub proxy serves only attached repos. Without the workspace repo, Checks 1-2 go to Unverified and the verdict is COMMENT at most (Step 1). Until the workspace repo is published on GitHub, routines cannot read its docs.
 - Cloud sessions reject GraphQL. Use the GitHub MCP or `gh api` (REST), as in Step 2.
-- The `game-contract-reviewer` agent exists only in the workspace. In a child-repo routine, Check 2 runs without it and says so under Unverified.
+- Each child repo also holds a copy of the `game-contract-reviewer` agent (`.claude/agents/game-contract-reviewer.md`), kept equal to the workspace file. The agent reviews both sides, so it works only in the workspace layout. In a child-repo routine (single-repo layout), Check 2 runs without it and says so under Unverified.
