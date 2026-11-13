@@ -14,11 +14,13 @@ export class EnemyPlayer extends Phaser.GameObjects.Sprite {
     lastMoveAt: number;
     maskShape: Phaser.GameObjects.Graphics;
 
-    constructor({ game, id, spawn, skin, name }: PlayerConfig) {
+    constructor({ game, id, spawn, name }: PlayerConfig) {
         const centerCol = spawn.x - TILE_SIZE / 2;
         const centerRow = spawn.y - TILE_SIZE / 2;
 
-        super(game, centerCol, centerRow, skin, name);
+        // The texture key is the player id (see Preload). No frame: the name is
+        // not a frame, and setPlayerAvatar sets the final texture.
+        super(game, centerCol, centerRow, id);
 
         this.game = game;
         this.id = id;
