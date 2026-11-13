@@ -4,11 +4,28 @@
 
 @font-face {
     font-family: "Outfit";
-    src: local("Outfit-Regular"), url("./assets/fonts/Outfit-Regular.ttf");
+    font-weight: 400;
+    src: local("Outfit-Regular"), url("/assets/fonts/Outfit-Regular.ttf");
 }
 @font-face {
     font-family: "Outfit";
-    src: local("Outfit-Bold"), url("./assets/fonts/Outfit-Bold.ttf");
+    font-weight: 500;
+    src: local("Outfit-Medium"), url("/assets/fonts/Outfit-Medium.ttf");
+}
+@font-face {
+    font-family: "Outfit";
+    font-weight: 600;
+    src: local("Outfit-SemiBold"), url("/assets/fonts/Outfit-SemiBold.ttf");
+}
+@font-face {
+    font-family: "Outfit";
+    font-weight: 700;
+    src: local("Outfit-Bold"), url("/assets/fonts/Outfit-Bold.ttf");
+}
+@font-face {
+    font-family: "Outfit";
+    font-weight: 800;
+    src: local("Outfit-ExtraBold"), url("/assets/fonts/Outfit-ExtraBold.ttf");
 }
 
 @layer base {
