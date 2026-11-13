@@ -264,7 +264,11 @@ export const Card = ({
                     <BlurImage
                         src={card.src}
                         alt={card.title}
-                        className="absolute inset-0 z-10 h-full object-cover"
+                        // Size hint for the lazy image (the md card size);
+                        // w-full/h-full keep the real size on the card.
+                        width={320}
+                        height={480}
+                        className="absolute inset-0 z-10 h-full w-full object-cover"
                     />
                 ) : (
                     <div
