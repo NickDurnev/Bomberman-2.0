@@ -50,7 +50,7 @@ const Stats = () => {
         <>
             <UserBar />
             <div className="flex h-full w-full flex-col gap-y-10 py-20">
-                <div className="mx-auto w-3/4">
+                <div className="mx-auto w-full px-4 sm:w-3/4 sm:px-0">
                     <>
                         <DataTable
                             columns={columns}
