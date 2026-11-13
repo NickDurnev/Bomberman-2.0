@@ -4,11 +4,11 @@
 
 @font-face {
     font-family: "Outfit";
-    src: local("Outfit-Regular"), url("./assets/fonts/Outfit-Regular.ttf");
+    src: local("Outfit-Regular"), url("/assets/fonts/Outfit-Regular.ttf");
 }
 @font-face {
     font-family: "Outfit";
-    src: local("Outfit-Bold"), url("./assets/fonts/Outfit-Bold.ttf");
+    src: local("Outfit-Bold"), url("/assets/fonts/Outfit-Bold.ttf");
 }
 
 @layer base {
