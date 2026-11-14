@@ -36,7 +36,11 @@ const PlayerWinModal = () => {
         const victims = getPlayerVictims(prevGameInfo, winner);
         setVictims(victims);
 
-        setWinner(winner);
+        // Only the players in prevGameInfo carry the noKillPhrase.
+        const winnerInfo = prevGameInfo.players.find(
+            (player) => player.id === winner.id,
+        );
+        setWinner(winnerInfo ?? winner);
         setOpen(true);
     };
 
