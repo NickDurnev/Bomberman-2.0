@@ -43,7 +43,15 @@ const BombButton = () => {
             return;
         }
         pointerId.current = e.pointerId;
-        e.currentTarget.setPointerCapture(e.pointerId);
+        try {
+            try {
+            e.currentTarget.setPointerCapture(e.pointerId);
+        } catch {
+            // No active pointer to capture. Still handle the press.
+        }
+        } catch {
+            // No active pointer to capture. Still handle the press.
+        }
         setPressed(true);
         setBomb(true);
     };

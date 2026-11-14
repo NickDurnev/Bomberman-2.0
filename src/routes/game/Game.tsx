@@ -60,7 +60,7 @@ function Game() {
             >
                 {modals}
                 <div className="flex shrink-0 items-start justify-between gap-2 px-3 pt-3">
-                    <div className="min-w-0 [&>ul]:flex-wrap">{stats}</div>
+                    <div className="h-9 min-w-0 overflow-hidden">{stats}</div>
                     <HomeButton onClick={backToMenu} />
                 </div>
                 <div className="flex shrink-0 justify-center py-2">
@@ -68,7 +68,7 @@ function Game() {
                 </div>
                 <div
                     key="game-view"
-                    className="relative min-h-0 w-full flex-1 overflow-hidden"
+                    className="relative mx-auto max-h-[735px] min-h-0 w-full max-w-[1120px] flex-1 overflow-hidden"
                 >
                     {gameId && <PhaserGame gameId={gameId} />}
                 </div>
@@ -85,14 +85,14 @@ function Game() {
             >
                 {modals}
                 <div className="flex h-full w-[150px] shrink-0 flex-col items-center justify-between py-3">
-                    <div className="flex w-full justify-center px-2 [&>ul]:flex-wrap [&>ul]:justify-center">
+                    <div className="flex h-[128px] w-full justify-center overflow-hidden px-2 [&>ul]:flex-wrap [&>ul]:content-start [&>ul]:justify-center">
                         {stats}
                     </div>
                     {isTouch && <Thumbstick />}
                 </div>
                 <div
                     key="game-view"
-                    className="relative h-full min-w-0 flex-1 overflow-hidden"
+                    className="relative h-full max-h-[735px] min-w-0 max-w-[1120px] flex-1 self-center overflow-hidden"
                 >
                     {gameId && <PhaserGame gameId={gameId} />}
                 </div>
