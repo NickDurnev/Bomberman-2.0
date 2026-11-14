@@ -1,10 +1,30 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { PointerEvent } from "react";
 import { setBomb } from "@game/touchInput";
 
 const BombButton = () => {
     const pointerId = useRef<number | null>(null);
     const [pressed, setPressed] = useState(false);
+
+    useEffect(() => {
+        const clear = () => {
+            pointerId.current = null;
+            setPressed(false);
+            setBomb(false);
+        };
+        const onHidden = () => {
+            if (document.hidden) {
+                clear();
+            }
+        };
+        window.addEventListener("blur", clear);
+        document.addEventListener("visibilitychange", onHidden);
+        return () => {
+            window.removeEventListener("blur", clear);
+            document.removeEventListener("visibilitychange", onHidden);
+            setBomb(false);
+        };
+    }, []);
 
     const release = (e: PointerEvent<HTMLButtonElement>) => {
         if (pointerId.current !== null && e.pointerId !== pointerId.current) {
@@ -16,7 +36,10 @@ const BombButton = () => {
     };
 
     const handleDown = (e: PointerEvent<HTMLButtonElement>) => {
-        if (pointerId.current !== null) {
+        if (
+            pointerId.current !== null ||
+            (e.pointerType === "mouse" && e.button !== 0)
+        ) {
             return;
         }
         pointerId.current = e.pointerId;

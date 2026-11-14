@@ -21,15 +21,21 @@ const Thumbstick = () => {
     const [active, setActive] = useState(false);
 
     useEffect(() => {
+        const clear = () => {
+            pointerId.current = null;
+            setOffset({ x: 0, y: 0 });
+            setActive(false);
+            resetTouchInput();
+        };
         const onHidden = () => {
             if (document.hidden) {
-                resetTouchInput();
+                clear();
             }
         };
-        window.addEventListener("blur", resetTouchInput);
+        window.addEventListener("blur", clear);
         document.addEventListener("visibilitychange", onHidden);
         return () => {
-            window.removeEventListener("blur", resetTouchInput);
+            window.removeEventListener("blur", clear);
             document.removeEventListener("visibilitychange", onHidden);
             resetTouchInput();
         };
@@ -62,7 +68,10 @@ const Thumbstick = () => {
     };
 
     const handleDown = (e: PointerEvent<HTMLDivElement>) => {
-        if (pointerId.current !== null) {
+        if (
+            pointerId.current !== null ||
+            (e.pointerType === "mouse" && e.button !== 0)
+        ) {
             return;
         }
         pointerId.current = e.pointerId;
