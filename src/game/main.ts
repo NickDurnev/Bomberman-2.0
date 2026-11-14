@@ -6,7 +6,6 @@ import Preload from "./scenes/Preload";
 
 export const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
-    parent: "game-container",
     scale: {
         mode: Phaser.Scale.RESIZE,
         parent: "game-container",

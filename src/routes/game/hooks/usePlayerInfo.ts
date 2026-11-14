@@ -1,19 +1,19 @@
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import clientSocket, { getOrCreateSocketId } from "@utils/socket";
+import { pickedSpoilSocketData } from "@utils/types";
 import {
+    SPEED,
+    POWER,
     BOMBS,
     DELAY,
-    INITIAL_DELAY,
-    INITIAL_SPEED,
     MAX_SPEED,
     MIN_DELAY,
-    POWER,
-    SPEED,
+    INITIAL_DELAY,
+    INITIAL_SPEED,
     STEP_DELAY,
     STEP_SPEED,
 } from "@utils/constants";
-import clientSocket, { getOrCreateSocketId } from "@utils/socket";
-import { pickedSpoilSocketData } from "@utils/types";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 
 const DEFAULT_INFO = [
     { title: "Speed", value: 1, color: "#37bf2e" },
@@ -71,8 +71,8 @@ export const usePlayerInfo = () => {
 
     const processInfo = (spoil_type: number) => {
         if (spoil_type === SPEED) {
-            setInfo(prev =>
-                prev.map(item => {
+            setInfo((prev) =>
+                prev.map((item) => {
                     if (item.title === "Speed") {
                         if (item.value >= MAX_SPEED_VALUE) {
                             return item;
@@ -85,11 +85,11 @@ export const usePlayerInfo = () => {
                         };
                     }
                     return item;
-                }),
+                })
             );
         } else if (spoil_type === POWER) {
-            setInfo(prev =>
-                prev.map(item => {
+            setInfo((prev) =>
+                prev.map((item) => {
                     if (item.title === "Power") {
                         setLastInfo(item);
                         triggerHide();
@@ -99,11 +99,11 @@ export const usePlayerInfo = () => {
                         };
                     }
                     return item;
-                }),
+                })
             );
         } else if (spoil_type === BOMBS) {
-            setInfo(prev =>
-                prev.map(item => {
+            setInfo((prev) =>
+                prev.map((item) => {
                     if (item.title === "Bomb") {
                         setLastInfo(item);
                         triggerHide();
@@ -113,12 +113,12 @@ export const usePlayerInfo = () => {
                         };
                     }
                     return item;
-                }),
+                })
             );
         } else if (spoil_type === DELAY) {
             if (isDelaySpoil) {
-                setInfo(prev =>
-                    prev.map(item => {
+                setInfo((prev) =>
+                    prev.map((item) => {
                         if (item.title === "Delay") {
                             if (item.value >= MAX_DELAY_VALUE) {
                                 return item;
@@ -131,12 +131,12 @@ export const usePlayerInfo = () => {
                             };
                         }
                         return item;
-                    }),
+                    })
                 );
             } else {
                 isDelaySpoil = true;
-                setInfo(prev => {
-                    if (prev.some(item => item.title === "Delay")) {
+                setInfo((prev) => {
+                    if (prev.some((item) => item.title === "Delay")) {
                         return prev; // Avoid duplicate "Delay" entries
                     }
                     return [...prev, DELAY_INFO];

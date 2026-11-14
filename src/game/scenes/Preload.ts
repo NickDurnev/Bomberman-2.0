@@ -162,3 +162,4 @@ class Preload extends Phaser.Scene {
 }
 
 export default Preload;
+
