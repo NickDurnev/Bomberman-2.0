@@ -6,58 +6,57 @@ import { EventBus } from "../EventBus";
 import Playing from "./Playing";
 
 class GameOver extends Scene {
-    camera: Phaser.Cameras.Scene2D.Camera;
-    background: Phaser.GameObjects.Image;
-    gameOverText: Phaser.GameObjects.Text;
+  camera: Phaser.Cameras.Scene2D.Camera;
+  background: Phaser.GameObjects.Image;
+  gameOverText: Phaser.GameObjects.Text;
 
-    constructor() {
-        super("GameOver");
-    }
+  constructor() {
+    super("GameOver");
+  }
 
-    create() {
-        this.setEventHandlers();
-        this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
-        this.events.once(Phaser.Scenes.Events.DESTROY, this.cleanup, this);
-        this.camera = this.cameras.main;
-        this.camera.setBackgroundColor(0x252525);
+  create() {
+    this.setEventHandlers();
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
+    this.events.once(Phaser.Scenes.Events.DESTROY, this.cleanup, this);
+    this.camera = this.cameras.main;
+    this.camera.setBackgroundColor(0x252525);
 
-        this.background = this.add.image(512, 384, "background");
-        this.background.setAlpha(0.5);
+    this.background = this.add.image(512, 384, "background");
+    this.background.setAlpha(0.5);
 
-        this.gameOverText = this.add
-            .text(512, 384, "Game Over", {
-                fontFamily: "Arial Black",
-                fontSize: 64,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 8,
-                align: "center",
-            })
-            .setOrigin(0.5)
-            .setDepth(100);
+    this.gameOverText = this.add
+      .text(512, 384, "Game Over", {
+        fontFamily: "Arial Black",
+        fontSize: 64,
+        color: "#ffffff",
+        stroke: "#000000",
+        strokeThickness: 8,
+        align: "center",
+      })
+      .setOrigin(0.5)
+      .setDepth(100);
 
-        EventBus.emit("current-scene-ready", this);
-    }
+    EventBus.emit("current-scene-ready", this);
+  }
 
-    private boundLaunchGame = this.launchGame.bind(this);
+  private boundLaunchGame = this.launchGame.bind(this);
 
-    private setEventHandlers() {
-        clientSocket.on("launch game", this.boundLaunchGame);
-    }
+  private setEventHandlers() {
+    clientSocket.on("launch game", this.boundLaunchGame);
+  }
 
-    private cleanup() {
-        clientSocket.off("launch game", this.boundLaunchGame);
-    }
+  private cleanup() {
+    clientSocket.off("launch game", this.boundLaunchGame);
+  }
 
-    launchGame(game: GameData): void {
-        this.scene.remove("Playing");
-        this.scene.add("Playing", Playing, true, game);
-    }
+  launchGame(game: GameData): void {
+    this.scene.remove("Playing");
+    this.scene.add("Playing", Playing, true, game);
+  }
 
-    changeScene() {
-        this.scene.start("MainMenu");
-    }
+  changeScene() {
+    this.scene.start("MainMenu");
+  }
 }
 
 export default GameOver;
-

@@ -1,226 +1,202 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { Emoji } from "react-apple-emojis";
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import { useNavigate } from "react-router-dom";
 
+import {
+  AnimatedTooltip,
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  PlayersSlots,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  useModal,
+} from "@components/index";
 import clientSocket from "@utils/socket";
 import { EndGame, GameData as Game } from "@utils/types";
 import { getPlayerVictims } from "@utils/utils";
-import {
-    Button,
-    Modal,
-    ModalContent,
-    ModalBody,
-    useModal,
-    PlayersSlots,
-    Table,
-    TableBody,
-    TableHead,
-    TableRow,
-    TableHeader,
-    TableCell,
-    AnimatedTooltip,
-} from "@components/index";
 
 type GameData = {
-    current_game: Game;
+  current_game: Game;
 };
 
 const RestartGameModal = () => {
-    const [gameInfo, setGameInfo] = useState<Game | null>(null);
-    const [prevGameInfo, setPrevGameInfo] = useState<Game | null>(null);
-    const [gameId, setGameId] = useState<string | null>(null);
-    const [isTimerRunning, setIsTimerRunning] = useState(false);
-    const navigate = useNavigate();
-    const { open, setOpen } = useModal();
+  const [gameInfo, setGameInfo] = useState<Game | null>(null);
+  const [prevGameInfo, setPrevGameInfo] = useState<Game | null>(null);
+  const [gameId, setGameId] = useState<string | null>(null);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const navigate = useNavigate();
+  const { open, setOpen } = useModal();
 
-    useEffect(() => {
-        const onStartTimer = () => setIsTimerRunning(true);
-        clientSocket.on("end game", onEndGame);
-        clientSocket.on("update game", handleUpdateGame);
-        clientSocket.on("launch game", handleLaunchGame);
-        clientSocket.on("start timer", onStartTimer);
+  useEffect(() => {
+    const onStartTimer = () => setIsTimerRunning(true);
+    clientSocket.on("end game", onEndGame);
+    clientSocket.on("update game", handleUpdateGame);
+    clientSocket.on("launch game", handleLaunchGame);
+    clientSocket.on("start timer", onStartTimer);
 
-        const prevGameInfo = sessionStorage.getItem("prevGameInfo");
-        const newGameId = sessionStorage.getItem("new_game_id");
-        if (prevGameInfo && newGameId) {
-            setTimeout(() => {
-                clientSocket.emit("enter pending game", newGameId);
-            }, 1000);
-            const data = JSON.parse(prevGameInfo);
-            setPrevGameInfo(data);
-            setGameId(newGameId);
-            setOpen(true);
+    const prevGameInfo = sessionStorage.getItem("prevGameInfo");
+    const newGameId = sessionStorage.getItem("new_game_id");
+    if (prevGameInfo && newGameId) {
+      setTimeout(() => {
+        clientSocket.emit("enter pending game", newGameId);
+      }, 1000);
+      const data = JSON.parse(prevGameInfo);
+      setPrevGameInfo(data);
+      setGameId(newGameId);
+      setOpen(true);
 
-            sessionStorage.removeItem("prevGameInfo");
-            sessionStorage.removeItem("new_game_id");
-        }
+      sessionStorage.removeItem("prevGameInfo");
+      sessionStorage.removeItem("new_game_id");
+    }
 
-        return () => {
-            clientSocket.off("end game", onEndGame);
-            clientSocket.off("update game", handleUpdateGame);
-            clientSocket.off("launch game", handleLaunchGame);
-            clientSocket.off("start timer", onStartTimer);
-        };
-    }, []);
-
-    const onEndGame = ({ new_game_id, prevGameInfo }: EndGame) => {
-        sessionStorage.setItem("prevGameInfo", JSON.stringify(prevGameInfo));
-        sessionStorage.setItem("new_game_id", new_game_id);
-        navigate(0);
+    return () => {
+      clientSocket.off("end game", onEndGame);
+      clientSocket.off("update game", handleUpdateGame);
+      clientSocket.off("launch game", handleLaunchGame);
+      clientSocket.off("start timer", onStartTimer);
     };
+  }, []);
 
-    const handleUpdateGame = (data: GameData) => {
-        setGameInfo(data.current_game);
-    };
+  const onEndGame = ({ new_game_id, prevGameInfo }: EndGame) => {
+    sessionStorage.setItem("prevGameInfo", JSON.stringify(prevGameInfo));
+    sessionStorage.setItem("new_game_id", new_game_id);
+    navigate(0);
+  };
 
-    const handleLaunchGame = (game?: Game) => {
-        if (!open) {
-            return;
-        }
-        if (gameId || game?.id) {
-            const id = gameId || game?.id;
-            navigate("/game/" + id);
-            setOpen(false);
-        }
-    };
+  const handleUpdateGame = (data: GameData) => {
+    setGameInfo(data.current_game);
+  };
 
-    const startGameAction = () => {
-        clientSocket.emit("start game", gameId);
-        handleLaunchGame(); // Trigger the game launch
-    };
+  const handleLaunchGame = (game?: Game) => {
+    if (!open) {
+      return;
+    }
+    if (gameId || game?.id) {
+      const id = gameId || game?.id;
+      navigate(`/game/${id}`);
+      setOpen(false);
+    }
+  };
 
-    const leaveGameAction = () => {
-        clientSocket.emit("leave pending game");
-        navigate("/");
-    };
+  const startGameAction = () => {
+    clientSocket.emit("start game", gameId);
+    handleLaunchGame(); // Trigger the game launch
+  };
 
-    const startTimer = () => {
-        clientSocket.emit("start timer", gameId);
-    };
+  const leaveGameAction = () => {
+    clientSocket.emit("leave pending game");
+    navigate("/");
+  };
 
-    const players = gameInfo ? Object.values(gameInfo.players) : [];
-    const canStartGame = players.length > 1;
+  const startTimer = () => {
+    clientSocket.emit("start timer", gameId);
+  };
 
-    return (
-        <div className="absolute">
-            <Modal>
-                <ModalBody className="[@media(max-height:500px)]:!max-w-[80%] [@media(max-height:500px)]:!max-h-[95dvh] [@media(max-height:500px)]:!min-h-0">
-                    <ModalContent className="[@media(max-height:500px)]:!p-4 min-h-0 overflow-y-auto [&>*]:shrink-0">
-                        <h3 className="text-3xl font-bold tracking-wider text-center motion-preset-expand motion-loop-once">
-                            Stats
-                        </h3>
-                        <div className="[@media(max-height:500px)]:max-h-[120px] [@media(max-height:500px)]:pt-2 [@media(max-height:500px)]:mb-2 pt-5 mb-5 max-h-[325px] overflow-y-auto overflow-x-hidden">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className="w-[100px]">
-                                            No.
-                                        </TableHead>
-                                        <TableHead>Player</TableHead>
-                                        <TableHead>Eliminated</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {prevGameInfo &&
-                                        prevGameInfo.players.map(
-                                            (player, index) => {
-                                                const victims =
-                                                    getPlayerVictims(
-                                                        prevGameInfo,
-                                                        player
-                                                    );
-                                                return (
-                                                    <TableRow key={player.id}>
-                                                        <TableCell className="font-medium">
-                                                            {index + 1}
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            {player.name}
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            {victims.length !==
-                                                                0 && (
-                                                                <div className="flex flex-row items-center justify-start">
-                                                                    <AnimatedTooltip
-                                                                        items={
-                                                                            victims
-                                                                        }
-                                                                        size={
-                                                                            "small"
-                                                                        }
-                                                                    />
-                                                                </div>
-                                                            )}
-                                                            {victims.length ===
-                                                                0 &&
-                                                                player.noKillPhrase}
-                                                        </TableCell>
-                                                    </TableRow>
-                                                );
-                                            }
-                                        )}
-                                </TableBody>
-                            </Table>
-                        </div>
-                        {gameInfo && (
-                            <PlayersSlots
-                                max_players={gameInfo.max_players}
-                                players={players}
-                                size={"small"}
-                            />
-                        )}
-                        {isTimerRunning ? (
-                            <div className="flex flex-col gap-y-8">
-                                <h3 className="text-3xl font-bold tracking-wider text-center motion-preset-expand motion-loop-once">
-                                    Game will start in
-                                </h3>
-                                <div className="flex justify-center">
-                                    <CountdownCircleTimer
-                                        isPlaying
-                                        duration={3}
-                                        colors="#8953AD"
-                                        strokeWidth={10}
-                                        onComplete={() => {
-                                            setIsTimerRunning(false);
-                                            startGameAction();
-                                        }}
-                                    >
-                                        {({ remainingTime }) => (
-                                            <div className="text-4xl font-bold">
-                                                {remainingTime}
-                                            </div>
-                                        )}
-                                    </CountdownCircleTimer>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="[@media(max-height:500px)]:gap-y-3 flex flex-col justify-center items-center mx-auto gap-y-8">
-                                <Button
-                                    text="Restart Game"
-                                    animated
-                                    animatedIcon={
-                                        <Emoji name="bomb" width={20} />
-                                    }
-                                    onClick={startTimer}
-                                    disabled={!canStartGame}
+  const players = gameInfo ? Object.values(gameInfo.players) : [];
+  const canStartGame = players.length > 1;
+
+  return (
+    <div className="absolute">
+      <Modal>
+        <ModalBody className="[@media(max-height:500px)]:!max-w-[80%] [@media(max-height:500px)]:!max-h-[95dvh] [@media(max-height:500px)]:!min-h-0">
+          <ModalContent className="[@media(max-height:500px)]:!p-4 min-h-0 overflow-y-auto [&>*]:shrink-0">
+            <h3 className="motion-preset-expand motion-loop-once text-center font-bold text-3xl tracking-wider">
+              Stats
+            </h3>
+            <div className="mb-5 max-h-[325px] overflow-y-auto overflow-x-hidden pt-5 [@media(max-height:500px)]:mb-2 [@media(max-height:500px)]:max-h-[120px] [@media(max-height:500px)]:pt-2">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">No.</TableHead>
+                    <TableHead>Player</TableHead>
+                    <TableHead>Eliminated</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {prevGameInfo &&
+                    prevGameInfo.players.map((player, index) => {
+                      const victims = getPlayerVictims(prevGameInfo, player);
+                      return (
+                        <TableRow key={player.id}>
+                          <TableCell className="font-medium">
+                            {index + 1}
+                          </TableCell>
+                          <TableCell>{player.name}</TableCell>
+                          <TableCell>
+                            {victims.length !== 0 && (
+                              <div className="flex flex-row items-center justify-start">
+                                <AnimatedTooltip
+                                  items={victims}
+                                  size={"small"}
                                 />
-                                <Button
-                                    text="Main Menu"
-                                    animated
-                                    animatedIcon={
-                                        <Emoji name="door" width={20} />
-                                    }
-                                    onClick={leaveGameAction}
-                                />
-                            </div>
-                        )}
-                    </ModalContent>
-                </ModalBody>
-            </Modal>
-        </div>
-    );
+                              </div>
+                            )}
+                            {victims.length === 0 && player.noKillPhrase}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              </Table>
+            </div>
+            {gameInfo && (
+              <PlayersSlots
+                max_players={gameInfo.max_players}
+                players={players}
+                size={"small"}
+              />
+            )}
+            {isTimerRunning ? (
+              <div className="flex flex-col gap-y-8">
+                <h3 className="motion-preset-expand motion-loop-once text-center font-bold text-3xl tracking-wider">
+                  Game will start in
+                </h3>
+                <div className="flex justify-center">
+                  <CountdownCircleTimer
+                    isPlaying
+                    duration={3}
+                    colors="#8953AD"
+                    strokeWidth={10}
+                    onComplete={() => {
+                      setIsTimerRunning(false);
+                      startGameAction();
+                    }}
+                  >
+                    {({ remainingTime }) => (
+                      <div className="font-bold text-4xl">{remainingTime}</div>
+                    )}
+                  </CountdownCircleTimer>
+                </div>
+              </div>
+            ) : (
+              <div className="mx-auto flex flex-col items-center justify-center gap-y-8 [@media(max-height:500px)]:gap-y-3">
+                <Button
+                  text="Restart Game"
+                  animated
+                  animatedIcon={<Emoji name="bomb" width={20} />}
+                  onClick={startTimer}
+                  disabled={!canStartGame}
+                />
+                <Button
+                  text="Main Menu"
+                  animated
+                  animatedIcon={<Emoji name="door" width={20} />}
+                  onClick={leaveGameAction}
+                />
+              </div>
+            )}
+          </ModalContent>
+        </ModalBody>
+      </Modal>
+    </div>
+  );
 };
 
 export default RestartGameModal;
-

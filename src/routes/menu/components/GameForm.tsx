@@ -10,65 +10,64 @@ import clientSocket from "@utils/socket";
 import { GameStore } from "@utils/types";
 
 const GameForm = () => {
-    const { isAuthenticated } = useAuth();
-    const changeGameName = useGameStore(
-        (state: GameStore) => state.changeGameName,
-    );
-    const [name, setName] = useState("");
-    const [isBtnDisabled, setIsBtnDisabled] = useState(true);
+  const { isAuthenticated } = useAuth();
+  const changeGameName = useGameStore(
+    (state: GameStore) => state.changeGameName,
+  );
+  const [name, setName] = useState("");
+  const [isBtnDisabled, setIsBtnDisabled] = useState(true);
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        return () => {
-            changeGameName(name);
-        };
-    }, [changeGameName, name]);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value);
-        if (e.target.value.length <= 2) {
-            setIsBtnDisabled(true);
-        } else {
-            setIsBtnDisabled(false);
-        }
+  useEffect(() => {
+    return () => {
+      changeGameName(name);
     };
+  }, [changeGameName, name]);
 
-    const checkGameName = () => {
-        clientSocket.emit("check game name", name, handleHostGame);
-    };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+    if (e.target.value.length <= 2) {
+      setIsBtnDisabled(true);
+    } else {
+      setIsBtnDisabled(false);
+    }
+  };
 
-    const handleHostGame = ({ isAvailable }: { isAvailable: boolean }) => {
-        if (isAvailable) {
-            clientSocket.emit("leave lobby");
-            navigate("/map");
-        } else {
-            toast("Game name already in use");
-        }
-    };
+  const checkGameName = () => {
+    clientSocket.emit("check game name", name, handleHostGame);
+  };
 
-    return (
-        <>
-            <div className="motion-preset-expand motion-loop-once text-center font-extrabold text-4xl tracking-wider">
-                <Input
-                    name="gameName"
-                    placeholder="Game Name"
-                    onChange={handleChange}
-                    value={name}
-                    type="text"
-                    maxLength={30}
-                />
-            </div>
-            <Button
-                text="New Game"
-                onClick={checkGameName}
-                animated
-                animatedIcon={<Emoji name="video-game" width={20} />}
-                disabled={isBtnDisabled || !isAuthenticated}
-            />
-        </>
-    );
+  const handleHostGame = ({ isAvailable }: { isAvailable: boolean }) => {
+    if (isAvailable) {
+      clientSocket.emit("leave lobby");
+      navigate("/map");
+    } else {
+      toast("Game name already in use");
+    }
+  };
+
+  return (
+    <>
+      <div className="motion-preset-expand motion-loop-once text-center font-extrabold text-4xl tracking-wider">
+        <Input
+          name="gameName"
+          placeholder="Game Name"
+          onChange={handleChange}
+          value={name}
+          type="text"
+          maxLength={30}
+        />
+      </div>
+      <Button
+        text="New Game"
+        onClick={checkGameName}
+        animated
+        animatedIcon={<Emoji name="video-game" width={20} />}
+        disabled={isBtnDisabled || !isAuthenticated}
+      />
+    </>
+  );
 };
 
 export default GameForm;
-
