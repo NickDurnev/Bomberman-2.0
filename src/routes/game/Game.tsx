@@ -11,11 +11,13 @@ import HomeButton from "./components/HomeButton";
 import Thumbstick from "./components/Thumbstick";
 import BombButton from "./components/BombButton";
 import { usePlayerInfo } from "./hooks/usePlayerInfo";
+import { useCountdown } from "./hooks/useCountdown";
 
 function Game() {
     const { gameId } = useParams();
     const { info, lastInfo, hidden, isDead, backToMenu } = usePlayerInfo();
     const { isTouch, isCompact, isPortrait } = useGameLayout();
+    const timeLeft = useCountdown();
 
     const touchClass = isTouch ? "touch-none select-none" : "";
 
@@ -62,7 +64,7 @@ function Game() {
                     <HomeButton onClick={backToMenu} />
                 </div>
                 <div className="flex shrink-0 justify-center py-2">
-                    <CountdownTimer compact />
+                    <CountdownTimer timeLeft={timeLeft} compact />
                 </div>
                 <div
                     key="game-view"
@@ -96,7 +98,7 @@ function Game() {
                 </div>
                 <div className="flex h-full w-[150px] shrink-0 flex-col items-center justify-between py-3">
                     <div className="flex flex-col items-center gap-2">
-                        <CountdownTimer compact />
+                        <CountdownTimer timeLeft={timeLeft} compact />
                         <HomeButton onClick={backToMenu} />
                     </div>
                     {isTouch && <BombButton />}
@@ -117,7 +119,7 @@ function Game() {
             <div className="grid w-full max-w-[1120px] grid-cols-[1fr_auto_1fr] items-center">
                 <div className="justify-self-start">{stats}</div>
                 <div className="justify-self-center">
-                    <CountdownTimer />
+                    <CountdownTimer timeLeft={timeLeft} />
                 </div>
                 <div className="justify-self-end">
                     <HomeButton onClick={backToMenu} />
