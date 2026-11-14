@@ -42,14 +42,14 @@ const PlayerWinModal = () => {
     return (
         <div className="absolute">
             <Modal>
-                <ModalBody>
-                    <ModalContent>
+                <ModalBody className="[@media(max-height:500px)]:!max-w-[80%] max-h-[95dvh] min-h-0">
+                    <ModalContent className="[@media(max-height:500px)]:!p-4 min-h-0 overflow-y-auto [&>*]:shrink-0">
                         {winner && (
-                            <div className="mt-6 flex flex-col justify-center items-center mx-auto gap-y-8">
+                            <div className="[@media(max-height:500px)]:mt-0 [@media(max-height:500px)]:gap-y-3 mt-6 flex flex-col justify-center items-center mx-auto gap-y-8">
                                 <img
                                     src={winner.skin}
                                     alt={winner.name}
-                                    className="w-32 h-32 rounded-full motion-preset-confetti motion-loop-once"
+                                    className="[@media(max-height:500px)]:w-16 [@media(max-height:500px)]:h-16 w-32 h-32 rounded-full motion-preset-confetti motion-loop-once"
                                 />
                                 <h3 className="text-3xl font-bold tracking-wider text-center motion-preset-expand motion-loop-once">
                                     Winner{" "}
@@ -63,7 +63,7 @@ const PlayerWinModal = () => {
                                         Eliminated:
                                     </h4>
                                 )}
-                                <div className="flex flex-row items-center justify-center mb-10 w-full">
+                                <div className="[@media(max-height:500px)]:mb-2 flex flex-row items-center justify-center mb-10 w-full">
                                     {victims.length !== 0 && (
                                         <AnimatedTooltip
                                             items={victims}
