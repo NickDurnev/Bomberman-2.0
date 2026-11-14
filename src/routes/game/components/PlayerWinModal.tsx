@@ -40,7 +40,7 @@ const PlayerWinModal = () => {
     };
 
     return (
-        <div className="py-40  flex items-center justify-center">
+        <div className="absolute">
             <Modal>
                 <ModalBody>
                     <ModalContent>

@@ -103,7 +103,7 @@ const RestartGameModal = () => {
     const canStartGame = players.length > 1;
 
     return (
-        <div className="py-40  flex items-center justify-center">
+        <div className="absolute">
             <Modal>
                 <ModalBody>
                     <ModalContent>
