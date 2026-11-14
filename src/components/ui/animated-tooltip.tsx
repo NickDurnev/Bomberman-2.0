@@ -19,7 +19,7 @@ type Props = {
 // A player without a photo has an empty image URL. Pick one of the game's
 // fallback avatars (avatar-1..12, as in setPlayerAvatar) from the name, so the
 // same player keeps the same avatar across renders.
-const fallbackAvatar = (name: string) => {
+export const fallbackAvatar = (name: string) => {
     let hash = 0;
     for (const char of name) {
         hash = (hash * 31 + char.charCodeAt(0)) >>> 0;

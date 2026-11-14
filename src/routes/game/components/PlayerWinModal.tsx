@@ -9,6 +9,7 @@ import {
     useModal,
     ColourfulText,
     AnimatedTooltip,
+    fallbackAvatar,
 } from "@components/index";
 
 const PlayerWinModal = () => {
@@ -47,7 +48,22 @@ const PlayerWinModal = () => {
                         {winner && (
                             <div className="[@media(max-height:500px)]:mt-0 [@media(max-height:500px)]:gap-y-3 mt-6 flex flex-col justify-center items-center mx-auto gap-y-8">
                                 <img
-                                    src={winner.skin}
+                                    src={
+                                        winner.skin ||
+                                        fallbackAvatar(winner.name)
+                                    }
+                                    onError={(e) => {
+                                        const fallback = fallbackAvatar(
+                                            winner.name,
+                                        );
+                                        if (
+                                            !e.currentTarget.src.endsWith(
+                                                fallback,
+                                            )
+                                        ) {
+                                            e.currentTarget.src = fallback;
+                                        }
+                                    }}
                                     alt={winner.name}
                                     className="[@media(max-height:500px)]:w-16 [@media(max-height:500px)]:h-16 w-32 h-32 rounded-full motion-preset-confetti motion-loop-once"
                                 />
