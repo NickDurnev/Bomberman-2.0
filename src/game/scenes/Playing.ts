@@ -9,6 +9,7 @@ import {
     Spoil,
     Tombstone,
 } from "@game/entities";
+import { resetTouchInput } from "@game/touchInput";
 import {
     LAYER,
     PORTAL_DELAY,
@@ -60,6 +61,15 @@ class Playing extends Phaser.Scene {
     create() {
         this.createMap();
         this.createPlayers();
+        this.cameras.main.setBounds(
+            0,
+            0,
+            this.map.widthInPixels,
+            this.map.heightInPixels,
+        );
+        if (this.player) {
+            this.cameras.main.startFollow(this.player, true);
+        }
         this.setEventHandlers();
 
         // Guarantee socket listeners are removed on every teardown path —
@@ -430,6 +440,7 @@ class Playing extends Phaser.Scene {
             clientSocket.off(event, handler);
         }
         this.socketHandlers = [];
+        resetTouchInput();
     }
 
     private onPlayerDisconnect({ player_id }: { player_id: string }) {

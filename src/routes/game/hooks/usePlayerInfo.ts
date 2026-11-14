@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { IoHomeOutline } from "react-icons/io5";
-import clsx from "clsx";
 import clientSocket, { getOrCreateSocketId } from "@utils/socket";
 import { pickedSpoilSocketData } from "@utils/types";
 import {
@@ -16,7 +14,6 @@ import {
     STEP_DELAY,
     STEP_SPEED,
 } from "@utils/constants";
-import { Button } from "@components/index";
 
 const DEFAULT_INFO = [
     { title: "Speed", value: 1, color: "#37bf2e" },
@@ -26,7 +23,7 @@ const DEFAULT_INFO = [
 
 const DELAY_INFO = { title: "Delay", value: 2, color: "#5B5FCD" };
 
-type Info = {
+export type Info = {
     title: string;
     value: number;
     color: string;
@@ -35,10 +32,10 @@ type Info = {
 const MAX_SPEED_VALUE = (MAX_SPEED - INITIAL_SPEED) / STEP_SPEED;
 const MAX_DELAY_VALUE = (INITIAL_DELAY - MIN_DELAY) / STEP_DELAY;
 
-const PlayerInfo = () => {
+export const usePlayerInfo = () => {
     const { gameId } = useParams();
     const navigate = useNavigate();
-    const [info, setInfo] = useState(DEFAULT_INFO);
+    const [info, setInfo] = useState<Info[]>(DEFAULT_INFO);
     const [lastInfo, setLastInfo] = useState<Info | null>(null);
     const [hidden, setHidden] = useState(false);
     const [isDead, setIsDead] = useState(false);
@@ -161,64 +158,5 @@ const PlayerInfo = () => {
         navigate("/");
     };
 
-    return (
-        <>
-            <ul className="flex gap-x-8 items-center p-2 absolute top-[34px] left-[140px]">
-                {info.map(({ title, value }) => (
-                    <li
-                        key={title}
-                        className="flex items-center gap-x-2 bg-black transition motion-preset-pop motion-loop-once rounded-lg px-3 py-1"
-                    >
-                        <div className="rounded-full">
-                            <img
-                                src={`/assets/${title.toLowerCase()}_icon.png`}
-                                alt={title}
-                                className="w-[25px] h-[23px] rounded-full object-contain"
-                            />
-                        </div>
-                        <p className="text-white text-sm">x{value}</p>
-                    </li>
-                ))}
-                {lastInfo && (
-                    <li
-                        key="notification"
-                        className={clsx(
-                            "flex items-center gap-x-2 bg-transparent transition-opacity duration-500 rounded-lg px-3",
-                            hidden ? "opacity-0" : "opacity-100"
-                        )}
-                    >
-                        <p
-                            className="text-lg font-bold"
-                            style={{
-                                color: lastInfo.color,
-                            }}
-                        >
-                            +1 {lastInfo.title}
-                        </p>
-                    </li>
-                )}
-                {isDead && (
-                    <li
-                        key="notification"
-                        className={clsx(
-                            "flex items-center gap-x-2 bg-transparent transition-opacity duration-500 rounded-lg px-3",
-                            hidden ? "opacity-0" : "opacity-100"
-                        )}
-                    >
-                        <p className="text-lg font-bold text-white">You died</p>
-                    </li>
-                )}
-            </ul>
-            <div className="flex gap-x-8 items-center p-[6px] absolute top-[34px] right-[140px]">
-                <Button
-                    icon={<IoHomeOutline size={17} />}
-                    onClick={backToMenu}
-                    className="rounded-full p-2"
-                />
-            </div>
-        </>
-    );
+    return { info, lastInfo, hidden, isDead, backToMenu };
 };
-
-export default PlayerInfo;
-

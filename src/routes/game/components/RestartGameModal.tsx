@@ -103,14 +103,14 @@ const RestartGameModal = () => {
     const canStartGame = players.length > 1;
 
     return (
-        <div className="py-40  flex items-center justify-center">
+        <div className="absolute">
             <Modal>
-                <ModalBody>
-                    <ModalContent>
+                <ModalBody className="[@media(max-height:500px)]:!max-w-[80%] [@media(max-height:500px)]:!max-h-[95dvh] [@media(max-height:500px)]:!min-h-0">
+                    <ModalContent className="[@media(max-height:500px)]:!p-4 min-h-0 overflow-y-auto [&>*]:shrink-0">
                         <h3 className="text-3xl font-bold tracking-wider text-center motion-preset-expand motion-loop-once">
                             Stats
                         </h3>
-                        <div className="pt-5 mb-5 max-h-[325px] overflow-y-auto overflow-x-hidden">
+                        <div className="[@media(max-height:500px)]:max-h-[120px] [@media(max-height:500px)]:pt-2 [@media(max-height:500px)]:mb-2 pt-5 mb-5 max-h-[325px] overflow-y-auto overflow-x-hidden">
                             <Table>
                                 <TableHeader>
                                     <TableRow>
@@ -195,7 +195,7 @@ const RestartGameModal = () => {
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex flex-col justify-center items-center mx-auto gap-y-8">
+                            <div className="[@media(max-height:500px)]:gap-y-3 flex flex-col justify-center items-center mx-auto gap-y-8">
                                 <Button
                                     text="Restart Game"
                                     animated
