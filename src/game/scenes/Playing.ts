@@ -9,6 +9,7 @@ import {
     Spoil,
     Tombstone,
 } from "@game/entities";
+import { resetTouchInput } from "@game/touchInput";
 import {
     LAYER,
     PORTAL_DELAY,
@@ -430,6 +431,7 @@ class Playing extends Phaser.Scene {
             clientSocket.off(event, handler);
         }
         this.socketHandlers = [];
+        resetTouchInput();
     }
 
     private onPlayerDisconnect({ player_id }: { player_id: string }) {
