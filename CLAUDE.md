@@ -11,18 +11,21 @@ Stack: React 18, Phaser 3, TypeScript, Vite, Tailwind, Biome.
 | `npm run dev` | Vite dev server |
 | `npm run build` | Production build |
 | `npm run start` | Preview the production build on :3000 |
-| `npm run lint:fix` / `npm run format:fix` | Biome lint / format with fixes on the whole repo. Do not use them before a commit (see below) |
+| `npm run check` | `biome ci .`: lint and format check on the whole repo, no writes |
+| `npm run typecheck` | `tsc --noEmit` (vite build does not type-check) |
+| `npm run lint:fix` / `npm run format:fix` | Biome lint / format with fixes on the whole repo |
 | `npm run format` | Biome format check |
 
 ## Checks before a commit
 
-Never commit with a NEW failure. `<changed files>` means only the files you changed yourself.
+Never commit with a failing check. Each command must exit 0. `<changed files>` means only the files you changed yourself.
 
-1. Biome: `npx biome check --write <changed files>`. Never run Biome with `--write` on the whole repo: it rewrites many unrelated files.
-2. Types: `npx tsc --noEmit`. Compare the errors with the same command on `origin/dev`.
-3. Build: `npm run build`
+1. Fix Biome in your files: `npx biome check --write <changed files>`.
+2. Lint and format: `npm run check`
+3. Types: `npm run typecheck`
+4. Build: `npm run build`
 
-`dev` currently has existing Biome errors (no known `tsc` errors). Your change must add no NEW errors versus `origin/dev`. Do not fix unrelated errors in the same PR.
+CI runs the same `checks` job on every PR to `dev`. A red check blocks the merge.
 
 There is no unit-test script. The `test` script is a load test (`workLoadTest.js`), not a unit test.
 

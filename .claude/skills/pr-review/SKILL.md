@@ -223,7 +223,7 @@ cd - && git -C <repo> worktree remove --force "$wt" && rm -rf "$(dirname "$wt")"
 Always remove the worktree, also after a failure. Then run `git -C <repo> worktree prune`.
 
 - A lint or format error in a changed file is an Issue. Give `file:line` and the rule.
-- A `tsc` or build error in a file the PR changed is an Issue. An error only in unchanged files may already be on `dev`: if you have time, run the same command on `origin/dev` in a second temp worktree. If it fails there too, it is not this PR's finding; note it under Suggestions.
+- A `tsc` or build error in a file the PR changed is an Issue. `dev` is protected by the `checks` CI job, so an error in an unchanged file is unexpected: report it as an Issue and say that it is outside the PR's files.
 - If a step cannot run (install fails, no network), put it under Unverified with the error. Never claim a check passed that you did not run.
 
 ## Step 5: Decide the verdict
