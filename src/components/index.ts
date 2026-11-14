@@ -9,7 +9,7 @@ export { AuthCheck } from "./AuthCheck";
 
 export { BackgroundLines } from "./ui/background-lines";
 export { Carousel, Card } from "./ui/apple-cards-carousel";
-export { AnimatedTooltip } from "./ui/animated-tooltip";
+export { AnimatedTooltip, fallbackAvatar } from "./ui/animated-tooltip";
 export { Input } from "./ui/input";
 export { Switch } from "./ui/switch";
 export {
