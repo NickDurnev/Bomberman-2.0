@@ -39,6 +39,6 @@ export function PhaserGame({ gameId }: Readonly<IProps>) {
         };
     }, [gameId]);
 
-    return <div id="game-container"></div>;
+    return <div id="game-container" className="absolute inset-0"></div>;
 }
 

@@ -2,8 +2,13 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { MdOutlineTimer } from "react-icons/md";
 import { GAME_DURATION } from "@utils/constants";
+import clsx from "clsx";
 
-const CountdownTimer = () => {
+type Props = {
+    compact?: boolean;
+};
+
+const CountdownTimer = ({ compact }: Props) => {
     const { gameId } = useParams();
     const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
 
@@ -37,9 +42,14 @@ const CountdownTimer = () => {
     };
 
     return (
-        <div className="flex items-center gap-x-2 bg-black transition motion-preset-pop motion-loop-once rounded-lg px-2 py-1">
-            <MdOutlineTimer color="#fefefe" size={20} />
-            <p className="text-large font-semibold text-white">
+        <div className="flex items-center gap-x-2 bg-black border border-[#1f2937] transition motion-preset-pop motion-loop-once rounded-lg px-2 py-1">
+            <MdOutlineTimer color="#fefefe" size={compact ? 16 : 20} />
+            <p
+                className={clsx(
+                    "font-semibold text-white",
+                    compact ? "text-sm" : "text-large",
+                )}
+            >
                 {formatTime(timeLeft)}
             </p>
         </div>
