@@ -17,11 +17,25 @@ class Preload extends Phaser.Scene {
 
         this.currentGame = game;
         // Draw a simple progress bar outline
-        const progressBarOutline = this.add.rectangle(512, 384, 468, 32);
+        const centerX = this.scale.width / 2;
+        const centerY = this.scale.height / 2;
+        const barWidth = Math.min(468, this.scale.width - 40);
+        const progressBarOutline = this.add.rectangle(
+            centerX,
+            centerY,
+            barWidth,
+            32,
+        );
         progressBarOutline.setStrokeStyle(2, 0xffffff);
 
         // Create the loading bar that fills as assets are loaded
-        const progressBar = this.add.rectangle(512 - 230, 384, 4, 28, 0xffffff);
+        const progressBar = this.add.rectangle(
+            centerX - (barWidth - 8) / 2,
+            centerY,
+            4,
+            28,
+            0xffffff,
+        );
 
         // Load player skins directly, with proper checks. An empty skin is a
         // player without a photo: setPlayerAvatar gives it a random avatar.
@@ -39,7 +53,7 @@ class Preload extends Phaser.Scene {
 
         // Update the progress bar width based on the load progress
         this.load.on("progress", (progress: number) => {
-            progressBar.width = 4 + 460 * progress;
+            progressBar.width = 4 + (barWidth - 8) * progress;
         });
 
         // Add error handling for load failures

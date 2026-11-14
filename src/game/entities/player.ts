@@ -1,6 +1,7 @@
 import Phaser, { Physics } from "phaser";
 
 import Playing from "@game/scenes/Playing";
+import { touchInput } from "@game/touchInput";
 import { Text } from "@helpers/elements";
 import {
     BOMBS,
@@ -159,22 +160,22 @@ export class Player extends Phaser.GameObjects.Sprite {
             return;
         }
 
-        if (this.upKey?.isDown) {
+        if (this.upKey?.isDown || touchInput.up) {
             this.body!.velocity.y = -velocity;
         }
-        if (this.leftKey?.isDown) {
+        if (this.leftKey?.isDown || touchInput.left) {
             this.body!.velocity.x = -velocity;
         }
-        if (this.downKey?.isDown) {
+        if (this.downKey?.isDown || touchInput.down) {
             this.body!.velocity.y = velocity;
         }
-        if (this.rightKey?.isDown) {
+        if (this.rightKey?.isDown || touchInput.right) {
             this.body!.velocity.x = velocity;
         }
     }
 
     handleBombs() {
-        if (this.spaceKey.isDown) {
+        if (this.spaceKey.isDown || touchInput.bomb) {
             if (this.activeBombs >= this.bombs) {
                 return;
             }
