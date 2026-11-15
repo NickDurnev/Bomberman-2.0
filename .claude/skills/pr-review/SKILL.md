@@ -122,7 +122,7 @@ Look for logic errors, null/undefined paths, races, error paths, dead or debug c
 
 **Code that runs at build time.** Some files under `src/` make the build run code from the PR. Flag each one as an Issue (must fix) that says "this runs code during the build; a maintainer must read it before any build", with `file:line`:
 
-- A CSS `@config` or `@plugin` directive (Tailwind loads and runs the JS file it names during PostCSS), and any new `.js`, `.cjs` or `.mjs` file that such a directive or a config file points to.
+- A CSS `@config` or `@plugin` directive (Tailwind loads and runs the JS file it names during the Vite build), and any new `.js`, `.cjs` or `.mjs` file that such a directive or a config file points to.
 - Any other change that makes a build tool load a file from the PR as code (a new PostCSS, Vite or Babel plugin reference, `require` in a config).
 
 ### Check 2: Cross-repo contract
