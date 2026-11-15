@@ -1,115 +1,234 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+@plugin "tailwindcss-motion";
 
 @font-face {
-    font-family: "Outfit";
-    src: local("Outfit-Regular"), url("./assets/fonts/Outfit-Regular.ttf");
+  font-family: "Outfit";
+  font-weight: 400;
+  src: local("Outfit-Regular"), url("/assets/fonts/Outfit-Regular.ttf");
 }
 @font-face {
-    font-family: "Outfit";
-    src: local("Outfit-Bold"), url("./assets/fonts/Outfit-Bold.ttf");
+  font-family: "Outfit";
+  font-weight: 500;
+  src: local("Outfit-Medium"), url("/assets/fonts/Outfit-Medium.ttf");
+}
+@font-face {
+  font-family: "Outfit";
+  font-weight: 600;
+  src: local("Outfit-SemiBold"), url("/assets/fonts/Outfit-SemiBold.ttf");
+}
+@font-face {
+  font-family: "Outfit";
+  font-weight: 700;
+  src: local("Outfit-Bold"), url("/assets/fonts/Outfit-Bold.ttf");
+}
+@font-face {
+  font-family: "Outfit";
+  font-weight: 800;
+  src: local("Outfit-ExtraBold"), url("/assets/fonts/Outfit-ExtraBold.ttf");
+}
+
+@custom-variant dark (&:is(.dark *));
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+  @media (width >= --theme(--breakpoint-sm)) {
+    max-width: none;
+  }
+  @media (width >= 1400px) {
+    max-width: 1400px;
+  }
+}
+
+@theme {
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-modal: hsl(var(--modal));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+/*
+  Tailwind CSS v4 changed the default placeholder colour and the button
+  cursor. These styles keep the Tailwind CSS v3 look and behaviour.
+*/
+@layer base {
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-gray-400);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
 @layer base {
-    :root {
-        --background: 0 0% 100%;
-        --foreground: 224 71.4% 4.1%;
-        --card: 0 0% 100%;
-        --card-foreground: 224 71.4% 4.1%;
-        --popover: 0 0% 100%;
-        --popover-foreground: 224 71.4% 4.1%;
-        --primary: 276, 35%, 65%;
-        --primary-foreground: 210 20% 98%;
-        --secondary: 276, 35%, 50%;
-        --secondary-foreground: 220.9 39.3% 11%;
-        --muted: 220 14.3% 95.9%;
-        --muted-foreground: 220 8.9% 46.1%;
-        --accent: 276, 35%, 65%;
-        --accent-foreground: 220.9 39.3% 11%;
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 210 20% 98%;
-        --border: 220 13% 91%;
-        --input: 220 13% 91%;
-        --ring: 276, 35%, 50%;
-        --radius: 0.5rem;
-        --chart-1: 12 76% 61%;
-        --chart-2: 173 58% 39%;
-        --chart-3: 197 37% 24%;
-        --chart-4: 43 74% 66%;
-        --chart-5: 27 87% 67%;
-        --modal: 229, 41%, 63%;
-    }
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 224 71.4% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 276, 35%, 65%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 276, 35%, 50%;
+    --secondary-foreground: 220.9 39.3% 11%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+    --accent: 276, 35%, 65%;
+    --accent-foreground: 220.9 39.3% 11%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 276, 35%, 50%;
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --modal: 229, 41%, 63%;
+  }
 
-    .dark {
-        --background: 0, 0%, 0%;
-        --foreground: 210 20% 98%;
-        --card: 224 71.4% 4.1%;
-        --card-foreground: 210 20% 98%;
-        --popover: 224 71.4% 4.1%;
-        --popover-foreground: 210 20% 98%;
-        --primary: 244 51% 64%;
-        --primary-foreground: 220.9 39.3% 11%;
-        --secondary: 215 27.9% 19%;
-        --secondary-foreground: 210 20% 98%;
-        --muted: 215 27.9% 16.9%;
-        --muted-foreground: 217.9 10.6% 64.9%;
-        --accent: 215 27.9% 16.9%;
-        --accent-foreground: 210 20% 98%;
-        --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 210 20% 98%;
-        --border: 227 46% 77%;
-        --input: 227 46% 77%;
-        --ring: 276, 35%, 50%;
-        --chart-1: 220 70% 50%;
-        --chart-2: 160 60% 45%;
-        --chart-3: 30 80% 55%;
-        --chart-4: 280 65% 60%;
-        --chart-5: 340 75% 55%;
-        --modal: 208, 41%, 26%;
-    }
+  .dark {
+    --background: 0, 0%, 0%;
+    --foreground: 210 20% 98%;
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 244 51% 64%;
+    --primary-foreground: 220.9 39.3% 11%;
+    --secondary: 215 27.9% 19%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 215 27.9% 16.9%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 227 46% 77%;
+    --input: 227 46% 77%;
+    --ring: 276, 35%, 50%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --modal: 208, 41%, 26%;
+  }
 }
 
 .transition-opacity {
-    transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
 }
 
 @layer base {
-    * {
-        @apply border-border;
-    }
+  * {
+    @apply border-border;
+  }
 
-    html {
-        overflow: auto;
-    }
+  html {
+    overflow: auto;
+  }
 
-    body {
-        @apply bg-background text-foreground;
-        font-family: Outfit, sans-serif;
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0px;
-        left: 0px;
-        overflow-y: scroll;
-        overflow-x: hidden;
-    }
+  body {
+    @apply bg-background text-foreground;
+    font-family: Outfit, sans-serif;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
 
-    ::-webkit-scrollbar {
-        width: 7px;
-    }
+  ::-webkit-scrollbar {
+    width: 7px;
+  }
 
-    ::-webkit-scrollbar-track {
-        visibility: hidden; /* doesn't seem to work */
-    }
+  ::-webkit-scrollbar-track {
+    visibility: hidden; /* doesn't seem to work */
+  }
 
-    ::-webkit-scrollbar-thumb {
-        border-radius: 4px;
-        background: rgba(0, 0, 0, 0.5);
-    }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.5);
+  }
 
-    ::-webkit-scrollbar:window-inactive {
-        visibility: hidden;
-    }
+  ::-webkit-scrollbar:window-inactive {
+    visibility: hidden;
+  }
 }
-

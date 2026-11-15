@@ -37,43 +37,42 @@ export const POINTS_PER_WIN = 3;
 export const POINTS_PER_TOP3 = 1;
 
 export const TUTORIAL = {
-    actions:
-        "Use the arrow keys to move your character across the map. Press the Spacebar to place a bomb. Bombs explode after a short delay, destroying nearby boxes and eliminating opponents caught in the blast.",
-    earningPoints: {
-        kills: "per enemy eliminated.",
-        wins: "for winning the match.",
-        top3: "for finishing in the top 3.",
-    },
+  actions:
+    "Use the arrow keys to move your character across the map. Press the Spacebar to place a bomb. Bombs explode after a short delay, destroying nearby boxes and eliminating opponents caught in the blast.",
+  earningPoints: {
+    kills: "per enemy eliminated.",
+    wins: "for winning the match.",
+    top3: "for finishing in the top 3.",
+  },
 };
 
 export const colors = [
-    "#46A5CA",
-    "#8C2F2F",
-    "#4FAE4D",
-    "#D6590C",
-    "#811010",
-    "#247AFB",
-    "#A534A0",
-    "#A8A438",
-    "#D6590C",
-    "#46A29C",
-    "#670F6D",
-    "#D7C200",
-    "#59BBEB",
-    "#504F1C",
-    "#55BC54",
-    "#4D3568",
-    "#9F39A5",
-    "#363636",
-    "#860909",
-    "#6A286F",
-    "#604483",
+  "#46A5CA",
+  "#8C2F2F",
+  "#4FAE4D",
+  "#D6590C",
+  "#811010",
+  "#247AFB",
+  "#A534A0",
+  "#A8A438",
+  "#D6590C",
+  "#46A29C",
+  "#670F6D",
+  "#D7C200",
+  "#59BBEB",
+  "#504F1C",
+  "#55BC54",
+  "#4D3568",
+  "#9F39A5",
+  "#363636",
+  "#860909",
+  "#6A286F",
+  "#604483",
 ];
 
 export const BROWSERS = {
-    chrome: "chrome",
-    edge: "microsoftEdge",
-    safari: "safari",
-    other: "other",
+  chrome: "chrome",
+  edge: "microsoftEdge",
+  safari: "safari",
+  other: "other",
 };
-
