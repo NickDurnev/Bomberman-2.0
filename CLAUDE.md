@@ -2,7 +2,7 @@
 
 Client of a multiplayer Bomberman game. The server is authoritative for game state. The client mirrors state and renders.
 
-Stack: React 18, Phaser 3, TypeScript, Vite, Tailwind, Biome.
+Stack: React 19, Phaser 3, TypeScript, Vite, Tailwind, Biome.
 
 ## npm scripts
 
