@@ -1,6 +1,6 @@
-import { TILE_SIZE } from "@utils/constants";
-import { ITombStone } from "@utils/types";
 import Phaser from "phaser";
+import { TILE_SIZE } from "@/utils/constants";
+import { ITombStone } from "@/utils/types";
 
 export class Tombstone extends Phaser.GameObjects.Sprite {
   readonly game: Phaser.Scene;

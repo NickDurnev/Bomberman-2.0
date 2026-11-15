@@ -1,5 +1,5 @@
-import { Button } from "@components/index";
 import { IoHomeOutline } from "react-icons/io5";
+import { Button } from "@/components/index";
 
 type Props = {
   onClick: () => void;

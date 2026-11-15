@@ -1,7 +1,7 @@
-import { useAuth } from "@contexts/AuthContext";
 import { ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { Loader } from "./Loader";
+import { Loader } from "@/components/Loader";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const AuthCheck = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();

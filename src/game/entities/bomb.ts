@@ -1,5 +1,5 @@
-import { EXPLOSION_TIME, TILE_SIZE } from "@utils/constants";
 import Phaser from "phaser";
+import { EXPLOSION_TIME, TILE_SIZE } from "@/utils/constants";
 
 type ConstructorParams = {
   scene: Phaser.Scene;

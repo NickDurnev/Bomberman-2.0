@@ -1,5 +1,8 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -9,11 +12,8 @@ import {
   FormLabel,
   ShadButton,
   Switch,
-} from "@components/index";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { MapData } from "@utils/types";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+} from "@/components/index";
+import { MapData } from "@/utils/types";
 
 const FormSchema = z.object({
   isPortalsEnabled: z.boolean(),

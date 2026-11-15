@@ -1,6 +1,6 @@
-import { TILE_SIZE } from "@utils/constants";
-import { IPortal } from "@utils/types";
 import Phaser, { Physics } from "phaser";
+import { TILE_SIZE } from "@/utils/constants";
+import { IPortal } from "@/utils/types";
 
 export class Portal extends Phaser.GameObjects.Sprite {
   readonly game: Phaser.Scene;

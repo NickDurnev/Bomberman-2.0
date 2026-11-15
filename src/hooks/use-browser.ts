@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BROWSERS } from "../utils/constants";
+import { BROWSERS } from "@/utils/constants";
 
 export const useBrowser = () => {
   const [userBrowser, setUserBrowser] = useState("");

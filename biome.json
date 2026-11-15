@@ -113,7 +113,22 @@
         "useCollapsedElseIf": "error",
         "useDefaultParameterLast": "error",
         "useTemplate": "error",
-        "useArrayLiterals": "off"
+        "useArrayLiterals": "off",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "patterns": [
+              {
+                "group": [
+                  "./**",
+                  "../**",
+                  "!../../../public/assets/maps/*.json"
+                ],
+                "message": "Import from src with the @/ alias (tsconfig paths) instead of a relative path."
+              }
+            ]
+          }
+        }
       },
       "suspicious": {
         "noExplicitAny": "error",

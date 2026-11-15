@@ -1,13 +1,9 @@
 "use client";
-import useOutsideClick from "@hooks/use-outside-click";
 import {
   IconArrowNarrowLeft,
   IconArrowNarrowRight,
   IconX,
 } from "@tabler/icons-react";
-import { colors } from "@utils/constants";
-import { MapCard, MapData } from "@utils/types";
-import { getRandomItem } from "@utils/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import React, {
   createContext,
@@ -17,7 +13,11 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { cn } from "src/lib/utils";
+import useOutsideClick from "@/hooks/use-outside-click";
+import { cn } from "@/lib/utils";
+import { colors } from "@/utils/constants";
+import { MapCard, MapData } from "@/utils/types";
+import { getRandomItem } from "@/utils/utils";
 
 interface CarouselProps {
   items: JSX.Element[];

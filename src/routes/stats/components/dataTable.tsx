@@ -1,4 +1,12 @@
 import {
+  ColumnDef,
+  flexRender,
+  RowData,
+  useTable,
+} from "@tanstack/react-table";
+import { ChevronDown } from "lucide-react";
+import React, { useCallback, useState } from "react";
+import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -12,17 +20,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@components/index";
-import {
-  ColumnDef,
-  flexRender,
-  RowData,
-  useTable,
-} from "@tanstack/react-table";
-import { debounce } from "@utils/utils";
-import { ChevronDown } from "lucide-react";
-import React, { useCallback, useState } from "react";
-import { statsTableFeatures } from "./statsTableFeatures";
+} from "@/components/index";
+import { statsTableFeatures } from "@/routes/stats/components/statsTableFeatures";
+import { debounce } from "@/utils/utils";
 
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<typeof statsTableFeatures, TData>[];

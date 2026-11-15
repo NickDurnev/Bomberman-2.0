@@ -1,6 +1,6 @@
-import { TILE_SIZE } from "@utils/constants";
-import { ICell } from "@utils/types";
 import Phaser, { Physics } from "phaser";
+import { TILE_SIZE } from "@/utils/constants";
+import { ICell } from "@/utils/types";
 
 export class FireBlast extends Phaser.GameObjects.Sprite {
   private game: Phaser.Scene;

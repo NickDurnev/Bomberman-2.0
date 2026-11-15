@@ -1,7 +1,7 @@
-export { Bomb } from "./bomb";
-export { EnemyPlayer } from "./enemy_player";
-export { FireBlast } from "./fire_blast";
-export { Player } from "./player";
-export { Portal } from "./portal";
-export { Spoil } from "./spoil";
-export { Tombstone } from "./tombstone";
+export { Bomb } from "@/game/entities/bomb";
+export { EnemyPlayer } from "@/game/entities/enemy_player";
+export { FireBlast } from "@/game/entities/fire_blast";
+export { Player } from "@/game/entities/player";
+export { Portal } from "@/game/entities/portal";
+export { Spoil } from "@/game/entities/spoil";
+export { Tombstone } from "@/game/entities/tombstone";

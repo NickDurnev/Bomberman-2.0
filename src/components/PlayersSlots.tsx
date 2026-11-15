@@ -1,7 +1,7 @@
-import { Player, PlayerSlot } from "@utils/types";
 import { useEffect, useState } from "react";
 import { Emoji } from "react-apple-emojis";
-import { AnimatedTooltip } from "./ui/animated-tooltip";
+import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
+import { Player, PlayerSlot } from "@/utils/types";
 
 type Props = {
   max_players: number;

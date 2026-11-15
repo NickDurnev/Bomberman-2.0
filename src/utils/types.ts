@@ -1,5 +1,5 @@
-import Playing from "@game/scenes/Playing";
 import Phaser from "phaser";
+import Playing from "@/game/scenes/Playing";
 
 export interface IUser {
   email: string;

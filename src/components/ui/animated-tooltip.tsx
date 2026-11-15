@@ -1,6 +1,5 @@
 "use client";
 
-import { PlayerSlot } from "@utils/types";
 import {
   AnimatePresence,
   motion,
@@ -9,7 +8,8 @@ import {
   useTransform,
 } from "framer-motion";
 import React, { useState } from "react";
-import { cn } from "src/lib/utils";
+import { cn } from "@/lib/utils";
+import { PlayerSlot } from "@/utils/types";
 
 type Props = {
   items: PlayerSlot[];
