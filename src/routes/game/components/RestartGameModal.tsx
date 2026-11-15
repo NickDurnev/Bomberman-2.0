@@ -104,8 +104,8 @@ const RestartGameModal = () => {
   return (
     <div className="absolute">
       <Modal>
-        <ModalBody className="[@media(max-height:500px)]:!max-h-[95dvh] [@media(max-height:500px)]:!min-h-0 [@media(max-height:500px)]:!max-w-[80%]">
-          <ModalContent className="min-h-0 overflow-y-auto [&>*]:shrink-0 [@media(max-height:500px)]:!p-4">
+        <ModalBody className="[@media(max-height:500px)]:max-h-[95dvh]! [@media(max-height:500px)]:min-h-0! [@media(max-height:500px)]:max-w-[80%]!">
+          <ModalContent className="min-h-0 overflow-y-auto *:shrink-0 [@media(max-height:500px)]:p-4!">
             <h3 className="motion-preset-expand motion-loop-once text-center text-3xl font-bold tracking-wider">
               Stats
             </h3>

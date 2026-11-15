@@ -109,7 +109,7 @@ export const ModalBody = ({
             opacity: 0,
             backdropFilter: "blur(0px)",
           }}
-          className="fixed inset-0 z-50 flex h-full w-full items-center justify-center [perspective:800px] [transform-style:preserve-3d]"
+          className="fixed inset-0 z-50 flex h-full w-full items-center justify-center perspective-midrange transform-3d"
         >
           <Overlay />
 
@@ -198,7 +198,7 @@ const Overlay = ({ className }: { className?: string }) => {
         opacity: 0,
         backdropFilter: "blur(0px)",
       }}
-      className={`bg-opacity-50 fixed inset-0 z-50 h-full w-full bg-black ${className}`}
+      className={`fixed inset-0 z-50 h-full w-full bg-black/50 ${className}`}
     ></motion.div>
   );
 };
