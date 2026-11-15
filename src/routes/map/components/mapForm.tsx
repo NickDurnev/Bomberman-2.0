@@ -16,8 +16,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const FormSchema = z.object({
-  isPortalsEnabled: z.boolean().default(false).optional(),
-  isDelaySpoilEnabled: z.boolean().default(false).optional(),
+  isPortalsEnabled: z.boolean(),
+  isDelaySpoilEnabled: z.boolean(),
 });
 
 type Props = {
@@ -36,8 +36,8 @@ export default function MapForm({ mapName, onSelect }: Props) {
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const mapData = {
-      isPortalsEnabled: data.isPortalsEnabled || false,
-      isDelaySpoilEnabled: data.isDelaySpoilEnabled || false,
+      isPortalsEnabled: data.isPortalsEnabled,
+      isDelaySpoilEnabled: data.isDelaySpoilEnabled,
       mapName,
     };
     onSelect(mapData);
