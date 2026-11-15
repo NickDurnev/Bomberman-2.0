@@ -42,7 +42,7 @@
     "framer-motion": "^11.18.2",
     "lucide-react": "^0.460.0",
     "motion": "^12.0.6",
-    "phaser": "^3.80.1",
+    "phaser": "^3.90.0",
     "phaser3-rex-plugins": "^1.80.10",
     "prettier": "^3.5.3",
     "react": "^18.2.0",
