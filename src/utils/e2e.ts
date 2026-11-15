@@ -1,6 +1,5 @@
-import type Phaser from "phaser";
-
 import clientSocket from "@utils/socket";
+import type Phaser from "phaser";
 
 // Read-only test hook for the E2E suite (Bomberman-2.0-E2E). main.tsx installs
 // it only when VITE_E2E is "true", so other builds drop this module.

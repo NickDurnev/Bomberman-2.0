@@ -1,8 +1,3 @@
-import { useEffect, useState } from "react";
-import { Emoji } from "react-apple-emojis";
-import { CountdownCircleTimer } from "react-countdown-circle-timer";
-import { useNavigate } from "react-router-dom";
-
 import {
   AnimatedTooltip,
   Button,
@@ -21,6 +16,10 @@ import {
 import clientSocket from "@utils/socket";
 import { EndGame, GameData as Game } from "@utils/types";
 import { getPlayerVictims } from "@utils/utils";
+import { useEffect, useState } from "react";
+import { Emoji } from "react-apple-emojis";
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import { useNavigate } from "react-router-dom";
 
 type GameData = {
   current_game: Game;
@@ -105,12 +104,12 @@ const RestartGameModal = () => {
   return (
     <div className="absolute">
       <Modal>
-        <ModalBody className="[@media(max-height:500px)]:!max-w-[80%] [@media(max-height:500px)]:!max-h-[95dvh] [@media(max-height:500px)]:!min-h-0">
-          <ModalContent className="[@media(max-height:500px)]:!p-4 min-h-0 overflow-y-auto [&>*]:shrink-0">
-            <h3 className="motion-preset-expand motion-loop-once text-center font-bold text-3xl tracking-wider">
+        <ModalBody className="[@media(max-height:500px)]:!max-h-[95dvh] [@media(max-height:500px)]:!min-h-0 [@media(max-height:500px)]:!max-w-[80%]">
+          <ModalContent className="min-h-0 overflow-y-auto [&>*]:shrink-0 [@media(max-height:500px)]:!p-4">
+            <h3 className="motion-preset-expand motion-loop-once text-center text-3xl font-bold tracking-wider">
               Stats
             </h3>
-            <div className="mb-5 max-h-[325px] overflow-y-auto overflow-x-hidden pt-5 [@media(max-height:500px)]:mb-2 [@media(max-height:500px)]:max-h-[120px] [@media(max-height:500px)]:pt-2">
+            <div className="mb-5 max-h-[325px] overflow-x-hidden overflow-y-auto pt-5 [@media(max-height:500px)]:mb-2 [@media(max-height:500px)]:max-h-[120px] [@media(max-height:500px)]:pt-2">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -155,7 +154,7 @@ const RestartGameModal = () => {
             )}
             {isTimerRunning ? (
               <div className="flex flex-col gap-y-8">
-                <h3 className="motion-preset-expand motion-loop-once text-center font-bold text-3xl tracking-wider">
+                <h3 className="motion-preset-expand motion-loop-once text-center text-3xl font-bold tracking-wider">
                   Game will start in
                 </h3>
                 <div className="flex justify-center">
@@ -170,7 +169,7 @@ const RestartGameModal = () => {
                     }}
                   >
                     {({ remainingTime }) => (
-                      <div className="font-bold text-4xl">{remainingTime}</div>
+                      <div className="text-4xl font-bold">{remainingTime}</div>
                     )}
                   </CountdownCircleTimer>
                 </div>

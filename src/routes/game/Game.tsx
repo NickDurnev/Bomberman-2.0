@@ -89,7 +89,7 @@ function Game() {
         </div>
         <div
           key="game-view"
-          className="relative h-full max-h-[735px] min-w-0 max-w-[1120px] flex-1 self-center overflow-hidden"
+          className="relative h-full max-h-[735px] max-w-[1120px] min-w-0 flex-1 self-center overflow-hidden"
         >
           {gameId && <PhaserGame gameId={gameId} />}
         </div>

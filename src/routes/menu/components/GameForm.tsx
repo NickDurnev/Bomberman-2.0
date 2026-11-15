@@ -1,13 +1,12 @@
+import { Button, Input } from "@components/index";
 import { useAuth } from "@contexts/AuthContext";
+import { useGameStore } from "@hooks/stores";
+import clientSocket from "@utils/socket";
+import { GameStore } from "@utils/types";
 import React, { useEffect, useState } from "react";
 import { Emoji } from "react-apple-emojis";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-
-import { Button, Input } from "@components/index";
-import { useGameStore } from "@hooks/stores";
-import clientSocket from "@utils/socket";
-import { GameStore } from "@utils/types";
 
 const GameForm = () => {
   const { isAuthenticated } = useAuth();
@@ -49,7 +48,7 @@ const GameForm = () => {
 
   return (
     <>
-      <div className="motion-preset-expand motion-loop-once text-center font-extrabold text-4xl tracking-wider">
+      <div className="motion-preset-expand motion-loop-once text-center text-4xl font-extrabold tracking-wider">
         <Input
           name="gameName"
           placeholder="Game Name"

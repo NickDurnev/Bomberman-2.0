@@ -1,6 +1,6 @@
 import { setBomb } from "@game/touchInput";
-import { useEffect, useRef, useState } from "react";
 import type { PointerEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const BombButton = () => {
   const pointerId = useRef<number | null>(null);
@@ -56,7 +56,7 @@ const BombButton = () => {
     <button
       type="button"
       aria-label="Place bomb"
-      className="flex touch-none select-none items-center justify-center rounded-full"
+      className="flex touch-none items-center justify-center rounded-full select-none"
       style={{
         width: 80,
         height: 80,

@@ -1,8 +1,8 @@
-import Phaser from "phaser";
-
 import { EnemyPlayer, Player } from "@game/entities";
 import { TILE_SIZE } from "@utils/constants";
 import { Coordinates, GameData, Player as PlayerType } from "@utils/types";
+import Phaser from "phaser";
+
 interface GameObject extends Phaser.GameObjects.GameObject {
   id: number;
   x: number;

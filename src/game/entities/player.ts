@@ -1,5 +1,3 @@
-import Phaser, { Physics } from "phaser";
-
 import Playing from "@game/scenes/Playing";
 import { touchInput } from "@game/touchInput";
 import { Text } from "@helpers/elements";
@@ -25,6 +23,7 @@ import {
 import clientSocket from "@utils/socket";
 import { Coordinates, ISpoilType, PlayerConfig } from "@utils/types";
 import { setPlayerAvatar } from "@utils/utils";
+import Phaser, { Physics } from "phaser";
 
 export class Player extends Phaser.GameObjects.Sprite {
   readonly game: Playing;

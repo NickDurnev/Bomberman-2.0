@@ -3,8 +3,8 @@ import useOutsideClick from "@hooks/use-outside-click";
 import { cn } from "@lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  ReactNode,
   createContext,
+  ReactNode,
   useContext,
   useEffect,
   useRef,
@@ -198,7 +198,7 @@ const Overlay = ({ className }: { className?: string }) => {
         opacity: 0,
         backdropFilter: "blur(0px)",
       }}
-      className={`fixed inset-0 z-50 h-full w-full bg-black bg-opacity-50 ${className}`}
+      className={`bg-opacity-50 fixed inset-0 z-50 h-full w-full bg-black ${className}`}
     ></motion.div>
   );
 };
@@ -220,7 +220,7 @@ const CloseIcon = () => {
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="h-4 w-4 text-black transition duration-200 group-hover:rotate-3 group-hover:scale-125 dark:text-white"
+        className="h-4 w-4 text-black transition duration-200 group-hover:scale-125 group-hover:rotate-3 dark:text-white"
       >
         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
         <path d="M18 6l-12 12" />

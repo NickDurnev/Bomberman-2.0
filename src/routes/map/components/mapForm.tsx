@@ -1,9 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
 import {
   Form,
   FormControl,
@@ -14,7 +10,10 @@ import {
   ShadButton,
   Switch,
 } from "@components/index";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { MapData } from "@utils/types";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const FormSchema = z.object({
   isPortalsEnabled: z.boolean().default(false).optional(),
@@ -48,7 +47,7 @@ export default function MapForm({ mapName, onSelect }: Props) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
         <div>
-          <h3 className="mb-4 font-medium text-lg">Additional features</h3>
+          <h3 className="mb-4 text-lg font-medium">Additional features</h3>
           <div className="space-y-4">
             <FormField
               control={form.control}

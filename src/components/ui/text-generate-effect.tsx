@@ -56,7 +56,7 @@ export const TextGenerateEffect = ({
       <div className="mt-4">
         <div
           className={cn(
-            "text-2xl text-black leading-snug tracking-wide dark:text-white",
+            "text-2xl leading-snug tracking-wide text-black dark:text-white",
             className,
           )}
         >

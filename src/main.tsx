@@ -1,26 +1,24 @@
-import { GoogleOAuthProvider } from "@react-oauth/google";
-import React from "react";
-import { EmojiProvider } from "react-apple-emojis";
-import emojiData from "react-apple-emojis/src/data.json";
-import ReactDOM from "react-dom/client";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { Toaster } from "sonner";
-
-import { AuthProvider } from "@contexts/AuthContext";
-import { installE2EHook } from "@utils/e2e";
-import ErrorPage from "./error-page";
-import Game from "./routes/game/Game";
-import SelectMap from "./routes/map/SelectMap";
-import Menu from "./routes/menu/Menu";
-import Pending from "./routes/pending/Pending";
-import Stats from "./routes/stats/Stats";
-
 import {
   AuthCheck,
   BackgroundLines,
   PaddingContainer,
   Socket,
 } from "@components/index";
+import { AuthProvider } from "@contexts/AuthContext";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { installE2EHook } from "@utils/e2e";
+import React from "react";
+import { EmojiProvider } from "react-apple-emojis";
+import emojiData from "react-apple-emojis/src/data.json";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Toaster } from "sonner";
+import ErrorPage from "./error-page";
+import Game from "./routes/game/Game";
+import SelectMap from "./routes/map/SelectMap";
+import Menu from "./routes/menu/Menu";
+import Pending from "./routes/pending/Pending";
+import Stats from "./routes/stats/Stats";
 
 import "./index.css";
 

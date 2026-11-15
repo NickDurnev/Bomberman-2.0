@@ -1,5 +1,3 @@
-import Phaser from "phaser";
-
 import {
   Bomb,
   EnemyPlayer,
@@ -34,6 +32,7 @@ import {
   findById,
   getIntersectionArea,
 } from "@utils/utils";
+import Phaser from "phaser";
 
 type PlayerData = Pick<PlayerConfig, "id" | "name" | "spawn" | "skin">;
 

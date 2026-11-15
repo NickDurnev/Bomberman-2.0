@@ -1,13 +1,4 @@
 import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import { ChevronDown } from "lucide-react";
-import React, { useCallback, useState } from "react";
-
-import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -22,7 +13,15 @@ import {
   TableHeader,
   TableRow,
 } from "@components/index";
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import { debounce } from "@utils/utils";
+import { ChevronDown } from "lucide-react";
+import React, { useCallback, useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

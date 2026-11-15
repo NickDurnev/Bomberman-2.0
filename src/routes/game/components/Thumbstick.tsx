@@ -4,8 +4,8 @@ import {
   setDirections,
   stickToDirections,
 } from "@game/touchInput";
-import { useEffect, useRef, useState } from "react";
 import type { PointerEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const BASE_SIZE = 132;
 const KNOB_SIZE = 56;
@@ -95,7 +95,7 @@ const Thumbstick = () => {
       ref={baseRef}
       role="group"
       aria-label="Movement stick"
-      className="relative touch-none select-none rounded-full"
+      className="relative touch-none rounded-full select-none"
       style={{
         width: BASE_SIZE,
         height: BASE_SIZE,
@@ -111,25 +111,25 @@ const Thumbstick = () => {
     >
       <span
         aria-hidden="true"
-        className={`${CHEVRON} -translate-x-1/2 top-1.5 left-1/2`}
+        className={`${CHEVRON} top-1.5 left-1/2 -translate-x-1/2`}
       >
         ▲
       </span>
       <span
         aria-hidden="true"
-        className={`${CHEVRON} -translate-x-1/2 bottom-1.5 left-1/2`}
+        className={`${CHEVRON} bottom-1.5 left-1/2 -translate-x-1/2`}
       >
         ▼
       </span>
       <span
         aria-hidden="true"
-        className={`${CHEVRON} -translate-y-1/2 top-1/2 left-1.5`}
+        className={`${CHEVRON} top-1/2 left-1.5 -translate-y-1/2`}
       >
         ◀
       </span>
       <span
         aria-hidden="true"
-        className={`${CHEVRON} -translate-y-1/2 top-1/2 right-1.5`}
+        className={`${CHEVRON} top-1/2 right-1.5 -translate-y-1/2`}
       >
         ▶
       </span>

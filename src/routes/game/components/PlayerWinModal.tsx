@@ -1,10 +1,10 @@
 import {
   AnimatedTooltip,
   ColourfulText,
+  fallbackAvatar,
   Modal,
   ModalBody,
   ModalContent,
-  fallbackAvatar,
   useModal,
 } from "@components/index";
 import clientSocket from "@utils/socket";
@@ -47,8 +47,8 @@ const PlayerWinModal = () => {
   return (
     <div className="absolute">
       <Modal>
-        <ModalBody className="[@media(max-height:500px)]:!max-w-[80%] [@media(max-height:500px)]:!max-h-[95dvh] [@media(max-height:500px)]:!min-h-0">
-          <ModalContent className="[@media(max-height:500px)]:!p-4 min-h-0 overflow-y-auto [&>*]:shrink-0">
+        <ModalBody className="[@media(max-height:500px)]:!max-h-[95dvh] [@media(max-height:500px)]:!min-h-0 [@media(max-height:500px)]:!max-w-[80%]">
+          <ModalContent className="min-h-0 overflow-y-auto [&>*]:shrink-0 [@media(max-height:500px)]:!p-4">
             {winner && (
               <div className="mx-auto mt-6 flex flex-col items-center justify-center gap-y-8 [@media(max-height:500px)]:mt-0 [@media(max-height:500px)]:gap-y-3">
                 <img
@@ -62,12 +62,12 @@ const PlayerWinModal = () => {
                   alt={winner.name}
                   className="motion-preset-confetti motion-loop-once h-32 w-32 rounded-full [@media(max-height:500px)]:h-16 [@media(max-height:500px)]:w-16"
                 />
-                <h3 className="motion-preset-expand motion-loop-once text-center font-bold text-3xl tracking-wider">
+                <h3 className="motion-preset-expand motion-loop-once text-center text-3xl font-bold tracking-wider">
                   Winner{" "}
                   <ColourfulText text={winner.name} colors={["#8852AC"]} />
                 </h3>
                 {victims.length !== 0 && (
-                  <h4 className="text-center font-bold text-2xl tracking-wider">
+                  <h4 className="text-center text-2xl font-bold tracking-wider">
                     Eliminated:
                   </h4>
                 )}
@@ -76,7 +76,7 @@ const PlayerWinModal = () => {
                     <AnimatedTooltip items={victims} size={"medium"} />
                   )}
                   {victims.length === 0 && (
-                    <p className="text-center font-semibold text-xl">
+                    <p className="text-center text-xl font-semibold">
                       {winner.noKillPhrase}
                     </p>
                   )}
