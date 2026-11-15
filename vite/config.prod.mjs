@@ -1,7 +1,6 @@
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
 
 const phasermsg = () => {
   return {
@@ -21,7 +20,8 @@ const phasermsg = () => {
 
 export default defineConfig({
   base: "/",
-  plugins: [tailwindcss(), react(), phasermsg(), tsconfigPaths()],
+  plugins: [tailwindcss(), react(), phasermsg()],
+  resolve: { tsconfigPaths: true },
   logLevel: "info",
   build: {
     rolldownOptions: {
