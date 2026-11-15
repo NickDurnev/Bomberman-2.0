@@ -151,6 +151,14 @@ When it does:
 3. If the PR body links a PR in the other repo ("Requires ..."), review the two as one change.
 4. Dispatch the `game-contract-reviewer` agent only in the workspace layout (Step 1). It needs both submodules on disk. Give it **only the target**: the PR URL, or the branch name. Do not pass your summary, your findings or the PR body. Merge its findings: CRITICAL, HIGH and MEDIUM go to Issues, LOW to Suggestions, its unverified suspicions to Unverified. In any other layout, do not dispatch it (its copy in a child repo stops at once there); put "contract review agent not run: not in the workspace layout" under Unverified.
 
+### Check 2b: E2E sync
+
+The E2E suite (`Bomberman-2.0-E2E`) asserts on the match flow, button names, the test hook and exact client listener counts (`development-workflow` › Keep E2E in sync after behaviour changes).
+
+- The diff adds, removes or moves a `clientSocket.on` / `.off` in `Bomberman-2.0`, or changes `src/utils/e2e.ts`, and no linked E2E PR updates `tests/fixtures/expected-listeners.ts` or `tests/global.d.ts`: Issue.
+- The diff changes a route, a scene key, the restart flow, or the copy of a button or input in the lobby, map, pending or game screens: search the suite for it (workspace layout: `grep -rn -F -e "<text>" Bomberman-2.0-E2E/tests`, with the text taken from the diff as in Check 2; otherwise read the files on GitHub). A match with no linked E2E PR is a Suggestion.
+- Not in the workspace layout and you cannot read the suite: put "E2E sync not checked" under Unverified.
+
 ### Check 3: Conventions
 
 - The base branch is `dev`. Any other base is an Issue.

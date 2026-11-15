@@ -7,6 +7,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { Toaster } from "sonner";
 
 import { AuthProvider } from "@contexts/AuthContext";
+import { installE2EHook } from "@utils/e2e";
 import ErrorPage from "./error-page";
 import Game from "./routes/game/Game";
 import SelectMap from "./routes/map/SelectMap";
@@ -22,6 +23,10 @@ import {
 } from "@components/index";
 
 import "./index.css";
+
+if (import.meta.env.VITE_E2E === "true") {
+  installE2EHook();
+}
 
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID ?? "";
 
