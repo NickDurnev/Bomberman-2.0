@@ -165,15 +165,16 @@ Run the tools on `$sha` in a temporary worktree. Never run them in the maintaine
 **The build executes PR code.** `npm run build` runs code from files the PR controls, also when the PR changes only `src/` (for example a CSS `@config "./x.cjs"` directive makes Tailwind run that file). Biome and `tsc --noEmit` only read the code. So:
 
 - Auto mode and `--dry-run` (either mode): **never run `npm run build`**, in either repo. Run only the Biome and `tsc` steps below. Put "build not run in auto mode (executes PR code)" under Unverified (in a local `--dry-run`, write "build not run in dry-run mode (executes PR code)").
+- `npm test` executes PR code like the build. Never run it in auto mode or `--dry-run`. Read the PR's `checks` result instead (`gh pr checks <n>`). Local mode may run it, under the same maintainer agreement as the build.
 - Local mode (not dry-run): run the build only after the maintainer explicitly agrees. Ask with this warning: "A build executes code from the PR. Run `npm run build` on <sha>?" If the maintainer does not agree, put the build under Unverified.
 
-**Guard first: path allowlist.** These tools run code that the PR controls (npm scripts, build config, packages). Decide with this command, not by reading the diff. It takes the file list from local git (the merge base of `$base` and `$sha` against `$sha`), because the GitHub files API stops at 3000 files. `$base` is the PR's `base.sha` from Step 2 (`gh api repos/<owner>/<repo>/pulls/<n> --jq .base.sha`; this also works for a merged PR), or `origin/dev` for a branch target. If you cannot get `$base`, the guard fails. `--no-renames` lists a rename as a delete plus an add, so both the old and the new name are checked. It passes only when git exits 0, the list is not empty, every path has only safe characters (`A-Za-z0-9._/@+-` and space), every path is under `src/`, `public/` or `docs/` or ends in `.md`, and no path is agent or tooling configuration. Any other result fails. The snippet works in `bash` and `zsh`.
+**Guard first: path allowlist.** These tools run code that the PR controls (npm scripts, build config, packages). Decide with this command, not by reading the diff. It takes the file list from local git (the merge base of `$base` and `$sha` against `$sha`), because the GitHub files API stops at 3000 files. `$base` is the PR's `base.sha` from Step 2 (`gh api repos/<owner>/<repo>/pulls/<n> --jq .base.sha`; this also works for a merged PR), or `origin/dev` for a branch target. If you cannot get `$base`, the guard fails. `--no-renames` lists a rename as a delete plus an add, so both the old and the new name are checked. It passes only when git exits 0, the list is not empty, every path has only safe characters (`A-Za-z0-9._/@+-` and space), every path is under `src/`, `public/`, `docs/` or `test/` or ends in `.md`, and no path is agent or tooling configuration. Any other result fails. The snippet works in `bash` and `zsh`.
 
 ```bash
 paths="$(mktemp)"; rc=0
 [ -n "$base" ] && [ -n "$sha" ] || rc=99
 [ "$rc" -eq 0 ] && { git -C <repo> diff --name-only --no-renames "$base...$sha" > "$paths" || rc=$?; }
-allow='^(src|public|docs)/|\.md$'
+allow='^(src|public|docs|test)/|\.md$'
 deny='(^|/)(\.claude|\.husky|\.github)/|(^|/)(CLAUDE|CLAUDE\.local|AGENTS)\.md$|(^|/)\.mcp\.json$'
 unsafe='[^A-Za-z0-9._/@+ -]'
 if [ "$rc" -eq 0 ] && [ -s "$paths" ] \
