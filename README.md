@@ -36,7 +36,7 @@ Bomberman is a real-time multiplayer game where players navigate a grid-based ma
 
 -   **Frontend**:
 
-    -   React 18 with TypeScript
+    -   React 19 with TypeScript
     -   TailwindCSS for styling
     -   Zustand for state management
     -   React Router for navigation

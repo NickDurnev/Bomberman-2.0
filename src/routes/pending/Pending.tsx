@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import { Emoji } from "react-apple-emojis";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { IoIosAlert } from "react-icons/io";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 
 interface GameData {
   current_game: Game;

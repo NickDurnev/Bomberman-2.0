@@ -2,7 +2,7 @@ import { ModalProvider } from "@components/index";
 import { PhaserGame } from "@game/PhaserGame";
 import { useGameLayout } from "@hooks/use-game-layout";
 import clsx from "clsx";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import BombButton from "./components/BombButton";
 import CountdownTimer from "./components/CountdownTimer";
 import HomeButton from "./components/HomeButton";

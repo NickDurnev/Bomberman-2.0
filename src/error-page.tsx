@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate, useRouteError } from "react-router-dom";
+import { useNavigate, useRouteError } from "react-router";
 
 interface RouteError {
   statusText?: string;

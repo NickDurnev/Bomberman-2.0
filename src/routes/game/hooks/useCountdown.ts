@@ -1,6 +1,6 @@
 import { GAME_DURATION } from "@utils/constants";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 
 export const useCountdown = (): number => {
   const { gameId } = useParams();

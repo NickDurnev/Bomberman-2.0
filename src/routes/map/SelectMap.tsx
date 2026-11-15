@@ -6,7 +6,7 @@ import { GameStore, MapCard, MapData } from "@utils/types";
 import default_map_data from "public/assets/maps/default_map.json";
 import small_map_data from "public/assets/maps/small_map.json";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import MapForm from "./components/mapForm";
 
 const data = [

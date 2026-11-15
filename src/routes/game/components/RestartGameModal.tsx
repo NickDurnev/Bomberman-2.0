@@ -19,7 +19,7 @@ import { getPlayerVictims } from "@utils/utils";
 import { useEffect, useState } from "react";
 import { Emoji } from "react-apple-emojis";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 type GameData = {
   current_game: Game;
