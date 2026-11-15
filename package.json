@@ -13,7 +13,13 @@
     "url": "https://github.com/phaserjs/template-react-ts/issues"
   },
   "homepage": "https://github.com/phaserjs/template-react-ts#readme",
-  "keywords": ["phaser", "phaser3", "react", "vite", "typescript"],
+  "keywords": [
+    "phaser",
+    "phaser3",
+    "react",
+    "vite",
+    "typescript"
+  ],
   "scripts": {
     "dev": "vite --config vite/config.dev.mjs",
     "build": "vite build --config vite/config.prod.mjs",
@@ -60,7 +66,7 @@
     "zustand": "^5.0.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.6.8",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@commitlint/types": "^19.8.1",
@@ -78,6 +84,8 @@
     "vite-tsconfig-paths": "^5.1.2"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": ["biome check --write --no-errors-on-unmatched"]
+    "*.{js,jsx,ts,tsx}": [
+      "biome check --write --no-errors-on-unmatched"
+    ]
   }
 }
