@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
 
+import { setCurrentGame } from "@utils/e2e";
 import clientSocket from "@utils/socket";
 import { GameData } from "@utils/types";
 import { config } from "./main";
@@ -29,6 +30,7 @@ export function PhaserGame({ gameId }: Readonly<IProps>) {
       }
       game.current?.destroy(true);
       game.current = new Phaser.Game(config);
+      setCurrentGame(game.current);
       game.current.scene.start("Preload", gameData);
     });
 
@@ -36,6 +38,7 @@ export function PhaserGame({ gameId }: Readonly<IProps>) {
       cancelled = true;
       game.current?.destroy(true);
       game.current = null;
+      setCurrentGame(null);
     };
   }, [gameId]);
 
