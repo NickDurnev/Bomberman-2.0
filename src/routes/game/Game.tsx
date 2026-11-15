@@ -53,7 +53,7 @@ function Game() {
     return (
       <div
         id="app"
-        className={clsx("flex h-[100dvh] flex-col overflow-hidden", touchClass)}
+        className={clsx("flex h-dvh flex-col overflow-hidden", touchClass)}
       >
         {modals}
         <div className="flex shrink-0 items-start justify-between gap-2 px-3 pt-3">
@@ -76,10 +76,7 @@ function Game() {
 
   if (isCompact) {
     return (
-      <div
-        id="app"
-        className={clsx("flex h-[100dvh] overflow-hidden", touchClass)}
-      >
+      <div id="app" className={clsx("flex h-dvh overflow-hidden", touchClass)}>
         {modals}
         <div className="flex h-full w-[150px] shrink-0 flex-col items-center justify-between py-3">
           <div className="flex h-[128px] w-full justify-center overflow-hidden px-2 [&>ul]:flex-wrap [&>ul]:content-start [&>ul]:justify-center">
@@ -108,7 +105,7 @@ function Game() {
     <div
       id="app"
       className={clsx(
-        "flex h-[100dvh] flex-col items-center gap-2 overflow-hidden pt-3",
+        "flex h-dvh flex-col items-center gap-2 overflow-hidden pt-3",
         touchClass,
       )}
     >

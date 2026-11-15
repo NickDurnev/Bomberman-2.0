@@ -53,10 +53,10 @@ export default function MapForm({ mapName, onSelect }: Props) {
               control={form.control}
               name="isPortalsEnabled"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                  <div className="space-y-0.5">
+                <FormItem className="flex flex-row items-center justify-between space-y-0 rounded-lg border p-3 shadow-xs">
+                  <div>
                     <FormLabel>Enable portals</FormLabel>
-                    <FormDescription>
+                    <FormDescription className="mt-0.5">
                       Adds portals to the corners of the map, allowing you to
                       teleport and escape from the traps.
                     </FormDescription>
@@ -74,10 +74,10 @@ export default function MapForm({ mapName, onSelect }: Props) {
               control={form.control}
               name="isDelaySpoilEnabled"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                  <div className="space-y-0.5">
+                <FormItem className="flex flex-row items-center justify-between space-y-0 rounded-lg border p-3 shadow-xs">
+                  <div>
                     <FormLabel>Enable bomb delay spoil</FormLabel>
-                    <FormDescription>
+                    <FormDescription className="mt-0.5">
                       Adds to the spoils pool - delay to the bomb detonation,
                       making your bombs more dangerous. Lets you become true
                       "kamikaze"

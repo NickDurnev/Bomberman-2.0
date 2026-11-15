@@ -45,11 +45,11 @@ export function GameSlots({ data, onJoinGame }: GameSlotsProps) {
                   rotate: 0,
                   zIndex: 100,
                 }}
-                className="mt-4 -mr-4 flex-shrink-0 overflow-hidden rounded-xl border border-neutral-100 bg-white p-1 dark:border-neutral-700 dark:bg-neutral-800"
+                className="mt-4 -mr-4 shrink-0 overflow-hidden rounded-xl border border-neutral-100 bg-white p-1 dark:border-neutral-700 dark:bg-neutral-800"
               >
                 <button
                   onClick={() => onJoinGame(game.id)}
-                  className="h-20 w-20 flex-shrink-0 rounded-lg object-cover opacity-90 hover:opacity-100 md:h-32 md:w-32"
+                  className="h-20 w-20 shrink-0 rounded-lg object-cover opacity-90 hover:opacity-100 md:h-32 md:w-32"
                   style={{
                     background: COLOR,
                   }}

@@ -47,8 +47,8 @@ const PlayerWinModal = () => {
   return (
     <div className="absolute">
       <Modal>
-        <ModalBody className="[@media(max-height:500px)]:!max-h-[95dvh] [@media(max-height:500px)]:!min-h-0 [@media(max-height:500px)]:!max-w-[80%]">
-          <ModalContent className="min-h-0 overflow-y-auto [&>*]:shrink-0 [@media(max-height:500px)]:!p-4">
+        <ModalBody className="[@media(max-height:500px)]:max-h-[95dvh]! [@media(max-height:500px)]:min-h-0! [@media(max-height:500px)]:max-w-[80%]!">
+          <ModalContent className="min-h-0 overflow-y-auto *:shrink-0 [@media(max-height:500px)]:p-4!">
             {winner && (
               <div className="mx-auto mt-6 flex flex-col items-center justify-center gap-y-8 [@media(max-height:500px)]:mt-0 [@media(max-height:500px)]:gap-y-3">
                 <img
