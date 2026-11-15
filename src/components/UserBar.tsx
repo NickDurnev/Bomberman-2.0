@@ -5,7 +5,7 @@ import { deleteFromLocalStorage } from "@utils/local_storage";
 import clientSocket from "@utils/socket";
 import { CiLogout } from "react-icons/ci";
 import { IoIosArrowRoundBack } from "react-icons/io";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 
 export const UserBar = () => {
   const { login, logout, user, isLoading } = useAuth();

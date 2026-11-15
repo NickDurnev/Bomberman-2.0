@@ -9,7 +9,7 @@ import clientSocket, { getOrCreateSocketId } from "@utils/socket";
 import { GameData } from "@utils/types";
 import { useEffect, useState } from "react";
 import { Emoji } from "react-apple-emojis";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import { addUser } from "../../services/auth";
 import GameForm from "./components/GameForm";
 

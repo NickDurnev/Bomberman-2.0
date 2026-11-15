@@ -5,7 +5,7 @@ import clientSocket from "@utils/socket";
 import { GameStore } from "@utils/types";
 import React, { useEffect, useState } from "react";
 import { Emoji } from "react-apple-emojis";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
 const GameForm = () => {

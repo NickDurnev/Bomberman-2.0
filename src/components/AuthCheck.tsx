@@ -1,6 +1,6 @@
 import { useAuth } from "@contexts/AuthContext";
 import { ReactNode, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { Loader } from "./Loader";
 
 export const AuthCheck = ({ children }: { children: ReactNode }) => {
