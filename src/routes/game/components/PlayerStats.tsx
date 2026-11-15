@@ -41,7 +41,7 @@ const PlayerStats = ({ info, lastInfo, hidden, isDead, compact }: Props) => (
         )}
       >
         <p
-          className="font-bold text-lg"
+          className="text-lg font-bold"
           style={{
             color: lastInfo.color,
           }}
@@ -58,7 +58,7 @@ const PlayerStats = ({ info, lastInfo, hidden, isDead, compact }: Props) => (
           hidden ? "opacity-0" : "opacity-100",
         )}
       >
-        <p className="font-bold text-lg text-white">You died</p>
+        <p className="text-lg font-bold text-white">You died</p>
       </li>
     )}
   </ul>

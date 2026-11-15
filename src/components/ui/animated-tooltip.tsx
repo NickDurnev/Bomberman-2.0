@@ -1,4 +1,6 @@
 "use client";
+
+import { PlayerSlot } from "@utils/types";
 import clsx from "clsx";
 import {
   AnimatePresence,
@@ -8,8 +10,6 @@ import {
   useTransform,
 } from "framer-motion";
 import React, { useState } from "react";
-
-import { PlayerSlot } from "@utils/types";
 
 type Props = {
   items: PlayerSlot[];
@@ -52,7 +52,7 @@ export const AnimatedTooltip = ({ items, size }: Props) => {
     <>
       {items.map((item, index) => (
         <div
-          className="-mr-4 group relative"
+          className="group relative -mr-4"
           key={`${index}-${item.name}`}
           onMouseEnter={() => setHoveredIndex(item.id)}
           onMouseLeave={() => setHoveredIndex(null)}
@@ -77,11 +77,11 @@ export const AnimatedTooltip = ({ items, size }: Props) => {
                   rotate: rotate,
                   whiteSpace: "nowrap",
                 }}
-                className="-top-16 -left-1/2 absolute z-50 flex translate-x-1/2 flex-col items-center justify-center rounded-md bg-black px-4 py-2 text-xs shadow-xl"
+                className="absolute -top-16 -left-1/2 z-50 flex translate-x-1/2 flex-col items-center justify-center rounded-md bg-black px-4 py-2 text-xs shadow-xl"
               >
-                <div className="-bottom-px absolute inset-x-10 z-30 h-px w-[20%] bg-gradient-to-r from-transparent via-emerald-500 to-transparent " />
-                <div className="-bottom-px absolute left-10 z-30 h-px w-[40%] bg-gradient-to-r from-transparent via-sky-500 to-transparent " />
-                <div className="relative z-30 font-bold text-base text-white">
+                <div className="absolute inset-x-10 -bottom-px z-30 h-px w-[20%] bg-gradient-to-r from-transparent via-emerald-500 to-transparent" />
+                <div className="absolute -bottom-px left-10 z-30 h-px w-[40%] bg-gradient-to-r from-transparent via-sky-500 to-transparent" />
+                <div className="relative z-30 text-base font-bold text-white">
                   {item.name}
                 </div>
               </motion.div>
@@ -102,7 +102,7 @@ export const AnimatedTooltip = ({ items, size }: Props) => {
             }}
             alt={item.name}
             className={clsx(
-              "!m-0 !p-0 relative h-14 w-14 rounded-full border-2 border-white object-cover object-top transition duration-500 group-hover:z-30 group-hover:scale-105",
+              "relative !m-0 h-14 w-14 rounded-full border-2 border-white object-cover object-top !p-0 transition duration-500 group-hover:z-30 group-hover:scale-105",
               size === "small" && "h-8 w-8",
               size === "large" && "h-16 w-16",
             )}

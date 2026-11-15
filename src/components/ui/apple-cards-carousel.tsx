@@ -10,12 +10,12 @@ import { MapCard, MapData } from "@utils/types";
 import { getRandomItem } from "@utils/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import React, {
+  createContext,
+  JSX,
+  useContext,
   useEffect,
   useRef,
   useState,
-  createContext,
-  useContext,
-  JSX,
 } from "react";
 import { cn } from "src/lib/utils";
 
@@ -103,7 +103,7 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
     >
       <div className="relative w-full">
         <div
-          className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth py-10 [scrollbar-width:none] md:py-12"
+          className="flex w-full [scrollbar-width:none] overflow-x-scroll overscroll-x-auto scroll-smooth py-10 md:py-12"
           ref={carouselRef}
           onScroll={checkScrollability}
         >
@@ -233,7 +233,7 @@ export const Card = ({
               </button>
               <motion.p
                 layoutId={layout ? `title-${card.title}` : undefined}
-                className="mt-4 font-semibold text-2xl text-neutral-700 md:text-5xl dark:text-white"
+                className="mt-4 text-2xl font-semibold text-neutral-700 md:text-5xl dark:text-white"
               >
                 {card.title}
               </motion.p>
@@ -252,7 +252,7 @@ export const Card = ({
         <div className="relative z-40 p-8">
           <motion.p
             layoutId={layout ? `title-${card.title}` : undefined}
-            className="mt-2 max-w-xs text-left font-sans font-semibold text-white text-xl [text-wrap:balance] md:text-3xl"
+            className="mt-2 max-w-xs text-left font-sans text-xl font-semibold [text-wrap:balance] text-white md:text-3xl"
           >
             {card.title}
           </motion.p>

@@ -1,7 +1,6 @@
 import clientSocket from "@utils/socket";
-import Phaser, { Scene } from "phaser";
-
 import { GameData } from "@utils/types";
+import Phaser, { Scene } from "phaser";
 import { EventBus } from "../EventBus";
 import Playing from "./Playing";
 

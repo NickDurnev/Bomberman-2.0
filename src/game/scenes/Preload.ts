@@ -1,6 +1,5 @@
-import Phaser from "phaser";
-
 import { GameData, Player } from "@utils/types";
+import Phaser from "phaser";
 
 class Preload extends Phaser.Scene {
   private currentGame: GameData;

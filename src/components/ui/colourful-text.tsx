@@ -39,7 +39,7 @@ export const ColourfulText = ({
         duration: 0.5,
         delay: index * 0.05,
       }}
-      className="inline-block whitespace-pre font-sans tracking-tight"
+      className="inline-block font-sans tracking-tight whitespace-pre"
     >
       {char}
     </motion.span>

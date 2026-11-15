@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
-
 import { getDataFromLocalStorage } from "@utils/local_storage";
+import React, { useEffect } from "react";
 
 export const PaddingContainer = ({
   children,

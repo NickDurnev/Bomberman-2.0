@@ -1,9 +1,8 @@
-import Phaser from "phaser";
-import { useEffect, useRef } from "react";
-
 import { setCurrentGame } from "@utils/e2e";
 import clientSocket from "@utils/socket";
 import { GameData } from "@utils/types";
+import Phaser from "phaser";
+import { useEffect, useRef } from "react";
 import { config } from "./main";
 
 export interface IRefPhaserGame {

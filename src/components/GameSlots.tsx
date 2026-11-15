@@ -1,10 +1,9 @@
 import { useAuth } from "@contexts/AuthContext";
-import { motion } from "framer-motion";
-import { Emoji } from "react-apple-emojis";
-
 import { colors } from "@utils/constants";
 import { GameSlotsProps } from "@utils/types";
 import { getRandomItem } from "@utils/utils";
+import { motion } from "framer-motion";
+import { Emoji } from "react-apple-emojis";
 
 export function GameSlots({ data, onJoinGame }: GameSlotsProps) {
   const { isAuthenticated } = useAuth();
@@ -12,7 +11,7 @@ export function GameSlots({ data, onJoinGame }: GameSlotsProps) {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="flex items-start gap-x-2">
-        <h4 className="mb-8 text-center font-bold text-lg text-neutral-600 md:text-2xl dark:text-neutral-100">
+        <h4 className="mb-8 text-center text-lg font-bold text-neutral-600 md:text-2xl dark:text-neutral-100">
           Find a game for{" "}
           <span className="rounded-md border border-gray-200 bg-gray-100 px-1 py-0.5 dark:border-neutral-700 dark:bg-neutral-800">
             Fun
@@ -46,7 +45,7 @@ export function GameSlots({ data, onJoinGame }: GameSlotsProps) {
                   rotate: 0,
                   zIndex: 100,
                 }}
-                className="-mr-4 mt-4 flex-shrink-0 overflow-hidden rounded-xl border border-neutral-100 bg-white p-1 dark:border-neutral-700 dark:bg-neutral-800"
+                className="mt-4 -mr-4 flex-shrink-0 overflow-hidden rounded-xl border border-neutral-100 bg-white p-1 dark:border-neutral-700 dark:bg-neutral-800"
               >
                 <button
                   onClick={() => onJoinGame(game.id)}
@@ -55,7 +54,7 @@ export function GameSlots({ data, onJoinGame }: GameSlotsProps) {
                     background: COLOR,
                   }}
                 >
-                  <p className="letter-spacing-1 text-center font-medium text-lg text-white">
+                  <p className="letter-spacing-1 text-center text-lg font-medium text-white">
                     {game.name}
                   </p>
                 </button>
@@ -64,7 +63,7 @@ export function GameSlots({ data, onJoinGame }: GameSlotsProps) {
           })}
         </div>
       ) : (
-        <h4 className="mb-8 text-center font-bold text-lg text-neutral-600 md:text-2xl dark:text-neutral-100">
+        <h4 className="mb-8 text-center text-lg font-bold text-neutral-600 md:text-2xl dark:text-neutral-100">
           But first you need to log in
         </h4>
       )}

@@ -1,7 +1,6 @@
+import { Player, PlayerSlot } from "@utils/types";
 import { useEffect, useState } from "react";
 import { Emoji } from "react-apple-emojis";
-
-import { Player, PlayerSlot } from "@utils/types";
 import { AnimatedTooltip } from "./ui/animated-tooltip";
 
 type Props = {
@@ -54,7 +53,7 @@ export const PlayersSlots = ({
   return (
     <div className="motion-preset-expand motion-loop-once px-24">
       <div className="flex items-start justify-center gap-x-2">
-        <h4 className="mb-8 text-center font-bold text-lg text-neutral-600 md:text-2xl dark:text-neutral-100">
+        <h4 className="mb-8 text-center text-lg font-bold text-neutral-600 md:text-2xl dark:text-neutral-100">
           Need as minimum{" "}
           <span className="rounded-md border border-gray-200 bg-gray-100 px-1 py-0.5 dark:border-neutral-700 dark:bg-neutral-800">
             2

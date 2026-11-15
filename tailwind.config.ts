@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import type { PluginAPI } from "tailwindcss/types/config";
+
 const {
   default: flattenColorPalette,
   // eslint-disable-next-line @typescript-eslint/no-var-requires

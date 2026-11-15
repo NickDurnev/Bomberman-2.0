@@ -29,7 +29,7 @@ export const Button = ({
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        "motion-preset-pop motion-loop-once group/modal-btn inline-flex items-center gap-2 overflow-hidden bg-accent text-white transition hover:bg-secondary",
+        "motion-preset-pop motion-loop-once group/modal-btn bg-accent hover:bg-secondary inline-flex items-center gap-2 overflow-hidden text-white transition",
         className ?? "rounded-lg px-4 py-2",
         disabled ? "cursor-not-allowed opacity-50" : "hover:scale-105",
       )}
@@ -45,7 +45,7 @@ export const Button = ({
       {text && (
         <span
           className={clsx(
-            "letter font-medium text-lg",
+            "letter text-lg font-medium",
             animated &&
               !disabled &&
               "text-center transition duration-500 group-hover/modal-btn:translate-x-40",
@@ -55,7 +55,7 @@ export const Button = ({
         </span>
       )}
       {animatedIcon && animated && !disabled && (
-        <div className="-translate-x-40 absolute inset-0 z-20 flex items-center justify-center text-white transition duration-500 group-hover/modal-btn:translate-x-0">
+        <div className="absolute inset-0 z-20 flex -translate-x-40 items-center justify-center text-white transition duration-500 group-hover/modal-btn:translate-x-0">
           {animatedIcon}
         </div>
       )}

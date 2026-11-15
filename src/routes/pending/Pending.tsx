@@ -1,9 +1,3 @@
-import { useEffect, useRef, useState } from "react";
-import { Emoji } from "react-apple-emojis";
-import { CountdownCircleTimer } from "react-countdown-circle-timer";
-import { IoIosAlert } from "react-icons/io";
-import { useNavigate, useParams } from "react-router-dom";
-
 import { Button, PlayersSlots, UserBar } from "@components/index";
 import {
   POINTS_PER_KILL,
@@ -13,6 +7,11 @@ import {
 } from "@utils/constants";
 import clientSocket from "@utils/socket";
 import { GameData as Game } from "@utils/types";
+import { useEffect, useRef, useState } from "react";
+import { Emoji } from "react-apple-emojis";
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import { IoIosAlert } from "react-icons/io";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface GameData {
   current_game: Game;
@@ -79,13 +78,13 @@ const PendingGame = () => {
       <UserBar />
       <div className="flex h-full w-full flex-col gap-y-10 py-10">
         <div>
-          <h1 className="motion-preset-expand motion-loop-once text-center font-extrabold text-5xl tracking-wider">
+          <h1 className="motion-preset-expand motion-loop-once text-center text-5xl font-extrabold tracking-wider">
             {gameInfo?.name ?? "Game"}
           </h1>
         </div>
         {isTimerRunning ? (
           <div className="flex flex-col gap-y-8">
-            <h3 className="motion-preset-expand motion-loop-once text-center font-bold text-3xl tracking-wider">
+            <h3 className="motion-preset-expand motion-loop-once text-center text-3xl font-bold tracking-wider">
               Game will start in
             </h3>
             <div className="flex justify-center">
@@ -100,7 +99,7 @@ const PendingGame = () => {
                 }}
               >
                 {({ remainingTime }) => (
-                  <div className="font-bold text-4xl">{remainingTime}</div>
+                  <div className="text-4xl font-bold">{remainingTime}</div>
                 )}
               </CountdownCircleTimer>
             </div>
@@ -125,7 +124,7 @@ const PendingGame = () => {
         {gameInfo && (
           <PlayersSlots max_players={gameInfo.max_players} players={players} />
         )}
-        <div className="motion-preset-expand motion-loop-once mx-auto flex w-1/2 items-start justify-center gap-x-2 rounded-lg bg-modal p-2 text-white">
+        <div className="motion-preset-expand motion-loop-once bg-modal mx-auto flex w-1/2 items-start justify-center gap-x-2 rounded-lg p-2 text-white">
           <IoIosAlert size={40} />
           <div>
             <p className="font-medium">{TUTORIAL.actions}</p>

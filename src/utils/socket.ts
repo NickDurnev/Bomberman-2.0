@@ -1,11 +1,10 @@
-import { io } from "socket.io-client";
-import { v4 as uuidv4 } from "uuid";
-
 import { GOOGLE_USER_STORAGE_KEY, SOCKET_ID_KEY } from "@utils/constants";
 import {
   addToLocalStorage,
   getDataFromLocalStorage,
 } from "@utils/local_storage";
+import { io } from "socket.io-client";
+import { v4 as uuidv4 } from "uuid";
 
 const BASE_URL = import.meta.env.VITE_SERVER_BASE_URL;
 

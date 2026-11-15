@@ -18,13 +18,13 @@ export default function ErrorPage() {
 
   return (
     <div className="flex h-screen flex-col items-center justify-center gap-y-5">
-      <h3 className="motion-preset-float motion-loop-once text-center font-extrabold text-4xl tracking-wider">
+      <h3 className="motion-preset-float motion-loop-once text-center text-4xl font-extrabold tracking-wider">
         Oops!
       </h3>
-      <h3 className="motion-preset-float motion-loop-once text-center font-extrabold text-4xl tracking-wider">
+      <h3 className="motion-preset-float motion-loop-once text-center text-4xl font-extrabold tracking-wider">
         Sorry, an unexpected error has occurred.
       </h3>
-      <h3 className="motion-preset-float motion-loop-once text-center font-bold text-5xl tracking-wider">
+      <h3 className="motion-preset-float motion-loop-once text-center text-5xl font-bold tracking-wider">
         <i>{error.statusText || error.message}</i>
       </h3>
     </div>

@@ -1,17 +1,15 @@
-import { useAuth } from "@contexts/AuthContext";
-import { useEffect, useState } from "react";
-import { Emoji } from "react-apple-emojis";
-import { useLocation, useNavigate } from "react-router-dom";
-
-import clientSocket, { getOrCreateSocketId } from "@utils/socket";
-import { GameData } from "@utils/types";
-
 import {
   Button,
   GameSlots,
   TextGenerateEffect,
   UserBar,
 } from "@components/index";
+import { useAuth } from "@contexts/AuthContext";
+import clientSocket, { getOrCreateSocketId } from "@utils/socket";
+import { GameData } from "@utils/types";
+import { useEffect, useState } from "react";
+import { Emoji } from "react-apple-emojis";
+import { useLocation, useNavigate } from "react-router-dom";
 import { addUser } from "../../services/auth";
 import GameForm from "./components/GameForm";
 
@@ -82,7 +80,7 @@ const Menu = () => {
         <TextGenerateEffect
           words="Bomberman"
           duration={2.0}
-          className="text-center font-extrabold text-5xl text-foreground tracking-wider sm:text-7xl md:text-8xl"
+          className="text-foreground text-center text-5xl font-extrabold tracking-wider sm:text-7xl md:text-8xl"
         />
       </div>
       <div className="mx-auto mt-20 flex flex-col items-center justify-center gap-y-8">

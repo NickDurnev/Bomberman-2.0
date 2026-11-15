@@ -1,10 +1,9 @@
-import Phaser, { Physics } from "phaser";
-
 import Playing from "@game/scenes/Playing";
 import { Text } from "@helpers/elements";
 import { PING, TILE_SIZE } from "@utils/constants";
 import { Coordinates, PlayerConfig } from "@utils/types";
 import { setPlayerAvatar } from "@utils/utils";
+import Phaser, { Physics } from "phaser";
 export class EnemyPlayer extends Phaser.GameObjects.Sprite {
   readonly game: Playing;
   readonly id: string;
