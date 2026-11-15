@@ -15,23 +15,14 @@ import {
 } from "@components/index";
 import {
   ColumnDef,
-  columnVisibilityFeature,
   flexRender,
   RowData,
-  rowSelectionFeature,
-  tableFeatures,
   useTable,
 } from "@tanstack/react-table";
 import { debounce } from "@utils/utils";
 import { ChevronDown } from "lucide-react";
 import React, { useCallback, useState } from "react";
-
-// Table V9 includes only the registered features: column visibility for
-// the sort dropdown (getCanHide), row selection for row.getIsSelected().
-export const statsTableFeatures = tableFeatures({
-  columnVisibilityFeature,
-  rowSelectionFeature,
-});
+import { statsTableFeatures } from "./statsTableFeatures";
 
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<typeof statsTableFeatures, TData>[];

@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { UserStats } from "@utils/types";
-import { statsTableFeatures } from "./dataTable";
+import { statsTableFeatures } from "./statsTableFeatures";
 
 export const columns: ColumnDef<typeof statsTableFeatures, UserStats>[] = [
   {
