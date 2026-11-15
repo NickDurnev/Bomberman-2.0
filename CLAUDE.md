@@ -29,6 +29,8 @@ CI runs the same `checks` job on every PR to `dev`. A red check blocks the merge
 
 There is no unit-test script. The `test` script is a load test (`workLoadTest.js`), not a unit test.
 
+End-to-end tests live in `NickDurnev/Bomberman-2.0-E2E`. They use the read-only test hook in `src/utils/e2e.ts`, which exists only in builds with `VITE_E2E=true` (workspace `docs/e2e-hook.md`). A change to the hook or to a `clientSocket.on` / `.off` needs a companion E2E PR.
+
 ## Workflow
 
 - Open PRs to `dev`.
