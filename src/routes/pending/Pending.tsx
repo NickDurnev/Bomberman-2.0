@@ -1,17 +1,17 @@
-import { Button, PlayersSlots, UserBar } from "@components/index";
-import {
-  POINTS_PER_KILL,
-  POINTS_PER_TOP3,
-  POINTS_PER_WIN,
-  TUTORIAL,
-} from "@utils/constants";
-import clientSocket from "@utils/socket";
-import { GameData as Game } from "@utils/types";
 import { useEffect, useRef, useState } from "react";
 import { Emoji } from "react-apple-emojis";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { IoIosAlert } from "react-icons/io";
 import { useNavigate, useParams } from "react-router";
+import { Button, PlayersSlots, UserBar } from "@/components/index";
+import {
+  POINTS_PER_KILL,
+  POINTS_PER_TOP3,
+  POINTS_PER_WIN,
+  TUTORIAL,
+} from "@/utils/constants";
+import clientSocket from "@/utils/socket";
+import { GameData as Game } from "@/utils/types";
 
 interface GameData {
   current_game: Game;

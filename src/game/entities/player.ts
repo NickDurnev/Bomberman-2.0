@@ -1,6 +1,7 @@
-import Playing from "@game/scenes/Playing";
-import { touchInput } from "@game/touchInput";
-import { Text } from "@helpers/elements";
+import Phaser, { Physics } from "phaser";
+import Playing from "@/game/scenes/Playing";
+import { touchInput } from "@/game/touchInput";
+import { Text } from "@/helpers/elements";
 import {
   BOMBS,
   DELAY,
@@ -19,11 +20,10 @@ import {
   STEP_POWER,
   STEP_SPEED,
   TILE_SIZE,
-} from "@utils/constants";
-import clientSocket from "@utils/socket";
-import { Coordinates, ISpoilType, PlayerConfig } from "@utils/types";
-import { setPlayerAvatar } from "@utils/utils";
-import Phaser, { Physics } from "phaser";
+} from "@/utils/constants";
+import clientSocket from "@/utils/socket";
+import { Coordinates, ISpoilType, PlayerConfig } from "@/utils/types";
+import { setPlayerAvatar } from "@/utils/utils";
 
 export class Player extends Phaser.GameObjects.Sprite {
   readonly game: Playing;

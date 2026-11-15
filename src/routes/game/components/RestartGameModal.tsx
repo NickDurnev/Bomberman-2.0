@@ -1,3 +1,7 @@
+import { useEffect, useState } from "react";
+import { Emoji } from "react-apple-emojis";
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import { useNavigate } from "react-router";
 import {
   AnimatedTooltip,
   Button,
@@ -12,14 +16,10 @@ import {
   TableHeader,
   TableRow,
   useModal,
-} from "@components/index";
-import clientSocket from "@utils/socket";
-import { EndGame, GameData as Game } from "@utils/types";
-import { getPlayerVictims } from "@utils/utils";
-import { useEffect, useState } from "react";
-import { Emoji } from "react-apple-emojis";
-import { CountdownCircleTimer } from "react-countdown-circle-timer";
-import { useNavigate } from "react-router";
+} from "@/components/index";
+import clientSocket from "@/utils/socket";
+import { EndGame, GameData as Game } from "@/utils/types";
+import { getPlayerVictims } from "@/utils/utils";
 
 type GameData = {
   current_game: Game;

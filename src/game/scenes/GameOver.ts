@@ -1,8 +1,8 @@
-import clientSocket from "@utils/socket";
-import { GameData } from "@utils/types";
 import Phaser, { Scene } from "phaser";
-import { EventBus } from "../EventBus";
-import Playing from "./Playing";
+import { EventBus } from "@/game/EventBus";
+import Playing from "@/game/scenes/Playing";
+import clientSocket from "@/utils/socket";
+import { GameData } from "@/utils/types";
 
 class GameOver extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;

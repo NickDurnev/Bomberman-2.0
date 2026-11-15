@@ -1,5 +1,5 @@
-import { GameStore } from "@utils/types";
 import { create } from "zustand";
+import { GameStore } from "@/utils/types";
 
 export const useGameStore = create<GameStore>(set => ({
   gameName: "",

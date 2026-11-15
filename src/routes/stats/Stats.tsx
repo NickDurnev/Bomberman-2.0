@@ -1,10 +1,10 @@
-import { ShadButton, UserBar } from "@components/index";
-import { getUserStats } from "@utils/statsAPI";
-import { UserStats } from "@utils/types";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { DataTable } from "./components/dataTable";
-import { columns } from "./components/statsColumn";
+import { ShadButton, UserBar } from "@/components/index";
+import { DataTable } from "@/routes/stats/components/dataTable";
+import { columns } from "@/routes/stats/components/statsColumn";
+import { getUserStats } from "@/utils/statsAPI";
+import { UserStats } from "@/utils/types";
 
 const Stats = () => {
   const [data, setData] = useState<UserStats[]>([]);

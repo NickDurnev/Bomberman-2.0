@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   AnimatedTooltip,
   ColourfulText,
@@ -6,11 +7,10 @@ import {
   ModalBody,
   ModalContent,
   useModal,
-} from "@components/index";
-import clientSocket from "@utils/socket";
-import { Player, PlayerSlot, PlayerWin } from "@utils/types";
-import { getPlayerVictims } from "@utils/utils";
-import { useEffect, useState } from "react";
+} from "@/components/index";
+import clientSocket from "@/utils/socket";
+import { Player, PlayerSlot, PlayerWin } from "@/utils/types";
+import { getPlayerVictims } from "@/utils/utils";
 
 const PlayerWinModal = () => {
   const [victims, setVictims] = useState<PlayerSlot[]>([]);

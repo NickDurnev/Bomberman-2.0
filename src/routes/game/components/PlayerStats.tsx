@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import type { Info } from "../hooks/usePlayerInfo";
+import type { Info } from "@/routes/game/hooks/usePlayerInfo";
 
 type Props = {
   info: Info[];

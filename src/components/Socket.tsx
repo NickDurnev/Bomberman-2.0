@@ -1,6 +1,6 @@
-import { useAuth } from "@contexts/AuthContext";
-import socket, { getOrCreateSocketId } from "@utils/socket";
 import React, { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import socket, { getOrCreateSocketId } from "@/utils/socket";
 
 interface Transport {
   name: string;

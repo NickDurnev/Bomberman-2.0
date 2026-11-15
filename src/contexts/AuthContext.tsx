@@ -1,6 +1,4 @@
 import { googleLogout, useGoogleLogin } from "@react-oauth/google";
-import { GOOGLE_USER_STORAGE_KEY } from "@utils/constants";
-import { getDataFromLocalStorage } from "@utils/local_storage";
 import {
   createContext,
   type ReactNode,
@@ -9,6 +7,8 @@ import {
   useEffect,
   useState,
 } from "react";
+import { GOOGLE_USER_STORAGE_KEY } from "@/utils/constants";
+import { getDataFromLocalStorage } from "@/utils/local_storage";
 
 const USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo";
 

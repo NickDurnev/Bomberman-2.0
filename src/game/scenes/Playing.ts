@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 import {
   Bomb,
   EnemyPlayer,
@@ -6,17 +7,17 @@ import {
   Portal,
   Spoil,
   Tombstone,
-} from "@game/entities";
-import { resetTouchInput } from "@game/touchInput";
+} from "@/game/entities";
+import { resetTouchInput } from "@/game/touchInput";
 import {
   LAYER,
   PORTAL_DELAY,
   PORTAL_DELAY_STEP,
   SOCKET_ID_KEY,
   TILESET,
-} from "@utils/constants";
-import { getDataFromLocalStorage } from "@utils/local_storage";
-import clientSocket from "@utils/socket";
+} from "@/utils/constants";
+import { getDataFromLocalStorage } from "@/utils/local_storage";
+import clientSocket from "@/utils/socket";
 import {
   GameData,
   ICell,
@@ -24,15 +25,14 @@ import {
   PlayerConfig,
   PlayerPositionData,
   pickedSpoilSocketData,
-} from "@utils/types";
+} from "@/utils/types";
 import {
   findAndDestroyByCoordinates,
   findAndDestroyById,
   findByCoordinates,
   findById,
   getIntersectionArea,
-} from "@utils/utils";
-import Phaser from "phaser";
+} from "@/utils/utils";
 
 type PlayerData = Pick<PlayerConfig, "id" | "name" | "spawn" | "skin">;
 

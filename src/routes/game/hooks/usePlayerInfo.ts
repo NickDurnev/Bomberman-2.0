@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import {
   BOMBS,
   DELAY,
@@ -9,11 +11,9 @@ import {
   SPEED,
   STEP_DELAY,
   STEP_SPEED,
-} from "@utils/constants";
-import clientSocket, { getOrCreateSocketId } from "@utils/socket";
-import { pickedSpoilSocketData } from "@utils/types";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+} from "@/utils/constants";
+import clientSocket, { getOrCreateSocketId } from "@/utils/socket";
+import { pickedSpoilSocketData } from "@/utils/types";
 
 const DEFAULT_INFO = [
   { title: "Speed", value: 1, color: "#37bf2e" },
