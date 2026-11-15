@@ -1,7 +1,8 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { UserStats } from "@utils/types";
+import { statsTableFeatures } from "./dataTable";
 
-export const columns: ColumnDef<UserStats>[] = [
+export const columns: ColumnDef<typeof statsTableFeatures, UserStats>[] = [
   {
     accessorKey: "index",
     header: () => <div className="text-center">No.</div>,

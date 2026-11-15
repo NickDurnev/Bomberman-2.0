@@ -15,16 +15,26 @@ import {
 } from "@components/index";
 import {
   ColumnDef,
+  columnVisibilityFeature,
   flexRender,
-  getCoreRowModel,
-  useReactTable,
+  RowData,
+  rowSelectionFeature,
+  tableFeatures,
+  useTable,
 } from "@tanstack/react-table";
 import { debounce } from "@utils/utils";
 import { ChevronDown } from "lucide-react";
 import React, { useCallback, useState } from "react";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+// Table V9 includes only the registered features: column visibility for
+// the sort dropdown (getCanHide), row selection for row.getIsSelected().
+export const statsTableFeatures = tableFeatures({
+  columnVisibilityFeature,
+  rowSelectionFeature,
+});
+
+interface DataTableProps<TData extends RowData> {
+  columns: ColumnDef<typeof statsTableFeatures, TData>[];
   data: TData[];
   sortOption: string;
   setSortOption: React.Dispatch<React.SetStateAction<string>>;
@@ -32,20 +42,20 @@ interface DataTableProps<TData, TValue> {
   isLoading?: boolean;
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends RowData>({
   columns,
   data,
   sortOption,
   setSortOption,
   setName,
   isLoading,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TData>) {
   const [input, setInput] = useState("");
 
-  const table = useReactTable({
+  const table = useTable({
+    features: statsTableFeatures,
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
   });
 
   const debounceInput = useCallback(
