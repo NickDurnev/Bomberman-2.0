@@ -182,7 +182,10 @@ class Playing extends Phaser.Scene {
 
     const tileset = this.map.addTilesetImage(TILESET);
 
-    this.blockLayer = this.map.createLayer(LAYER, tileset!)!;
+    this.blockLayer = this.map.createLayer(
+      LAYER,
+      tileset!,
+    ) as Phaser.Tilemaps.TilemapLayer; // no `gpu` option, so the runtime type is TilemapLayer
 
     this.map.setCollision([1, 2, 3, 4, 5]);
 

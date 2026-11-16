@@ -48,7 +48,7 @@
     "framer-motion": "^14.14.0",
     "lucide-react": "^1.73.0",
     "motion": "^14.14.0",
-    "phaser": "^3.90.0",
+    "phaser": "^4.2.1",
     "react": "^19.3.1",
     "react-apple-emojis": "^3.0.0",
     "react-countdown-circle-timer": "^3.2.1",
