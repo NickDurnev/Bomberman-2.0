@@ -293,6 +293,9 @@ class Playing extends Phaser.Scene {
       playerId: player.id,
       gameId: player.gameId,
     });
+    // The spoil leaves this.spoils on destroy, so the "spoil was picked" echo
+    // finds nothing and does not burst a second time.
+    pickupBurst(this, spoil.x, spoil.y);
     spoil.destroy();
   }
 
@@ -431,6 +434,8 @@ class Playing extends Phaser.Scene {
       this.player.pickSpoil(spoil_type);
     }
 
+    // Only a remote pickup still finds the spoil here; the local pickup burst
+    // runs in onPlayerVsSpoil.
     const spoil = findById(spoil_id, this.spoils);
     if (spoil) {
       pickupBurst(this, spoil.x, spoil.y);
