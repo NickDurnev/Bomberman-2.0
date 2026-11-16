@@ -181,6 +181,8 @@ const EndGameModal = () => {
     reason === "win" || reason === "disconnect"
       ? (winner ?? getSoleSurvivor(prevGameInfo))
       : null;
+  // A disconnect that leaves nobody alive has no winner: show it as a draw.
+  const isDraw = reason === "draw" || (reason === "disconnect" && !shownWinner);
   const victims =
     shownWinner && prevGameInfo
       ? getPlayerVictims(prevGameInfo, shownWinner)
@@ -237,7 +239,7 @@ const EndGameModal = () => {
                 </div>
               </div>
             )}
-            {reason === "draw" && (
+            {isDraw && (
               <h3 className="motion-preset-expand motion-loop-once mt-6 mb-8 text-center text-3xl font-bold tracking-wider [@media(max-height:500px)]:mt-0 [@media(max-height:500px)]:mb-3">
                 Draw
               </h3>
