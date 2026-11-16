@@ -1,5 +1,6 @@
 import Phaser, { Physics } from "phaser";
 
+import { applyGlow } from "@/game/effects";
 import { BOMBS, POWER, SPEED, TILE_SIZE } from "@/utils/constants";
 import { ISpoil } from "@/utils/types";
 
@@ -41,6 +42,7 @@ export class Spoil extends Phaser.GameObjects.Sprite {
     this.getBody().setSize(TILE_SIZE, TILE_SIZE);
 
     this.getBody().setImmovable(true);
+    applyGlow(this);
   }
 
   protected getBody(): Physics.Arcade.Body {

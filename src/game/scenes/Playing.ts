@@ -1,6 +1,11 @@
 import Phaser from "phaser";
 import { EventBus } from "@/game/EventBus";
-import { explosionFeedback, startFuseWarning } from "@/game/effects";
+import {
+  debrisBurst,
+  explosionFeedback,
+  pickupBurst,
+  startFuseWarning,
+} from "@/game/effects";
 import { playEndTransition } from "@/game/endSequence";
 import {
   Bomb,
@@ -18,6 +23,7 @@ import {
   PORTAL_DELAY,
   PORTAL_DELAY_STEP,
   SOCKET_ID_KEY,
+  TILE_SIZE,
   TILESET,
 } from "@/utils/constants";
 import { getDataFromLocalStorage } from "@/utils/local_storage";
@@ -394,6 +400,11 @@ class Playing extends Phaser.Scene {
           true, // Optional: Recalculate faces after placement (set to true or false as needed)
           this.blockLayer, // Specify the layer to place the tile in
         );
+        debrisBurst(
+          this,
+          cell.col * TILE_SIZE + TILE_SIZE / 2,
+          cell.row * TILE_SIZE + TILE_SIZE / 2,
+        );
       }
     });
 
@@ -418,6 +429,10 @@ class Playing extends Phaser.Scene {
       this.player.pickSpoil(spoil_type);
     }
 
+    const spoil = findById(spoil_id, this.spoils);
+    if (spoil) {
+      pickupBurst(this, spoil.x, spoil.y);
+    }
     findAndDestroyById(spoil_id, this.spoils);
   }
 

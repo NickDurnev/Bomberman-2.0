@@ -88,3 +88,81 @@ export function explosionFeedback(
   camera.shake(SHAKE_DURATION, SHAKE_INTENSITY);
   camera.flash(FLASH_DURATION, 255, 240, 200);
 }
+
+// Debris and pickup bursts: few, short-lived particles from a pooled emitter.
+export const PARTICLE_KEY = "particle";
+const MAX_BURST = 12;
+const DEBRIS_COUNT = 10;
+const PICKUP_COUNT = 8;
+const PARTICLE_LIFESPAN = 450;
+const DEBRIS_TINT = 0xb8864b;
+const PICKUP_TINT = 0xffe36b;
+
+type BurstKind = "debris" | "pickup";
+
+const burstEmitters = new WeakMap<
+  Phaser.Scene,
+  Partial<Record<BurstKind, Phaser.GameObjects.Particles.ParticleEmitter>>
+>();
+
+const getBurstEmitter = (
+  scene: Phaser.Scene,
+  kind: BurstKind,
+): Phaser.GameObjects.Particles.ParticleEmitter => {
+  const pool = burstEmitters.get(scene) ?? {};
+  burstEmitters.set(scene, pool);
+  const cached = pool[kind];
+  if (cached?.active) {
+    return cached;
+  }
+  const isDebris = kind === "debris";
+  const emitter = scene.add
+    .particles(0, 0, PARTICLE_KEY, {
+      lifespan: { min: PARTICLE_LIFESPAN / 2, max: PARTICLE_LIFESPAN },
+      speed: isDebris ? { min: 40, max: 130 } : { min: 30, max: 90 },
+      scale: { start: isDebris ? 1.4 : 1.1, end: 0 },
+      alpha: { start: 1, end: 0 },
+      gravityY: isDebris ? 220 : -60,
+      tint: isDebris ? DEBRIS_TINT : PICKUP_TINT,
+      emitting: false,
+    })
+    .setDepth(10);
+  // The emitter dies with the scene's display list; drop the stale entry.
+  emitter.once(Phaser.GameObjects.Events.DESTROY, () => {
+    delete pool[kind];
+  });
+  pool[kind] = emitter;
+  return emitter;
+};
+
+const burst = (
+  scene: Phaser.Scene,
+  kind: BurstKind,
+  x: number,
+  y: number,
+  count: number,
+): void => {
+  if (!getSettings().particles) {
+    return;
+  }
+  getBurstEmitter(scene, kind).explode(Math.min(count, MAX_BURST), x, y);
+};
+
+/** Brown debris where a box was destroyed. */
+export function debrisBurst(scene: Phaser.Scene, x: number, y: number): void {
+  burst(scene, "debris", x, y, DEBRIS_COUNT);
+}
+
+/** Yellow sparks where a spoil was picked up. */
+export function pickupBurst(scene: Phaser.Scene, x: number, y: number): void {
+  burst(scene, "pickup", x, y, PICKUP_COUNT);
+}
+
+/** Soft glow on a sprite. WebGL only; no-op on Canvas or when off. */
+export function applyGlow(sprite: Phaser.GameObjects.Sprite): void {
+  if (!(getSettings().glow && isWebGL(sprite.scene))) {
+    return;
+  }
+  sprite.enableFilters();
+  sprite.filters?.internal.addGlow(0xffffff, 2, 0, 1, false, 4, 6);
+}
