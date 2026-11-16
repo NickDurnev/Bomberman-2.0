@@ -101,10 +101,10 @@ export function explosionFeedback(
 // Debris and pickup bursts: few, short-lived particles from a pooled emitter.
 export const PARTICLE_KEY = "particle";
 const MAX_BURST = 12;
-const DEBRIS_COUNT = 10;
+const DEBRIS_COUNT = 12;
 const PICKUP_COUNT = 8;
-const PARTICLE_LIFESPAN = 450;
-const DEBRIS_TINT = 0xb8864b;
+const PARTICLE_LIFESPAN = 600;
+const DEBRIS_TINT = 0xf2c27b;
 const PICKUP_TINT = 0xffe36b;
 
 type BurstKind = "debris" | "pickup";
@@ -128,14 +128,15 @@ const getBurstEmitter = (
   const emitter = scene.add
     .particles(0, 0, PARTICLE_KEY, {
       lifespan: { min: PARTICLE_LIFESPAN / 2, max: PARTICLE_LIFESPAN },
-      speed: isDebris ? { min: 40, max: 130 } : { min: 30, max: 90 },
-      scale: { start: isDebris ? 1.4 : 1.1, end: 0 },
-      alpha: { start: 1, end: 0 },
+      speed: isDebris ? { min: 90, max: 200 } : { min: 30, max: 90 },
+      scale: { start: isDebris ? 2 : 1.1, end: isDebris ? 0.8 : 0 },
+      alpha: { start: 1, end: 0, ease: "Quad.easeIn" },
       gravityY: isDebris ? 220 : -60,
       tint: isDebris ? DEBRIS_TINT : PICKUP_TINT,
       emitting: false,
     })
-    .setDepth(10);
+    // Above the fire sprites (depth 10), which cover the destroyed cell.
+    .setDepth(11);
   // The emitter dies with the scene's display list; drop the stale entry.
   emitter.once(Phaser.GameObjects.Events.DESTROY, () => {
     delete pool[kind];
