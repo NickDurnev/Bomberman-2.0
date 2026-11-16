@@ -26,17 +26,6 @@ export class Portal extends Phaser.GameObjects.Sprite {
 
     this.getBody().setImmovable(true);
 
-    // Add bomb animation
-    this.anims.create({
-      key: "portal",
-      frames: this.anims.generateFrameNumbers("portal_tileset", {
-        start: 0,
-        end: 14,
-      }),
-      frameRate: 20,
-      repeat: -1,
-    });
-
     this.play("portal");
   }
 

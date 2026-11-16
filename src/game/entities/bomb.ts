@@ -46,17 +46,6 @@ export class Bomb extends Phaser.GameObjects.Sprite {
       repeat: 0,
     });
 
-    // Add bomb animation
-    this.anims.create({
-      key: "bomb",
-      frames: this.anims.generateFrameNumbers("bomb_tileset", {
-        start: 0,
-        end: 13,
-      }),
-      frameRate: 6,
-      repeat: -1,
-    });
-
     this.play("bomb");
   }
 

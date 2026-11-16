@@ -1,6 +1,16 @@
 import Phaser from "phaser";
 import { GameData, Player } from "@/utils/types";
 
+const BLAST_TYPES = [
+  "explosion_center",
+  "explosion_horizontal",
+  "explosion_vertical",
+  "explosion_up",
+  "explosion_right",
+  "explosion_down",
+  "explosion_left",
+];
+
 class Preload extends Phaser.Scene {
   private currentGame: GameData;
 
@@ -149,7 +159,48 @@ class Preload extends Phaser.Scene {
   }
 
   create() {
+    this.createAnimations();
     this.scene.start("Playing", this.currentGame);
+  }
+
+  private createAnimations() {
+    if (!this.anims.exists("bomb")) {
+      this.anims.create({
+        key: "bomb",
+        frames: this.anims.generateFrameNumbers("bomb_tileset", {
+          start: 0,
+          end: 13,
+        }),
+        frameRate: 6,
+        repeat: -1,
+      });
+    }
+
+    if (!this.anims.exists("portal")) {
+      this.anims.create({
+        key: "portal",
+        frames: this.anims.generateFrameNumbers("portal_tileset", {
+          start: 0,
+          end: 14,
+        }),
+        frameRate: 20,
+        repeat: -1,
+      });
+    }
+
+    // One blast animation per explosion sheet
+    for (const type of BLAST_TYPES) {
+      const key = `blast_${type}`;
+      if (!this.anims.exists(key)) {
+        this.anims.create({
+          key,
+          frames: this.anims.generateFrameNumbers(type, { start: 0, end: 4 }),
+          frameRate: 20,
+          repeat: 0, // No looping
+          hideOnComplete: true,
+        });
+      }
+    }
   }
 }
 
