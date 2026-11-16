@@ -1,5 +1,12 @@
 import Phaser from "phaser";
 import { EventBus } from "@/game/EventBus";
+import {
+  deathEffect,
+  debrisBurst,
+  explosionFeedback,
+  pickupBurst,
+  startFuseWarning,
+} from "@/game/effects";
 import { playEndTransition } from "@/game/endSequence";
 import {
   Bomb,
@@ -12,10 +19,12 @@ import {
 } from "@/game/entities";
 import { resetTouchInput } from "@/game/touchInput";
 import {
+  EXPLOSION_TIME,
   LAYER,
   PORTAL_DELAY,
   PORTAL_DELAY_STEP,
   SOCKET_ID_KEY,
+  TILE_SIZE,
   TILESET,
 } from "@/utils/constants";
 import { getDataFromLocalStorage } from "@/utils/local_storage";
@@ -284,6 +293,9 @@ class Playing extends Phaser.Scene {
       playerId: player.id,
       gameId: player.gameId,
     });
+    // The spoil leaves this.spoils on destroy, so the "spoil was picked" echo
+    // finds nothing and does not burst a second time.
+    pickupBurst(this, spoil.x, spoil.y);
     spoil.destroy();
   }
 
@@ -296,6 +308,7 @@ class Playing extends Phaser.Scene {
       gameId: player.gameId,
     });
     player.becomesDead();
+    deathEffect(this);
   }
 
   private onBombVsBlast(bomb: Bomb) {
@@ -330,19 +343,26 @@ class Playing extends Phaser.Scene {
     }
   }
 
-  private onShowBomb({ bomb_id, playerId, col, row }: ShowBombData) {
+  private onShowBomb({
+    bomb_id,
+    playerId,
+    col,
+    row,
+    delay = EXPLOSION_TIME,
+  }: ShowBombData) {
     if (this.player.id === playerId) {
       this.player.increaseActiveBombs();
     }
-    this.bombs.add(
-      new Bomb({
-        scene: this,
-        id: bomb_id,
-        col,
-        row,
-        playerId,
-      }),
-    );
+    const bomb = new Bomb({
+      scene: this,
+      id: bomb_id,
+      col,
+      row,
+      playerId,
+      delay,
+    });
+    this.bombs.add(bomb);
+    startFuseWarning(bomb, delay);
   }
 
   private onDetonateBomb({
@@ -360,6 +380,14 @@ class Playing extends Phaser.Scene {
     // Remove Bomb:
     findAndDestroyById(bomb_id, this.bombs);
 
+    explosionFeedback(
+      this,
+      blastedCells,
+      this.player
+        ? { x: this.player.x, y: this.player.y, isAlive: this.player.active }
+        : null,
+    );
+
     // Render Blast:
     for (const cell of blastedCells) {
       this.blasts.add(new FireBlast(this, cell, playerId));
@@ -376,6 +404,11 @@ class Playing extends Phaser.Scene {
           cell.row, // Y-coordinate (row) in the tilemap
           true, // Optional: Recalculate faces after placement (set to true or false as needed)
           this.blockLayer, // Specify the layer to place the tile in
+        );
+        debrisBurst(
+          this,
+          cell.col * TILE_SIZE + TILE_SIZE / 2,
+          cell.row * TILE_SIZE + TILE_SIZE / 2,
         );
       }
     });
@@ -401,6 +434,12 @@ class Playing extends Phaser.Scene {
       this.player.pickSpoil(spoil_type);
     }
 
+    // Only a remote pickup still finds the spoil here; the local pickup burst
+    // runs in onPlayerVsSpoil.
+    const spoil = findById(spoil_id, this.spoils);
+    if (spoil) {
+      pickupBurst(this, spoil.x, spoil.y);
+    }
     findAndDestroyById(spoil_id, this.spoils);
   }
 

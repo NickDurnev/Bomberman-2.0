@@ -28,7 +28,7 @@ const ROWS: {
   {
     key: "fuseWarning",
     label: "Bomb fuse warning",
-    description: "A bomb blinks faster and grows as its fuse burns down.",
+    description: "A bomb flashes shortly before it explodes.",
   },
   {
     key: "particles",

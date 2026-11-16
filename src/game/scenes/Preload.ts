@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { PARTICLE_KEY } from "@/game/effects";
 import { GameData, Player } from "@/utils/types";
 
 const BLAST_TYPES = [
@@ -160,7 +161,19 @@ class Preload extends Phaser.Scene {
 
   create() {
     this.createAnimations();
+    this.createParticleTexture();
     this.scene.start("Playing", this.currentGame);
+  }
+
+  private createParticleTexture() {
+    if (this.textures.exists(PARTICLE_KEY)) {
+      return;
+    }
+    const graphics = this.make.graphics({}, false);
+    graphics.fillStyle(0xffffff, 1);
+    graphics.fillRect(0, 0, 4, 4);
+    graphics.generateTexture(PARTICLE_KEY, 4, 4);
+    graphics.destroy();
   }
 
   private createAnimations() {

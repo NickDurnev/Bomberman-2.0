@@ -1,4 +1,5 @@
 import Phaser, { Physics } from "phaser";
+import { applyGlow } from "@/game/effects";
 import { TILE_SIZE } from "@/utils/constants";
 import { IPortal } from "@/utils/types";
 
@@ -27,6 +28,7 @@ export class Portal extends Phaser.GameObjects.Sprite {
     this.getBody().setImmovable(true);
 
     this.play("portal");
+    applyGlow(this);
   }
 
   protected getBody(): Physics.Arcade.Body {
