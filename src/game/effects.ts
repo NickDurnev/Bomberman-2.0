@@ -7,6 +7,8 @@ const FUSE_WARNING_TIME = 500;
 // One tint step of the warning pulse.
 const FUSE_PULSE_STEP = 100;
 const FUSE_PULSE_TINTS = [0xffffff, null, 0xff3030, null] as const;
+// Canvas has no tint modes: the warning blinks the bomb's alpha instead.
+const FUSE_PULSE_ALPHAS = [0.4, 1] as const;
 
 // An explosion closer than this to the local player shakes the camera.
 const FEEDBACK_RANGE = 3 * TILE_SIZE;
@@ -19,7 +21,8 @@ export const isWebGL = (scene: Phaser.Scene): boolean =>
 
 /**
  * Pulses a tint on the bomb in the last FUSE_WARNING_TIME ms of its fuse
- * (at once when the fuse is shorter). Runs until the sprite is destroyed.
+ * (at once when the fuse is shorter). On Canvas it blinks the alpha.
+ * Runs until the sprite is destroyed.
  */
 export function startFuseWarning(
   bomb: Phaser.GameObjects.Sprite,
@@ -29,10 +32,16 @@ export function startFuseWarning(
     return;
   }
   const scene = bomb.scene;
+  const useTint = isWebGL(scene);
   let step = 0;
   let pulse: Phaser.Time.TimerEvent | null = null;
 
   const tick = () => {
+    if (!useTint) {
+      bomb.setAlpha(FUSE_PULSE_ALPHAS[step % FUSE_PULSE_ALPHAS.length]);
+      step += 1;
+      return;
+    }
     const tint = FUSE_PULSE_TINTS[step % FUSE_PULSE_TINTS.length];
     step += 1;
     if (tint === null) {
@@ -165,4 +174,35 @@ export function applyGlow(sprite: Phaser.GameObjects.Sprite): void {
   }
   sprite.enableFilters();
   sprite.filters?.internal.addGlow(0xffffff, 2, 0, 1, false, 4, 6);
+}
+
+// Death effect: a short dip to black, then the view in grey (WebGL).
+const DEATH_DIP_HALF = 150;
+const deadScenes = new WeakSet<Phaser.Scene>();
+
+/**
+ * Runs once per scene when the local player dies. WebGL: the camera turns
+ * grey until the scene stops. Both renderers: a ~300 ms fade dip that
+ * returns to the full view. The board stays visible.
+ */
+export function deathEffect(scene: Phaser.Scene): void {
+  if (deadScenes.has(scene)) {
+    return;
+  }
+  deadScenes.add(scene);
+  const camera = scene.cameras.main;
+  if (isWebGL(scene)) {
+    camera.filters.internal.addColorMatrix().colorMatrix.grayscale(1);
+  }
+  camera.once(
+    Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+    (_camera: Phaser.Cameras.Scene2D.Camera, fade: { duration: number }) => {
+      // A longer fade (the end-of-match fade-out on Canvas) replaced the
+      // dip: never fade back in over it.
+      if (fade.duration === DEATH_DIP_HALF) {
+        camera.fadeIn(DEATH_DIP_HALF);
+      }
+    },
+  );
+  camera.fadeOut(DEATH_DIP_HALF);
 }

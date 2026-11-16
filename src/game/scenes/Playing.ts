@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { EventBus } from "@/game/EventBus";
 import {
+  deathEffect,
   debrisBurst,
   explosionFeedback,
   pickupBurst,
@@ -304,6 +305,7 @@ class Playing extends Phaser.Scene {
       gameId: player.gameId,
     });
     player.becomesDead();
+    deathEffect(this);
   }
 
   private onBombVsBlast(bomb: Bomb) {
