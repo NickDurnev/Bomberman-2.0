@@ -1,6 +1,6 @@
 # Bomberman
 
-A modern web-based multiplayer remake of the classic Bomberman game, built with Phaser 3, React, TypeScript, and Socket.IO.
+A modern web-based multiplayer remake of the classic Bomberman game, built with Phaser 4, React, TypeScript, and Socket.IO.
 
 ![Bomberman Logo](public/assets/bomb_logo.png)
 
@@ -12,7 +12,7 @@ Bomberman is a real-time multiplayer game where players navigate a grid-based ma
 
 -   **Multiplayer Gameplay**: Play with friends in real-time using Socket.IO for communication
 -   **Classic Mechanics**: Place bombs, collect power-ups, and be the last one standing
--   **Modern Tech Stack**: Built with Phaser 3, React, TypeScript, and TailwindCSS
+-   **Modern Tech Stack**: Built with Phaser 4, React, TypeScript, and TailwindCSS
 -   **Responsive Design**: Play on desktop or mobile devices
 -   **User Authentication**: Sign in with Google (@react-oauth/google) to save your progress and stats
 
@@ -44,7 +44,7 @@ Bomberman is a real-time multiplayer game where players navigate a grid-based ma
 
 -   **Game Engine**:
 
-    -   Phaser 3.80.1 - A powerful HTML5 game framework
+    -   Phaser 4.2.1 - A powerful HTML5 game framework
     -   Custom entity system for game objects
     -   Scene management for game states
 
@@ -125,7 +125,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Acknowledgments
 
 -   Original Bomberman game by Hudson Soft
--   Phaser 3 game framework
+-   Phaser 4 game framework
 -   React and the entire frontend ecosystem
 -   The open-source community for inspiration and resources
 
