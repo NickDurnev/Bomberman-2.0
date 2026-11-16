@@ -50,7 +50,7 @@ type PlayerData = Pick<PlayerConfig, "id" | "name" | "spawn" | "skin">;
 
 class Playing extends Phaser.Scene {
   private currentGame: GameData;
-  private player: Player;
+  private player?: Player;
   private portals: Phaser.GameObjects.Group;
   private tombstones: Phaser.GameObjects.Group;
   private bombs: Phaser.GameObjects.Group;
@@ -327,7 +327,7 @@ class Playing extends Phaser.Scene {
   }
 
   private onTeleportPlayer({ player_id, x, y }: PlayerPositionData) {
-    if (this.player.id === player_id) {
+    if (this.player && this.player.id === player_id) {
       this.player.goTo({ x, y });
     } else {
       this.onMovePlayer({ player_id, x, y });
@@ -350,7 +350,7 @@ class Playing extends Phaser.Scene {
     row,
     delay = EXPLOSION_TIME,
   }: ShowBombData) {
-    if (this.player.id === playerId) {
+    if (this.player && this.player.id === playerId) {
       this.player.increaseActiveBombs();
     }
     const bomb = new Bomb({
@@ -374,7 +374,7 @@ class Playing extends Phaser.Scene {
     playerId: string;
     blastedCells: ICell[];
   }) {
-    if (this.player.id === playerId) {
+    if (this.player && this.player.id === playerId) {
       this.player.decreaseActiveBombs();
     }
     // Remove Bomb:
@@ -430,7 +430,7 @@ class Playing extends Phaser.Scene {
     spoil_id,
     spoil_type,
   }: pickedSpoilSocketData) {
-    if (player_id === this.player.id) {
+    if (this.player && player_id === this.player.id) {
       this.player.pickSpoil(spoil_type);
     }
 

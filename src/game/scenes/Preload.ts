@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { PARTICLE_KEY } from "@/game/effects";
 import { GameData, Player } from "@/utils/types";
 
+// One sprite sheet and one blast animation per BlastedCell.type
 const BLAST_TYPES = [
   "explosion_center",
   "explosion_horizontal",
@@ -84,44 +85,12 @@ class Preload extends Phaser.Scene {
     this.load.tilemapTiledJSON("small_map", "assets/maps/small_map.json");
 
     // Load game spritesheets
-    this.load.spritesheet(
-      "explosion_center",
-      "assets/images/game/explosion_center.png",
-      { frameWidth: 35, frameHeight: 35 },
-    );
-    this.load.spritesheet(
-      "explosion_horizontal",
-      "assets/images/game/explosion_horizontal.png",
-      { frameWidth: 35, frameHeight: 35 },
-    );
-    this.load.spritesheet(
-      "explosion_vertical",
-      "assets/images/game/explosion_vertical.png",
-      { frameWidth: 35, frameHeight: 35 },
-    );
-    this.load.spritesheet(
-      "explosion_up",
-      "assets/images/game/explosion_up.png",
-      {
+    for (const type of BLAST_TYPES) {
+      this.load.spritesheet(type, `assets/images/game/${type}.png`, {
         frameWidth: 35,
         frameHeight: 35,
-      },
-    );
-    this.load.spritesheet(
-      "explosion_right",
-      "assets/images/game/explosion_right.png",
-      { frameWidth: 35, frameHeight: 35 },
-    );
-    this.load.spritesheet(
-      "explosion_down",
-      "assets/images/game/explosion_down.png",
-      { frameWidth: 35, frameHeight: 35 },
-    );
-    this.load.spritesheet(
-      "explosion_left",
-      "assets/images/game/explosion_left.png",
-      { frameWidth: 35, frameHeight: 35 },
-    );
+      });
+    }
     this.load.spritesheet(
       "spoil_tileset",
       "assets/images/game/spoil_tileset.png",

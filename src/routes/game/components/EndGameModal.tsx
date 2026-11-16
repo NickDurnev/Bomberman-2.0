@@ -193,6 +193,11 @@ const EndGameModal = () => {
       : null;
   // A disconnect that leaves nobody alive has no winner: show it as a draw.
   const isDraw = reason === "draw" || (reason === "disconnect" && !shownWinner);
+  const noWinnerHeader = isDraw
+    ? "Draw"
+    : reason === "timeout"
+      ? "Time's up"
+      : null;
   const victims =
     shownWinner && prevGameInfo
       ? getPlayerVictims(prevGameInfo, shownWinner)
@@ -219,7 +224,10 @@ const EndGameModal = () => {
                   className="motion-preset-confetti motion-loop-once h-32 w-32 rounded-full [@media(max-height:500px)]:h-16 [@media(max-height:500px)]:w-16"
                 />
                 <div className="flex flex-col items-center gap-y-2">
-                  <h3 className="motion-preset-expand motion-loop-once text-center text-3xl font-bold tracking-wider">
+                  <h3
+                    aria-label={`Winner ${shownWinner.name}`}
+                    className="motion-preset-expand motion-loop-once text-center text-3xl font-bold tracking-wider"
+                  >
                     Winner{" "}
                     <ColourfulText
                       text={shownWinner.name}
@@ -249,14 +257,9 @@ const EndGameModal = () => {
                 </div>
               </div>
             )}
-            {isDraw && (
+            {noWinnerHeader && (
               <h3 className="motion-preset-expand motion-loop-once mt-6 mb-8 text-center text-3xl font-bold tracking-wider [@media(max-height:500px)]:mt-0 [@media(max-height:500px)]:mb-3">
-                Draw
-              </h3>
-            )}
-            {reason === "timeout" && (
-              <h3 className="motion-preset-expand motion-loop-once mt-6 mb-8 text-center text-3xl font-bold tracking-wider [@media(max-height:500px)]:mt-0 [@media(max-height:500px)]:mb-3">
-                Time's up
+                {noWinnerHeader}
               </h3>
             )}
             <h3 className="motion-preset-expand motion-loop-once text-center text-3xl font-bold tracking-wider">
@@ -307,33 +310,32 @@ const EndGameModal = () => {
                 size={"small"}
               />
             )}
-            {newGameId &&
-              (isTimerRunning ? (
-                <div className="flex flex-col gap-y-8">
-                  <h3 className="motion-preset-expand motion-loop-once text-center text-3xl font-bold tracking-wider">
-                    Game will start in
-                  </h3>
-                  <div className="flex justify-center">
-                    <CountdownCircleTimer
-                      isPlaying
-                      duration={3}
-                      colors="#8953AD"
-                      strokeWidth={10}
-                      onComplete={() => {
-                        setIsTimerRunning(false);
-                        startGame();
-                      }}
-                    >
-                      {({ remainingTime }) => (
-                        <div className="text-4xl font-bold">
-                          {remainingTime}
-                        </div>
-                      )}
-                    </CountdownCircleTimer>
-                  </div>
+            {/* Main Menu shows before "end game" too: the modal cannot be closed. */}
+            {isTimerRunning ? (
+              <div className="flex flex-col gap-y-8">
+                <h3 className="motion-preset-expand motion-loop-once text-center text-3xl font-bold tracking-wider">
+                  Game will start in
+                </h3>
+                <div className="flex justify-center">
+                  <CountdownCircleTimer
+                    isPlaying
+                    duration={3}
+                    colors="#8953AD"
+                    strokeWidth={10}
+                    onComplete={() => {
+                      setIsTimerRunning(false);
+                      startGame();
+                    }}
+                  >
+                    {({ remainingTime }) => (
+                      <div className="text-4xl font-bold">{remainingTime}</div>
+                    )}
+                  </CountdownCircleTimer>
                 </div>
-              ) : (
-                <div className="mx-auto flex flex-col items-center justify-center gap-y-8 [@media(max-height:500px)]:gap-y-3">
+              </div>
+            ) : (
+              <div className="mx-auto flex flex-col items-center justify-center gap-y-8 [@media(max-height:500px)]:gap-y-3">
+                {newGameId && (
                   <Button
                     text="Restart Game"
                     animated
@@ -341,14 +343,15 @@ const EndGameModal = () => {
                     onClick={startTimer}
                     disabled={!canStartGame}
                   />
-                  <Button
-                    text="Main Menu"
-                    animated
-                    animatedIcon={<Emoji name="door" width={20} />}
-                    onClick={leaveGameAction}
-                  />
-                </div>
-              ))}
+                )}
+                <Button
+                  text="Main Menu"
+                  animated
+                  animatedIcon={<Emoji name="door" width={20} />}
+                  onClick={leaveGameAction}
+                />
+              </div>
+            )}
           </ModalContent>
         </ModalBody>
       </Modal>
