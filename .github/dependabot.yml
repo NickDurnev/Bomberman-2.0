@@ -15,11 +15,6 @@ updates:
         update-types:
           - minor
           - patch
-    ignore:
-      # Phaser stays on 3.x until the Phaser 4 port (Phase 5).
-      - dependency-name: phaser
-        update-types:
-          - version-update:semver-major
 
   - package-ecosystem: github-actions
     directory: /
