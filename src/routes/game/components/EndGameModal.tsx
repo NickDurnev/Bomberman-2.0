@@ -163,12 +163,22 @@ const EndGameModal = () => {
     };
   }, [launchNewGame, openResults, clearFallbackTimer]);
 
+  // launch game can clear the id before the countdown ends: never start a
+  // match without an id (the server would clear this player's game id).
   const startTimer = () => {
-    clientSocket.emit("start timer", newGameIdRef.current);
+    const id = newGameIdRef.current;
+    if (!id) {
+      return;
+    }
+    clientSocket.emit("start timer", id);
   };
 
   const startGame = () => {
-    clientSocket.emit("start game", newGameIdRef.current);
+    const id = newGameIdRef.current;
+    if (!id) {
+      return;
+    }
+    clientSocket.emit("start game", id);
     launchNewGame();
   };
 
