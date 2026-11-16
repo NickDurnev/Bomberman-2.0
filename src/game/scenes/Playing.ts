@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { EventBus } from "@/game/EventBus";
+import { explosionFeedback, startFuseWarning } from "@/game/effects";
 import { playEndTransition } from "@/game/endSequence";
 import {
   Bomb,
@@ -12,6 +13,7 @@ import {
 } from "@/game/entities";
 import { resetTouchInput } from "@/game/touchInput";
 import {
+  EXPLOSION_TIME,
   LAYER,
   PORTAL_DELAY,
   PORTAL_DELAY_STEP,
@@ -330,19 +332,26 @@ class Playing extends Phaser.Scene {
     }
   }
 
-  private onShowBomb({ bomb_id, playerId, col, row }: ShowBombData) {
+  private onShowBomb({
+    bomb_id,
+    playerId,
+    col,
+    row,
+    delay = EXPLOSION_TIME,
+  }: ShowBombData) {
     if (this.player.id === playerId) {
       this.player.increaseActiveBombs();
     }
-    this.bombs.add(
-      new Bomb({
-        scene: this,
-        id: bomb_id,
-        col,
-        row,
-        playerId,
-      }),
-    );
+    const bomb = new Bomb({
+      scene: this,
+      id: bomb_id,
+      col,
+      row,
+      playerId,
+      delay,
+    });
+    this.bombs.add(bomb);
+    startFuseWarning(bomb, delay);
   }
 
   private onDetonateBomb({
@@ -359,6 +368,14 @@ class Playing extends Phaser.Scene {
     }
     // Remove Bomb:
     findAndDestroyById(bomb_id, this.bombs);
+
+    explosionFeedback(
+      this,
+      blastedCells,
+      this.player
+        ? { x: this.player.x, y: this.player.y, isAlive: this.player.active }
+        : null,
+    );
 
     // Render Blast:
     for (const cell of blastedCells) {
