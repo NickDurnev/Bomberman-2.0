@@ -134,10 +134,22 @@ export interface ICell {
   portal?: IPortal | null;
 }
 
+export interface ShowBombData {
+  bomb_id: string;
+  playerId: string;
+  col: number;
+  row: number;
+  /** Fuse time in ms. Optional: an older server does not send it. */
+  delay?: number;
+}
+
+export type EndReason = "win" | "draw" | "timeout" | "disconnect";
+
 export interface EndGame {
   game_id: GameId;
   new_game_id: GameId;
   prevGameInfo: GameData;
+  reason: EndReason;
 }
 
 export interface PlayerWin {
