@@ -91,37 +91,67 @@ export const getRandomItem = (items: string[]) => {
   return items[randomIndex];
 };
 
+// Phaser 4 has no geometry masks in WebGL, so a round avatar is a canvas
+// texture: the source image, cropped to a centred square, drawn inside a
+// circle clip. The texture is created once per key and reused by every
+// sprite with the same source.
+export function makeRoundTexture(
+  scene: Phaser.Scene,
+  sourceKey: string,
+): string {
+  const roundKey = `${sourceKey}_round`;
+  if (scene.textures.exists(roundKey)) {
+    return roundKey;
+  }
+
+  const source = scene.textures.get(sourceKey).getSourceImage() as
+    | HTMLImageElement
+    | HTMLCanvasElement;
+  const side = Math.min(source.width, source.height);
+  const texture = scene.textures.createCanvas(roundKey, side, side);
+  if (!texture) {
+    return sourceKey;
+  }
+
+  const context = texture.getContext();
+  context.save();
+  context.beginPath();
+  context.arc(side / 2, side / 2, side / 2, 0, Math.PI * 2);
+  context.closePath();
+  context.clip();
+  context.drawImage(
+    source,
+    (source.width - side) / 2,
+    (source.height - side) / 2,
+    side,
+    side,
+    0,
+    0,
+    side,
+    side,
+  );
+  context.restore();
+  texture.refresh();
+
+  return roundKey;
+}
+
 export const setPlayerAvatar = (player: Player | EnemyPlayer, id: string) => {
   // textures.get(id) always returns a truthy object (the __MISSING texture
   // when the skin failed to load), so it can't be used to detect a missing
   // skin — that left players with a broken/empty skin rendering as a black
   // square. Use textures.exists(id), which is false when the load failed, so
   // we correctly fall back to a generated avatar.
-  if (player.game.textures.exists(id)) {
-    player.setTexture(id);
+  const sourceKey = player.game.textures.exists(id)
+    ? id
+    : `avatar-${Math.floor(Math.random() * 12) + 1}`;
 
-    // Get texture size
-    const textureFrame = player.game.textures.get(id).getSourceImage();
-    const textureWidth = textureFrame.width;
-    const textureHeight = textureFrame.height;
-
-    player.getBody().setSize(textureWidth, textureHeight);
-  } else {
-    const randomNumber = Math.floor(Math.random() * 12) + 1;
-    player.setTexture(`avatar-${randomNumber}`);
-
-    const randomTextureFrame = player.game.textures
-      .get(`avatar-${randomNumber}`)
-      .getSourceImage();
-    const randomTextureWidth = randomTextureFrame.width;
-    const randomTextureHeight = randomTextureFrame.height;
-
-    player.getBody().setSize(randomTextureWidth, randomTextureHeight);
-  }
+  const roundKey = makeRoundTexture(player.game, sourceKey);
+  player.setTexture(roundKey);
+  const textureFrame = player.game.textures.get(roundKey).getSourceImage();
+  player.getBody().setSize(textureFrame.width, textureFrame.height);
 
   // Set the physics body to a circle
-  const size = TILE_SIZE - 3;
-  const radius = size / 2; // Ensure the radius matches TILE_SIZE
   player
     .getBody()
     .setCircle(
@@ -131,19 +161,8 @@ export const setPlayerAvatar = (player: Player | EnemyPlayer, id: string) => {
     );
 
   // Resize the sprite to fit TILE_SIZE
+  const size = TILE_SIZE - 3;
   player.setDisplaySize(size, size);
-
-  // Apply a circular mask
-  player.maskShape = player.game.add.graphics();
-  player.maskShape.fillStyle(0xffffff);
-  player.maskShape.fillCircle(0, 0, radius);
-  player.maskShape.setPosition(player.x, player.y);
-
-  const mask = player.maskShape.createGeometryMask();
-  player.setMask(mask);
-
-  // Cleanup: Hide the mask shape
-  player.maskShape.setVisible(false);
 };
 
 export const getPlayerVictims = (

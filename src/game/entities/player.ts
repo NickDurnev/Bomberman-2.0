@@ -44,7 +44,6 @@ export class Player extends Phaser.GameObjects.Sprite {
   readonly sprite: Phaser.GameObjects.Sprite;
   playerText: Text;
   lastTeleportTime: number = 0;
-  maskShape: Phaser.GameObjects.Graphics;
 
   constructor({ game, id, spawn, name }: PlayerConfig) {
     const centerCol = spawn.x - TILE_SIZE / 2;
@@ -100,10 +99,6 @@ export class Player extends Phaser.GameObjects.Sprite {
           this.x - this.playerText.width / 2,
           this.y - TILE_SIZE * 1.2,
         );
-      }
-
-      if (this.maskShape) {
-        this.maskShape.setPosition(this.x, this.y);
       }
     }
   }
@@ -262,17 +257,6 @@ export class Player extends Phaser.GameObjects.Sprite {
         targets: this.playerText,
         x: newPosition.x - this.playerText.width / 2,
         y: newPosition.y - TILE_SIZE * 1.2,
-        duration: PING,
-        ease: Phaser.Math.Easing.Linear,
-      });
-    }
-
-    // Update mask position
-    if (this.maskShape) {
-      this.game.add.tween({
-        targets: this.maskShape,
-        x: newPosition.x,
-        y: newPosition.y,
         duration: PING,
         ease: Phaser.Math.Easing.Linear,
       });
