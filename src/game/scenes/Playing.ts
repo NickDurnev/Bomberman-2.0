@@ -413,15 +413,29 @@ class Playing extends Phaser.Scene {
     void this.startEndSequence();
   }
 
+  // Never rejects: onEndGame awaits it, and its teardown must always run.
   private startEndSequence(): Promise<void> {
     if (!this.endSequence) {
-      this.endSequence = playEndTransition(this).then(() => {
-        if (!this.isShutDown) {
-          EventBus.emit("show-results");
-        }
-      });
+      this.endSequence = this.runEndSequence();
     }
     return this.endSequence;
+  }
+
+  private async runEndSequence() {
+    try {
+      await playEndTransition(this);
+    } catch (error) {
+      console.error("End transition failed", error);
+    }
+
+    if (this.isShutDown) {
+      return;
+    }
+    try {
+      EventBus.emit("show-results");
+    } catch (error) {
+      console.error("show-results listener failed", error);
+    }
   }
 
   private async onEndGame() {
