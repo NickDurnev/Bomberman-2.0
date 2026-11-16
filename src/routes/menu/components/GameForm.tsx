@@ -1,12 +1,12 @@
-import { Button, Input } from "@components/index";
-import { useAuth } from "@contexts/AuthContext";
-import { useGameStore } from "@hooks/stores";
-import clientSocket from "@utils/socket";
-import { GameStore } from "@utils/types";
 import React, { useEffect, useState } from "react";
 import { Emoji } from "react-apple-emojis";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
+import { Button, Input } from "@/components/index";
+import { useAuth } from "@/contexts/AuthContext";
+import { useGameStore } from "@/hooks/stores";
+import clientSocket from "@/utils/socket";
+import { GameStore } from "@/utils/types";
 
 const GameForm = () => {
   const { isAuthenticated } = useAuth();

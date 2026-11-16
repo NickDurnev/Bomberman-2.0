@@ -1,6 +1,4 @@
 "use client";
-import useOutsideClick from "@hooks/use-outside-click";
-import { cn } from "@lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   createContext,
@@ -10,6 +8,8 @@ import {
   useRef,
   useState,
 } from "react";
+import useOutsideClick from "@/hooks/use-outside-click";
+import { cn } from "@/lib/utils";
 
 interface ModalContextType {
   open: boolean;

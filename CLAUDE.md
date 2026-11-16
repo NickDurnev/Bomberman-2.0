@@ -16,6 +16,10 @@ Stack: React 19, Phaser 3, TypeScript, Vite, Tailwind, Biome.
 | `npm run lint:fix` / `npm run format:fix` | Biome lint / format with fixes on the whole repo |
 | `npm run format` | Biome format check |
 
+## Imports
+
+Import from `src` with the `@/` alias (`@/components/ui/button`, `@/utils/types`), never with a relative path. `@/` maps to `src/` (`tsconfig.json` `paths`; Vite reads it through `resolve.tsconfigPaths`). Biome `noRestrictedImports` fails on a relative import. The only exception is the map JSON from `public/assets/maps/` in `src/routes/map/SelectMap.tsx`, which is outside `src`.
+
 ## Checks before a commit
 
 Never commit with a failing check. Each command must exit 0. `<changed files>` means only the files you changed yourself.

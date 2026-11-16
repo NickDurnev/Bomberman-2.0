@@ -1,11 +1,11 @@
+import type { PointerEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   NO_DIRECTION,
   resetTouchInput,
   setDirections,
   stickToDirections,
-} from "@game/touchInput";
-import type { PointerEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+} from "@/game/touchInput";
 
 const BASE_SIZE = 132;
 const KNOB_SIZE = 56;

@@ -1,4 +1,4 @@
-import { IUser } from "../utils/types";
+import { IUser } from "@/utils/types";
 
 const BASE_URL = import.meta.env.VITE_SERVER_BASE_URL;
 

@@ -1,9 +1,9 @@
-import { useAuth } from "@contexts/AuthContext";
-import { colors } from "@utils/constants";
-import { GameSlotsProps } from "@utils/types";
-import { getRandomItem } from "@utils/utils";
 import { motion } from "framer-motion";
 import { Emoji } from "react-apple-emojis";
+import { useAuth } from "@/contexts/AuthContext";
+import { colors } from "@/utils/constants";
+import { GameSlotsProps } from "@/utils/types";
+import { getRandomItem } from "@/utils/utils";
 
 export function GameSlots({ data, onJoinGame }: GameSlotsProps) {
   const { isAuthenticated } = useAuth();

@@ -1,6 +1,6 @@
-import { setBomb } from "@game/touchInput";
 import type { PointerEvent } from "react";
 import { useEffect, useRef, useState } from "react";
+import { setBomb } from "@/game/touchInput";
 
 const BombButton = () => {
   const pointerId = useRef<number | null>(null);

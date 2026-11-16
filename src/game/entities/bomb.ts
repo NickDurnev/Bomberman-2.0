@@ -1,5 +1,5 @@
-import { EXPLOSION_TIME, TILE_SIZE } from "@utils/constants";
 import Phaser from "phaser";
+import { EXPLOSION_TIME, TILE_SIZE } from "@/utils/constants";
 
 type ConstructorParams = {
   scene: Phaser.Scene;
@@ -7,6 +7,8 @@ type ConstructorParams = {
   col: number;
   row: number;
   playerId: string;
+  /** Fuse time in ms (the server `delay` from `show bomb`). */
+  delay?: number;
 };
 
 export class Bomb extends Phaser.GameObjects.Sprite {
@@ -14,7 +16,14 @@ export class Bomb extends Phaser.GameObjects.Sprite {
   private playerId: string;
   id: string;
 
-  constructor({ scene, id, col, row, playerId }: ConstructorParams) {
+  constructor({
+    scene,
+    id,
+    col,
+    row,
+    playerId,
+    delay = EXPLOSION_TIME,
+  }: ConstructorParams) {
     // Calculate the center of the cell
     const centerCol = col * TILE_SIZE + TILE_SIZE / 2;
     const centerRow = row * TILE_SIZE + TILE_SIZE / 2;
@@ -35,27 +44,18 @@ export class Bomb extends Phaser.GameObjects.Sprite {
 
     this.getBody().setImmovable(true);
 
-    // Add tween for scale animation
-    this.game.add.tween({
+    // The bomb grows over its real fuse time
+    const growth = this.game.add.tween({
       targets: this,
       scaleX: 1.2,
       scaleY: 1.2,
-      duration: EXPLOSION_TIME,
+      duration: delay,
       ease: Phaser.Math.Easing.Linear,
       yoyo: false,
       repeat: 0,
     });
 
-    // Add bomb animation
-    this.anims.create({
-      key: "bomb",
-      frames: this.anims.generateFrameNumbers("bomb_tileset", {
-        start: 0,
-        end: 13,
-      }),
-      frameRate: 6,
-      repeat: -1,
-    });
+    this.once(Phaser.GameObjects.Events.DESTROY, () => growth.stop());
 
     this.play("bomb");
   }

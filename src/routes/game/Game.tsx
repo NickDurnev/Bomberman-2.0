@@ -1,17 +1,16 @@
-import { ModalProvider } from "@components/index";
-import { PhaserGame } from "@game/PhaserGame";
-import { useGameLayout } from "@hooks/use-game-layout";
 import clsx from "clsx";
 import { useParams } from "react-router";
-import BombButton from "./components/BombButton";
-import CountdownTimer from "./components/CountdownTimer";
-import HomeButton from "./components/HomeButton";
-import PlayerStats from "./components/PlayerStats";
-import PlayerWinModal from "./components/PlayerWinModal";
-import RestartGameModal from "./components/RestartGameModal";
-import Thumbstick from "./components/Thumbstick";
-import { useCountdown } from "./hooks/useCountdown";
-import { usePlayerInfo } from "./hooks/usePlayerInfo";
+import { ModalProvider } from "@/components/index";
+import { PhaserGame } from "@/game/PhaserGame";
+import { useGameLayout } from "@/hooks/use-game-layout";
+import BombButton from "@/routes/game/components/BombButton";
+import CountdownTimer from "@/routes/game/components/CountdownTimer";
+import EndGameModal from "@/routes/game/components/EndGameModal";
+import HomeButton from "@/routes/game/components/HomeButton";
+import PlayerStats from "@/routes/game/components/PlayerStats";
+import Thumbstick from "@/routes/game/components/Thumbstick";
+import { useCountdown } from "@/routes/game/hooks/useCountdown";
+import { usePlayerInfo } from "@/routes/game/hooks/usePlayerInfo";
 
 function Game() {
   const { gameId } = useParams();
@@ -22,14 +21,9 @@ function Game() {
   const touchClass = isTouch ? "touch-none select-none" : "";
 
   const modals = (
-    <>
-      <ModalProvider isUnclosable={true}>
-        <RestartGameModal />
-      </ModalProvider>
-      <ModalProvider>
-        <PlayerWinModal />
-      </ModalProvider>
-    </>
+    <ModalProvider isUnclosable={true}>
+      <EndGameModal />
+    </ModalProvider>
   );
 
   const stats = (

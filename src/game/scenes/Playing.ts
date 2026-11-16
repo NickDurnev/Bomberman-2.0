@@ -1,3 +1,13 @@
+import Phaser from "phaser";
+import { EventBus } from "@/game/EventBus";
+import {
+  deathEffect,
+  debrisBurst,
+  explosionFeedback,
+  pickupBurst,
+  startFuseWarning,
+} from "@/game/effects";
+import { playEndTransition } from "@/game/endSequence";
 import {
   Bomb,
   EnemyPlayer,
@@ -6,17 +16,19 @@ import {
   Portal,
   Spoil,
   Tombstone,
-} from "@game/entities";
-import { resetTouchInput } from "@game/touchInput";
+} from "@/game/entities";
+import { resetTouchInput } from "@/game/touchInput";
 import {
+  EXPLOSION_TIME,
   LAYER,
   PORTAL_DELAY,
   PORTAL_DELAY_STEP,
   SOCKET_ID_KEY,
+  TILE_SIZE,
   TILESET,
-} from "@utils/constants";
-import { getDataFromLocalStorage } from "@utils/local_storage";
-import clientSocket from "@utils/socket";
+} from "@/utils/constants";
+import { getDataFromLocalStorage } from "@/utils/local_storage";
+import clientSocket from "@/utils/socket";
 import {
   GameData,
   ICell,
@@ -24,15 +36,15 @@ import {
   PlayerConfig,
   PlayerPositionData,
   pickedSpoilSocketData,
-} from "@utils/types";
+  ShowBombData,
+} from "@/utils/types";
 import {
   findAndDestroyByCoordinates,
   findAndDestroyById,
   findByCoordinates,
   findById,
   getIntersectionArea,
-} from "@utils/utils";
-import Phaser from "phaser";
+} from "@/utils/utils";
 
 type PlayerData = Pick<PlayerConfig, "id" | "name" | "spawn" | "skin">;
 
@@ -50,6 +62,12 @@ class Playing extends Phaser.Scene {
   private socketHandlers: Array<
     [string, Parameters<typeof clientSocket.on>[1]]
   > = [];
+  // One end sequence per match: the first of "player win" / "end game"
+  // starts it, the other one reuses the same promise.
+  private endSequence: Promise<void> | null = null;
+  // Set once shutdown() ran. After an await, the scene may be gone
+  // (end game teardown or Phaser.Game destroyed on a route change).
+  private isShutDown = false;
 
   constructor() {
     super("Playing");
@@ -57,6 +75,8 @@ class Playing extends Phaser.Scene {
 
   init(game: GameData) {
     this.currentGame = game;
+    this.endSequence = null;
+    this.isShutDown = false;
   }
 
   create() {
@@ -182,7 +202,10 @@ class Playing extends Phaser.Scene {
 
     const tileset = this.map.addTilesetImage(TILESET);
 
-    this.blockLayer = this.map.createLayer(LAYER, tileset!)!;
+    this.blockLayer = this.map.createLayer(
+      LAYER,
+      tileset!,
+    ) as Phaser.Tilemaps.TilemapLayer; // no `gpu` option, so the runtime type is TilemapLayer
 
     this.map.setCollision([1, 2, 3, 4, 5]);
 
@@ -221,6 +244,7 @@ class Playing extends Phaser.Scene {
     this.socketHandlers = [
       ["move player", this.onMovePlayer.bind(this)],
       ["teleport player", this.onTeleportPlayer.bind(this)],
+      ["player win", this.onPlayerWin.bind(this)],
       ["end game", this.onEndGame.bind(this)],
       ["show bomb", this.onShowBomb.bind(this)],
       ["detonate bomb", this.onDetonateBomb.bind(this)],
@@ -269,6 +293,9 @@ class Playing extends Phaser.Scene {
       playerId: player.id,
       gameId: player.gameId,
     });
+    // The spoil leaves this.spoils on destroy, so the "spoil was picked" echo
+    // finds nothing and does not burst a second time.
+    pickupBurst(this, spoil.x, spoil.y);
     spoil.destroy();
   }
 
@@ -281,6 +308,7 @@ class Playing extends Phaser.Scene {
       gameId: player.gameId,
     });
     player.becomesDead();
+    deathEffect(this);
   }
 
   private onBombVsBlast(bomb: Bomb) {
@@ -320,24 +348,21 @@ class Playing extends Phaser.Scene {
     playerId,
     col,
     row,
-  }: {
-    bomb_id: string;
-    playerId: string;
-    col: number;
-    row: number;
-  }) {
+    delay = EXPLOSION_TIME,
+  }: ShowBombData) {
     if (this.player.id === playerId) {
       this.player.increaseActiveBombs();
     }
-    this.bombs.add(
-      new Bomb({
-        scene: this,
-        id: bomb_id,
-        col,
-        row,
-        playerId,
-      }),
-    );
+    const bomb = new Bomb({
+      scene: this,
+      id: bomb_id,
+      col,
+      row,
+      playerId,
+      delay,
+    });
+    this.bombs.add(bomb);
+    startFuseWarning(bomb, delay);
   }
 
   private onDetonateBomb({
@@ -355,6 +380,14 @@ class Playing extends Phaser.Scene {
     // Remove Bomb:
     findAndDestroyById(bomb_id, this.bombs);
 
+    explosionFeedback(
+      this,
+      blastedCells,
+      this.player
+        ? { x: this.player.x, y: this.player.y, isAlive: this.player.active }
+        : null,
+    );
+
     // Render Blast:
     for (const cell of blastedCells) {
       this.blasts.add(new FireBlast(this, cell, playerId));
@@ -371,6 +404,11 @@ class Playing extends Phaser.Scene {
           cell.row, // Y-coordinate (row) in the tilemap
           true, // Optional: Recalculate faces after placement (set to true or false as needed)
           this.blockLayer, // Specify the layer to place the tile in
+        );
+        debrisBurst(
+          this,
+          cell.col * TILE_SIZE + TILE_SIZE / 2,
+          cell.row * TILE_SIZE + TILE_SIZE / 2,
         );
       }
     });
@@ -396,6 +434,12 @@ class Playing extends Phaser.Scene {
       this.player.pickSpoil(spoil_type);
     }
 
+    // Only a remote pickup still finds the spoil here; the local pickup burst
+    // runs in onPlayerVsSpoil.
+    const spoil = findById(spoil_id, this.spoils);
+    if (spoil) {
+      pickupBurst(this, spoil.x, spoil.y);
+    }
     findAndDestroyById(spoil_id, this.spoils);
   }
 
@@ -404,12 +448,51 @@ class Playing extends Phaser.Scene {
     findAndDestroyById(tombstone.player_id, this.enemies);
   }
 
-  private onEndGame() {
+  private onPlayerWin() {
+    void this.startEndSequence();
+  }
+
+  // Never rejects: onEndGame awaits it, and its teardown must always run.
+  private startEndSequence(): Promise<void> {
+    if (!this.endSequence) {
+      this.endSequence = this.runEndSequence();
+    }
+    return this.endSequence;
+  }
+
+  private async runEndSequence() {
+    try {
+      await playEndTransition(this);
+    } catch (error) {
+      console.error("End transition failed", error);
+    }
+
+    if (this.isShutDown) {
+      return;
+    }
+    try {
+      EventBus.emit("show-results");
+    } catch (error) {
+      console.error("show-results listener failed", error);
+    }
+  }
+
+  private async onEndGame() {
+    await this.startEndSequence();
+
+    // The scene may have shut down during the await (a second "end game"
+    // already tore it down, or PhaserGame destroyed the game on a route
+    // change). Never tear down twice.
+    if (this.isShutDown || !this.sys.isActive()) {
+      return;
+    }
+
     clientSocket.emit("leave game");
 
     if (this.player) {
       this.player.resetProperties();
       this.player.removeKeyboard();
+      this.player.destroy(true);
     }
 
     // Destroy game objects and groups
@@ -418,20 +501,17 @@ class Playing extends Phaser.Scene {
     this.spoils.destroy(true, true);
     this.blasts.destroy(true, true);
     this.enemies.destroy(true, true);
-    this.player.destroy(true);
 
     this.tweens.killAll();
     this.time.removeAllEvents();
-    this.registry.destroy(); // Destroy registry
 
     this.shutdown();
     // Properly stop this scene before transitioning
     this.scene.stop("Playing");
-
-    // this.scene.start("GameOver");
   }
 
   shutdown() {
+    this.isShutDown = true;
     for (const [event, handler] of this.socketHandlers) {
       clientSocket.off(event, handler);
     }
@@ -439,12 +519,10 @@ class Playing extends Phaser.Scene {
     resetTouchInput();
   }
 
+  // Only remove the enemy sprite. The server decides whether the match
+  // ends and sends "end game"; never emit "leave game" from here.
   private onPlayerDisconnect({ player_id }: { player_id: string }) {
     findAndDestroyById(player_id, this.enemies);
-    if (this.enemies.getChildren().length >= 1) {
-      return;
-    }
-    this.onEndGame();
   }
 }
 

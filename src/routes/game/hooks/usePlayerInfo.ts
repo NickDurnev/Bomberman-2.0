@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import {
   BOMBS,
   DELAY,
@@ -9,11 +11,9 @@ import {
   SPEED,
   STEP_DELAY,
   STEP_SPEED,
-} from "@utils/constants";
-import clientSocket, { getOrCreateSocketId } from "@utils/socket";
-import { pickedSpoilSocketData } from "@utils/types";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+} from "@/utils/constants";
+import clientSocket, { getOrCreateSocketId } from "@/utils/socket";
+import { pickedSpoilSocketData } from "@/utils/types";
 
 const DEFAULT_INFO = [
   { title: "Speed", value: 1, color: "#37bf2e" },
@@ -40,10 +40,12 @@ export const usePlayerInfo = () => {
   const [hidden, setHidden] = useState(false);
   const [isDead, setIsDead] = useState(false);
 
-  let isDelaySpoil = false;
+  // A ref, so the first Delay spoil is remembered across renders.
+  const isDelaySpoil = useRef(false);
 
   useEffect(() => {
     if (gameId) {
+      isDelaySpoil.current = false;
       setInfo(DEFAULT_INFO);
       setIsDead(false);
     }
@@ -116,7 +118,7 @@ export const usePlayerInfo = () => {
         }),
       );
     } else if (spoil_type === DELAY) {
-      if (isDelaySpoil) {
+      if (isDelaySpoil.current) {
         setInfo(prev =>
           prev.map(item => {
             if (item.title === "Delay") {
@@ -134,7 +136,7 @@ export const usePlayerInfo = () => {
           }),
         );
       } else {
-        isDelaySpoil = true;
+        isDelaySpoil.current = true;
         setInfo(prev => {
           if (prev.some(item => item.title === "Delay")) {
             return prev; // Avoid duplicate "Delay" entries

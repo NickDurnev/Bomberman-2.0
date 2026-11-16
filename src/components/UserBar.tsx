@@ -1,11 +1,11 @@
-import { Button, Loader, ThemeBtn } from "@components/index";
-import { useAuth } from "@contexts/AuthContext";
-import { SOCKET_ID_KEY } from "@utils/constants";
-import { deleteFromLocalStorage } from "@utils/local_storage";
-import clientSocket from "@utils/socket";
 import { CiLogout } from "react-icons/ci";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { useLocation, useNavigate } from "react-router";
+import { Button, Loader, SettingsBtn, ThemeBtn } from "@/components/index";
+import { useAuth } from "@/contexts/AuthContext";
+import { SOCKET_ID_KEY } from "@/utils/constants";
+import { deleteFromLocalStorage } from "@/utils/local_storage";
+import clientSocket from "@/utils/socket";
 
 export const UserBar = () => {
   const { login, logout, user, isLoading } = useAuth();
@@ -39,6 +39,7 @@ export const UserBar = () => {
         />
       )}
       <div className="flex items-center justify-end gap-8 p-6">
+        <SettingsBtn />
         <ThemeBtn />
         {isLoading ? (
           <Loader size={6} />

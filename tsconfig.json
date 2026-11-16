@@ -15,14 +15,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
-      "@utils/*": ["./src/utils/*"],
-      "@lib/*": ["./src/lib/*"],
-      "@helpers/*": ["./src/helpers/*"],
-      "@components/*": ["./src/components/*"],
-      "@contexts/*": ["./src/contexts/*"],
-      "@game/*": ["./src/game/*"],
-      "@hooks/*": ["./src/hooks/*"],
-      "*": ["./*"]
+      "@/*": ["./src/*"]
     },
 
     /* Linting */
@@ -32,6 +25,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["src"]
 }

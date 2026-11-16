@@ -1,12 +1,13 @@
-export { AuthCheck } from "./AuthCheck";
-export { Button } from "./Button";
-export { GameSlots } from "./GameSlots";
-export { Loader } from "./Loader";
-export { PaddingContainer } from "./PaddingContainer";
-export { PlayersSlots } from "./PlayersSlots";
-export { Socket } from "./Socket";
-export { ThemeBtn } from "./themeBtn";
-export { UserBar } from "./UserBar";
+export { AuthCheck } from "@/components/AuthCheck";
+export { Button } from "@/components/Button";
+export { GameSlots } from "@/components/GameSlots";
+export { Loader } from "@/components/Loader";
+export { PaddingContainer } from "@/components/PaddingContainer";
+export { PlayersSlots } from "@/components/PlayersSlots";
+export { SettingsBtn } from "@/components/SettingsBtn";
+export { Socket } from "@/components/Socket";
+export { ThemeBtn } from "@/components/themeBtn";
+export { UserBar } from "@/components/UserBar";
 export {
   Modal,
   ModalBody,
@@ -15,12 +16,15 @@ export {
   ModalProvider,
   ModalTrigger,
   useModal,
-} from "./ui/animated-modal";
-export { AnimatedTooltip, fallbackAvatar } from "./ui/animated-tooltip";
-export { Card, Carousel } from "./ui/apple-cards-carousel";
-export { BackgroundLines } from "./ui/background-lines";
-export { buttonVariants, ShadButton } from "./ui/button";
-export { ColourfulText } from "./ui/colourful-text";
+} from "@/components/ui/animated-modal";
+export {
+  AnimatedTooltip,
+  fallbackAvatar,
+} from "@/components/ui/animated-tooltip";
+export { Card, Carousel } from "@/components/ui/apple-cards-carousel";
+export { BackgroundLines } from "@/components/ui/background-lines";
+export { buttonVariants, ShadButton } from "@/components/ui/button";
+export { ColourfulText } from "@/components/ui/colourful-text";
 export {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -37,7 +41,7 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 export {
   Form,
   FormControl,
@@ -47,10 +51,10 @@ export {
   FormLabel,
   FormMessage,
   useFormField,
-} from "./ui/form";
-export { Input } from "./ui/input";
-export { Label } from "./ui/label";
-export { Switch } from "./ui/switch";
+} from "@/components/ui/form";
+export { Input } from "@/components/ui/input";
+export { Label } from "@/components/ui/label";
+export { Switch } from "@/components/ui/switch";
 export {
   Table,
   TableBody,
@@ -60,5 +64,5 @@ export {
   TableHead,
   TableHeader,
   TableRow,
-} from "./ui/table";
-export { TextGenerateEffect } from "./ui/text-generate-effect";
+} from "@/components/ui/table";
+export { TextGenerateEffect } from "@/components/ui/text-generate-effect";

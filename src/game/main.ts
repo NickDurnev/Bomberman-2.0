@@ -1,8 +1,8 @@
 import Phaser, { AUTO } from "phaser";
 
-import GameOver from "./scenes/GameOver";
-import Playing from "./scenes/Playing";
-import Preload from "./scenes/Preload";
+import GameOver from "@/game/scenes/GameOver";
+import Playing from "@/game/scenes/Playing";
+import Preload from "@/game/scenes/Preload";
 
 export const config: Phaser.Types.Core.GameConfig = {
   type: AUTO,

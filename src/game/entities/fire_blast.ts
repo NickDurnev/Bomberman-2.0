@@ -1,6 +1,6 @@
-import { TILE_SIZE } from "@utils/constants";
-import { ICell } from "@utils/types";
 import Phaser, { Physics } from "phaser";
+import { TILE_SIZE } from "@/utils/constants";
+import { ICell } from "@/utils/types";
 
 export class FireBlast extends Phaser.GameObjects.Sprite {
   private game: Phaser.Scene;
@@ -27,20 +27,8 @@ export class FireBlast extends Phaser.GameObjects.Sprite {
     // const body = this.body as Phaser.Physics.Arcade.Body;
     this.getBody().setImmovable(true);
 
-    // Add the blast animation
-    this.anims.create({
-      key: "blast",
-      frames: this.anims.generateFrameNumbers(cell.type, {
-        start: 0,
-        end: 4,
-      }),
-      frameRate: 20,
-      repeat: 0, // No looping
-      hideOnComplete: true,
-    });
-
     // Play the blast animation
-    this.play("blast");
+    this.play(`blast_${cell.type}`);
 
     // Listen for the animation complete event
     this.on("animationcomplete", this.onAnimationComplete, this);

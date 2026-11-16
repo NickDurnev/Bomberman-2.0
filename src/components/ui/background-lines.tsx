@@ -1,8 +1,8 @@
 "use client";
-import { colors } from "@utils/constants";
 import { motion } from "framer-motion";
 import React from "react";
-import { cn } from "src/lib/utils";
+import { cn } from "@/lib/utils";
+import { colors } from "@/utils/constants";
 
 export const BackgroundLines = ({
   children,

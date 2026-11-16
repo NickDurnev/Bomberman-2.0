@@ -1,17 +1,17 @@
+import { useEffect, useState } from "react";
+import { Emoji } from "react-apple-emojis";
+import { useLocation, useNavigate } from "react-router";
 import {
   Button,
   GameSlots,
   TextGenerateEffect,
   UserBar,
-} from "@components/index";
-import { useAuth } from "@contexts/AuthContext";
-import clientSocket, { getOrCreateSocketId } from "@utils/socket";
-import { GameData } from "@utils/types";
-import { useEffect, useState } from "react";
-import { Emoji } from "react-apple-emojis";
-import { useLocation, useNavigate } from "react-router";
-import { addUser } from "../../services/auth";
-import GameForm from "./components/GameForm";
+} from "@/components/index";
+import { useAuth } from "@/contexts/AuthContext";
+import GameForm from "@/routes/menu/components/GameForm";
+import { addUser } from "@/services/auth";
+import clientSocket, { getOrCreateSocketId } from "@/utils/socket";
+import { GameData } from "@/utils/types";
 
 const Menu = () => {
   const { user } = useAuth();

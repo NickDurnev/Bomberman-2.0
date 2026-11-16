@@ -1,13 +1,13 @@
-import { Card, Carousel, UserBar } from "@components/index";
-import { useGameStore } from "@hooks/stores";
-import { AVAILABLE_MAPS } from "@utils/constants";
-import clientSocket from "@utils/socket";
-import { GameStore, MapCard, MapData } from "@utils/types";
-import default_map_data from "public/assets/maps/default_map.json";
-import small_map_data from "public/assets/maps/small_map.json";
 import React from "react";
 import { useNavigate } from "react-router";
-import MapForm from "./components/mapForm";
+import { Card, Carousel, UserBar } from "@/components/index";
+import { useGameStore } from "@/hooks/stores";
+import MapForm from "@/routes/map/components/mapForm";
+import { AVAILABLE_MAPS } from "@/utils/constants";
+import clientSocket from "@/utils/socket";
+import { GameStore, MapCard, MapData } from "@/utils/types";
+import default_map_data from "../../../public/assets/maps/default_map.json";
+import small_map_data from "../../../public/assets/maps/small_map.json";
 
 const data = [
   {
