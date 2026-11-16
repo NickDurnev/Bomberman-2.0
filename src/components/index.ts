@@ -4,6 +4,7 @@ export { GameSlots } from "@/components/GameSlots";
 export { Loader } from "@/components/Loader";
 export { PaddingContainer } from "@/components/PaddingContainer";
 export { PlayersSlots } from "@/components/PlayersSlots";
+export { SettingsBtn } from "@/components/SettingsBtn";
 export { Socket } from "@/components/Socket";
 export { ThemeBtn } from "@/components/themeBtn";
 export { UserBar } from "@/components/UserBar";
