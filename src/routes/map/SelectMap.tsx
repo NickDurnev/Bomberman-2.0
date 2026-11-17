@@ -30,7 +30,7 @@ const data = [
     src: "./assets/images/menu/big_map_preview.png",
     maxPlayers: big_map_data.layers[0].properties.max_players,
     description:
-      "A wide arena for up to 20 players. The view follows you across long lanes, wall mazes and box fields, so watch every corner. Grab power-ups, find the portals and be the last one standing!",
+      "A wide arena for up to 18 players. The view follows you across long lanes, wall mazes and box fields, so watch every corner. Grab power-ups, find the portals and be the last one standing!",
   },
 ];
 
