@@ -6,6 +6,7 @@ import MapForm from "@/routes/map/components/mapForm";
 import { AVAILABLE_MAPS } from "@/utils/constants";
 import clientSocket from "@/utils/socket";
 import { GameStore, MapCard, MapData } from "@/utils/types";
+import big_map_data from "../../../public/assets/maps/big_map.json";
 import default_map_data from "../../../public/assets/maps/default_map.json";
 import small_map_data from "../../../public/assets/maps/small_map.json";
 
@@ -23,6 +24,13 @@ const data = [
     maxPlayers: small_map_data.layers[0].properties.max_players,
     description:
       "A compact and intense arena where every move counts. With limited space, action is fast-paced, and bombs explode closer than ever. Use power-ups wisely and dominate your rivals before they get you first!",
+  },
+  {
+    title: "Big map",
+    src: "./assets/images/menu/big_map_preview.png",
+    maxPlayers: big_map_data.layers[0].properties.max_players,
+    description:
+      "A wide arena for up to 20 players. The view follows you across long lanes, wall mazes and box fields, so watch every corner. Grab power-ups, find the portals and be the last one standing!",
   },
 ];
 
