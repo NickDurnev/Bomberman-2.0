@@ -5,7 +5,7 @@ export type DirectionFlags = {
   right: boolean;
 };
 
-export const DEAD_ZONE = 0.25;
+export const DEAD_ZONE = 0.15;
 
 export const NO_DIRECTION: Readonly<DirectionFlags> = Object.freeze({
   up: false,
