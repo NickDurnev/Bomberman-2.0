@@ -1,0 +1,185 @@
+# Release automation: release-please owns the version bump, the CHANGELOG and
+# the GitHub Release on main; then the release commit is back-merged to dev.
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  release-please:
+    name: release-please
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.rp.outputs.release_created }}
+      tag_name: ${{ steps.rp.outputs.tag_name }}
+      sha: ${{ steps.rp.outputs.sha }}
+      prs_created: ${{ steps.rp.outputs.prs_created }}
+      pr: ${{ steps.rp.outputs.pr }}
+    steps:
+      - id: rp
+        uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  automerge-release-pr:
+    name: Auto-merge release PR
+    needs: release-please
+    if: needs.release-please.outputs.prs_created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge release-please's PR
+        env:
+          # No GITHUB_TOKEN fallback on purpose: a GITHUB_TOKEN merge does not
+          # re-trigger this workflow, so the tag and GitHub Release never get cut.
+          GH_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          REPO: ${{ github.repository }}
+          BASE: ${{ github.ref_name }}
+          PR_JSON: ${{ needs.release-please.outputs.pr }}
+        run: |
+          set -euo pipefail
+          gh label create needs-resolution --repo "$REPO" --color D93F0B --description "Automation stopped; human merge needed" 2>/dev/null || true
+
+          PR=$(jq -r '.number' <<<"$PR_JSON")
+          HEAD_REF=$(jq -r '.headBranchName' <<<"$PR_JSON")
+
+          # Merge only release-please's own PR: its branch prefix and its pending
+          # label. A human-opened PR matches neither and is never touched.
+          case "$HEAD_REF" in
+            release-please--*) ;;
+            *) echo "::error::#$PR head '$HEAD_REF' is not a release-please branch"; exit 1 ;;
+          esac
+          labelled=$(gh pr view "$PR" --repo "$REPO" --json labels --jq '[.labels[].name] | contains(["autorelease: pending"])')
+          [ "$labelled" = "true" ] || { echo "::error::#$PR lacks the 'autorelease: pending' label"; exit 1; }
+
+          manifest_version() {
+            gh api "repos/${REPO}/contents/.release-please-manifest.json?ref=$1" --jq '.content' \
+              | base64 -d | jq -r '.["."]'
+          }
+          CURRENT=$(manifest_version "$BASE")
+          NEXT=$(manifest_version "$HEAD_REF")
+
+          # A major bump means a breaking-change commit landed; that ships with eyes on it.
+          if [ "${NEXT%%.*}" != "${CURRENT%%.*}" ]; then
+            gh pr edit "$PR" --repo "$REPO" --add-label needs-resolution
+            gh pr comment "$PR" --repo "$REPO" --body "Major bump (\`$CURRENT\` to \`$NEXT\`) held for human review. Merge this PR to cut the release."
+            echo "::warning::#$PR is a major bump ($CURRENT -> $NEXT); held for human review."
+            exit 0
+          fi
+
+          # An already-released version means main's manifest was rolled back, so
+          # merging would fail on a duplicate tag.
+          if gh release list --repo "$REPO" --limit 100 --json tagName --jq '.[].tagName' \
+               | sed 's/.*v//' | grep -Fxq "$NEXT"; then
+            gh pr edit "$PR" --repo "$REPO" --add-label needs-resolution
+            gh pr comment "$PR" --repo "$REPO" --body "Version \`$NEXT\` is already released. main's manifest was likely rolled back; reconcile the branches before merging."
+            echo "::error::#$PR proposes already-released $NEXT"
+            exit 1
+          fi
+
+          # main requires a code-owner review. This PR only contains
+          # release-please-managed files and the token is an admin one, so merge
+          # with --admin rather than have a human approve a version bump.
+          if ! gh pr merge "$PR" --repo "$REPO" --merge --admin; then
+            gh pr edit "$PR" --repo "$REPO" --add-label needs-resolution || true
+            gh pr comment "$PR" --repo "$REPO" --body "Auto-merge of the release PR could not complete. Manual merge needed." || true
+            echo "::error::Release PR #$PR needs manual resolution."
+            exit 1
+          fi
+          echo "Release PR #$PR merged ($CURRENT -> $NEXT)."
+
+  back-merge:
+    name: Back-merge release commit to dev
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+      - name: Back-merge release-managed files to dev
+        env:
+          # No GITHUB_TOKEN fallback: --admin needs the admin PAT, and a PR opened
+          # with GITHUB_TOKEN would not start the checks that dev requires.
+          GH_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          TAG: ${{ needs.release-please.outputs.tag_name }}
+          RELEASE_SHA: ${{ needs.release-please.outputs.sha }}
+        run: |
+          set -euo pipefail
+          gh label create back-merge --color BFD4F2 --description "Automated back-merge (release commit only)" 2>/dev/null || true
+          gh label create needs-resolution --color D93F0B --description "Automation stopped; human merge needed" 2>/dev/null || true
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          RELEASE_SHA="${RELEASE_SHA:-$(git rev-parse "${TAG}")}"
+
+          BRANCH="chore/back-merge-${TAG}"
+          git fetch origin dev
+          git checkout -B "$BRANCH" origin/dev
+
+          # Replace exactly the files the release commit changed (version bump and
+          # CHANGELOG) with their released content. dev's version files always lag
+          # main, so a cherry-pick would conflict on every release. "^1" is the
+          # pre-release parent, so the diff is release-please's own file set.
+          git diff --name-only -z "${RELEASE_SHA}^1" "${RELEASE_SHA}" \
+            | xargs -0 -r git checkout "${RELEASE_SHA}" --
+          git add -A
+          if git diff --cached --quiet; then
+            echo "dev already up to date with ${TAG}; nothing to back-merge."
+            exit 0
+          fi
+          git commit -m "chore: back-merge ${TAG} release commit to dev"
+          git push -f origin "$BRANCH"
+
+          PR=$(gh pr list --base dev --head "$BRANCH" --state open --json number --jq '.[0].number // empty' || echo "")
+          if [ -z "$PR" ]; then
+            PR=$(gh pr create --base dev --head "$BRANCH" \
+                   --title "chore: back-merge ${TAG} to dev" \
+                   --body "Automated back-merge of the ${TAG} release commit only (version bump and CHANGELOG)." \
+                   --label back-merge | grep -oE '[0-9]+$')
+          fi
+
+          fail() {
+            gh pr edit "$PR" --add-label needs-resolution || true
+            gh pr comment "$PR" --body "$1 Manual merge needed." || true
+            echo "::error::Back-merge PR #$PR: $1"
+            exit 1
+          }
+
+          # dev requires the checks job and nobody can bypass it, not even --admin.
+          # Wait until the checks are reported, then until they finish.
+          for _ in $(seq 1 30); do
+            count=$(gh pr checks "$PR" --required --json name --jq 'length' 2>/dev/null || echo 0)
+            [ "$count" -gt 0 ] && break
+            sleep 10
+          done
+          gh pr checks "$PR" --required --watch --fail-fast || fail "The required checks did not pass."
+
+          # dev also requires a code-owner review; the PR carries only the release
+          # commit's own files and the token is an admin one, so merge with --admin.
+          gh pr merge "$PR" --merge --admin || fail "Auto back-merge could not complete."
+          echo "Back-merge PR #$PR merged."
+
+          # A back-merge that never lands leaves dev behind main, and the next
+          # release would overwrite main's bump with the stale version.
+          git fetch origin dev
+          DEV_VERSION=$(git show origin/dev:.release-please-manifest.json | jq -r '.["."]')
+          RELEASED=$(git show "${RELEASE_SHA}:.release-please-manifest.json" | jq -r '.["."]')
+          if [ "$DEV_VERSION" != "$RELEASED" ]; then
+            echo "::error::dev is at ${DEV_VERSION} but ${TAG} released ${RELEASED}"
+            exit 1
+          fi
+          echo "dev is at ${DEV_VERSION}, matching ${TAG}."

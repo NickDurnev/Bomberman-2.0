@@ -1,4 +1,5 @@
 {
+  "ignoreCommand": "case \"$VERCEL_GIT_COMMIT_REF\" in release-please--*) exit 0 ;; esac; git log -1 --pretty=%B | grep -qE \"release-please--branches--main|^chore\\(main\\): release \" && exit 0; exit 1",
   "rewrites": [
     {
       "source": "/(.*)",

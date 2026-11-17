@@ -91,6 +91,9 @@ export const getRandomItem = (items: string[]) => {
   return items[randomIndex];
 };
 
+// The sprite is shown at TILE_SIZE - 3 px; a larger photo is scaled down.
+const ROUND_TEXTURE_SIZE = 128;
+
 // Phaser 4 has no geometry masks in WebGL, so a round avatar is a canvas
 // texture: the source image, cropped to a centred square, drawn inside a
 // circle clip. The texture is created once per key and reused by every
@@ -108,7 +111,8 @@ export function makeRoundTexture(
     | HTMLImageElement
     | HTMLCanvasElement;
   const side = Math.min(source.width, source.height);
-  const texture = scene.textures.createCanvas(roundKey, side, side);
+  const size = Math.min(side, ROUND_TEXTURE_SIZE);
+  const texture = scene.textures.createCanvas(roundKey, size, size);
   if (!texture) {
     return sourceKey;
   }
@@ -116,7 +120,7 @@ export function makeRoundTexture(
   const context = texture.getContext();
   context.save();
   context.beginPath();
-  context.arc(side / 2, side / 2, side / 2, 0, Math.PI * 2);
+  context.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
   context.closePath();
   context.clip();
   context.drawImage(
@@ -127,8 +131,8 @@ export function makeRoundTexture(
     side,
     0,
     0,
-    side,
-    side,
+    size,
+    size,
   );
   context.restore();
   texture.refresh();
