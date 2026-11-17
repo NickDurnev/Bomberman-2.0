@@ -109,7 +109,7 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
-      - name: Back-merge release-managed files to dev
+      - name: Merge the release into dev
         env:
           # No GITHUB_TOKEN fallback: --admin needs the admin PAT, and a PR opened
           # with GITHUB_TOKEN would not start the checks that dev requires.
@@ -118,7 +118,7 @@ jobs:
           RELEASE_SHA: ${{ needs.release-please.outputs.sha }}
         run: |
           set -euo pipefail
-          gh label create back-merge --color BFD4F2 --description "Automated back-merge (release commit only)" 2>/dev/null || true
+          gh label create back-merge --color BFD4F2 --description "Automated merge of a release into dev" 2>/dev/null || true
           gh label create needs-resolution --color D93F0B --description "Automation stopped; human merge needed" 2>/dev/null || true
 
           git config user.name "github-actions[bot]"
@@ -130,25 +130,27 @@ jobs:
           git fetch origin dev
           git checkout -B "$BRANCH" origin/dev
 
-          # Replace exactly the files the release commit changed (version bump and
-          # CHANGELOG) with their released content. dev's version files always lag
-          # main, so a cherry-pick would conflict on every release. "^1" is the
-          # pre-release parent, so the diff is release-please's own file set.
-          git diff --name-only -z "${RELEASE_SHA}^1" "${RELEASE_SHA}" \
-            | xargs -0 -r git checkout "${RELEASE_SHA}" --
-          git add -A
-          if git diff --cached --quiet; then
-            echo "dev already up to date with ${TAG}; nothing to back-merge."
+          # A real merge of the release commit, so dev always has main's history.
+          # Then the next dev -> main PR merges cleanly, also when dev changed lines
+          # next to the version lines. A conflict here means dev edited a file that
+          # release-please manages (CHANGELOG, manifest, version lines): a human
+          # resolves it.
+          if git merge-base --is-ancestor "${RELEASE_SHA}" HEAD; then
+            echo "dev already contains ${TAG}; nothing to back-merge."
             exit 0
           fi
-          git commit -m "chore: back-merge ${TAG} release commit to dev"
+          if ! git merge --no-ff "${RELEASE_SHA}" -m "chore: merge ${TAG} release into dev"; then
+            git merge --abort
+            echo "::error::Merging ${TAG} into dev conflicts. Merge main into dev by hand (keep dev's lines outside the release files)."
+            exit 1
+          fi
           git push -f origin "$BRANCH"
 
           PR=$(gh pr list --base dev --head "$BRANCH" --state open --json number --jq '.[0].number // empty' || echo "")
           if [ -z "$PR" ]; then
             PR=$(gh pr create --base dev --head "$BRANCH" \
                    --title "chore: back-merge ${TAG} to dev" \
-                   --body "Automated back-merge of the ${TAG} release commit only (version bump and CHANGELOG)." \
+                   --body "Automated merge of the ${TAG} release into dev (version bump and CHANGELOG, with main's history). Merge with a merge commit." \
                    --label back-merge | grep -oE '[0-9]+$')
           fi
 

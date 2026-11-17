@@ -1,18 +1,18 @@
 {
-  "name": "template-react-ts",
-  "description": "A Phaser 3 TypeScript project template that demonstrates React communication and uses Vite for bundling.",
+  "name": "bomberman-2.0",
+  "description": "Client of a multiplayer Bomberman game: React, Phaser 4 and Vite.",
   "version": "1.1.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/phaserjs/template-react-ts.git"
+    "url": "git+https://github.com/NickDurnev/Bomberman-2.0.git"
   },
   "author": "Phaser Studio <support@phaser.io> (https://phaser.io/)",
   "license": "MIT",
   "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
   "bugs": {
-    "url": "https://github.com/phaserjs/template-react-ts/issues"
+    "url": "https://github.com/NickDurnev/Bomberman-2.0/issues"
   },
-  "homepage": "https://github.com/phaserjs/template-react-ts#readme",
+  "homepage": "https://github.com/NickDurnev/Bomberman-2.0#readme",
   "keywords": [
     "phaser",
     "phaser3",
