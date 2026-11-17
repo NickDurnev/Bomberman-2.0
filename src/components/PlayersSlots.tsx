@@ -51,7 +51,7 @@ export const PlayersSlots = ({
   }, [max_players, players]);
 
   return (
-    <div className="motion-preset-expand motion-loop-once px-24">
+    <div className="motion-preset-expand motion-loop-once px-4 md:px-24">
       <div className="flex items-start justify-center gap-x-2">
         <h4 className="mb-8 text-center text-lg font-bold text-neutral-600 md:text-2xl dark:text-neutral-100">
           Need as minimum{" "}
@@ -62,7 +62,7 @@ export const PlayersSlots = ({
         </h4>
         <Emoji name="bomb" className="pt-2" width={20} />
       </div>
-      <div className="mb-10 flex w-full flex-row items-center justify-center">
+      <div className="mb-10 flex w-full flex-row flex-wrap items-center justify-center gap-y-3 pl-4">
         <AnimatedTooltip items={playersArray} size={size} />
       </div>
     </div>

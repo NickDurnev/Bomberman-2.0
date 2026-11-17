@@ -83,6 +83,7 @@ class Preload extends Phaser.Scene {
     this.load.image("tiles", "assets/maps/tileset.png");
     this.load.tilemapTiledJSON("default_map", "assets/maps/default_map.json");
     this.load.tilemapTiledJSON("small_map", "assets/maps/small_map.json");
+    this.load.tilemapTiledJSON("big_map", "assets/maps/big_map.json");
 
     // Load game spritesheets
     for (const type of BLAST_TYPES) {
