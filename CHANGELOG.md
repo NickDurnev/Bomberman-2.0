@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.2.0](https://github.com/NickDurnev/Bomberman-2.0/compare/v1.1.0...v1.2.0) (2026-11-17)
+
+
+### Highlights
+
+* **maps:** add the big map to the map menu ([95894fc](https://github.com/NickDurnev/Bomberman-2.0/commit/95894fcc73fe46158fb5edbaf68c812903fa93b0))
+* **maps:** add the big map to the map menu ([9104458](https://github.com/NickDurnev/Bomberman-2.0/commit/91044586f2bec021e890067847f2fe6d9e5f42ac))
+
+
+### Fixes
+
+* **game:** lower the thumbstick dead zone to 15% of the stick radius ([d73768d](https://github.com/NickDurnev/Bomberman-2.0/commit/d73768d83119ce6e94e203acf64b10b6f1223859))
+* **game:** lower the thumbstick dead zone to 15% of the stick radius ([0b4b3d1](https://github.com/NickDurnev/Bomberman-2.0/commit/0b4b3d12c8480d2158801b3f7062c6b932487e63))
+* **pending:** wrap player slots instead of squeezing them ([c25437c](https://github.com/NickDurnev/Bomberman-2.0/commit/c25437cb3d6ef341c01c89c6c07a56495479dc4b))
+
 ## [1.1.0](https://github.com/NickDurnev/Bomberman-2.0/compare/template-react-ts-v1.0.0...template-react-ts-v1.1.0) (2026-11-17)
 
 
