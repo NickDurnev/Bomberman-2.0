@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.5.0](https://github.com/NickDurnev/Bomberman-2.0/compare/v1.4.0...v1.5.0) (2026-11-25)
+
+
+### Highlights
+
+* **maps:** show arena_map first as the default map ([e1f96a3](https://github.com/NickDurnev/Bomberman-2.0/commit/e1f96a3957bcfb104d1f6cf03d5d38847d6997ed))
+* **packs:** let the host pick the room's texture pack ([fda6b79](https://github.com/NickDurnev/Bomberman-2.0/commit/fda6b7907992da746d0f466b4f65d8c686b5b31b))
+* texture packs picked by the host, live map previews, arena_map ([2b0ef38](https://github.com/NickDurnev/Bomberman-2.0/commit/2b0ef38b6b2ad55d2fd6255ee50d47c83446e9e5))
+
+
+### Fixes
+
+* **game:** centre a map smaller than the game view ([80847a9](https://github.com/NickDurnev/Bomberman-2.0/commit/80847a97a4fd87543958f3be9d8131fa9d949749))
+
 ## [1.4.0](https://github.com/NickDurnev/Bomberman-2.0/compare/v1.3.0...v1.4.0) (2026-11-17)
 
 
