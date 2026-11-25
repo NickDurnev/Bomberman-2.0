@@ -13,11 +13,10 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { MapPreview } from "@/components/MapPreview";
 import useOutsideClick from "@/hooks/use-outside-click";
 import { cn } from "@/lib/utils";
-import { colors } from "@/utils/constants";
 import { MapCard, MapData } from "@/utils/types";
-import { getRandomItem } from "@/utils/utils";
 
 interface CarouselProps {
   items: JSX.Element[];
@@ -36,8 +35,6 @@ type CardProps = {
   onSelect: (data: MapData) => void;
   layout?: boolean;
 };
-
-const COLOR = getRandomItem(colors);
 
 export const CarouselContext = createContext<{
   onCardClose: (index: number) => void;
@@ -244,7 +241,6 @@ export const Card = ({
       <motion.button
         layoutId={layout ? `card-${card.title}` : undefined}
         onClick={handleOpen}
-        disabled={!card.src}
         className="relative z-10 flex h-80 w-56 flex-col items-start justify-start overflow-hidden rounded-3xl bg-gray-100 md:h-120 md:w-80 dark:bg-neutral-900"
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-linear-to-b from-black/50 via-transparent to-transparent" />
@@ -256,63 +252,13 @@ export const Card = ({
             {card.title}
           </motion.p>
         </div>
-        {card.src ? (
-          <BlurImage
-            src={card.src}
-            alt={card.title}
-            // Size hint for the lazy image (the md card size);
-            // w-full/h-full keep the real size on the card.
-            width={320}
-            height={480}
-            className="absolute inset-0 z-10 h-full w-full object-cover"
-          />
-        ) : (
-          <div
-            className={"absolute inset-0 z-10 h-full opacity-60"}
-            style={{
-              background: COLOR,
-            }}
-          />
-        )}
+        {/* The menu shows the map in the default pack */}
+        <MapPreview
+          mapName={mapName}
+          title={card.title}
+          className="absolute inset-0 z-10 h-full w-full object-cover"
+        />
       </motion.button>
-    </>
-  );
-};
-
-type ImageProps = {
-  src: string;
-  alt: string;
-  width?: number;
-  height?: number;
-  className?: string;
-};
-
-export const BlurImage = ({
-  height,
-  width,
-  src,
-  className,
-  alt,
-  ...rest
-}: ImageProps) => {
-  const [isLoading, setLoading] = useState(true);
-  return (
-    <>
-      <img
-        className={cn(
-          "transition duration-300",
-          isLoading ? "blur-xs" : "blur-0",
-          className,
-        )}
-        onLoad={() => setLoading(false)}
-        src={src}
-        width={width}
-        height={height}
-        loading="lazy"
-        decoding="async"
-        {...rest}
-        alt={alt ?? "Background of a beautiful view"}
-      />
     </>
   );
 };
