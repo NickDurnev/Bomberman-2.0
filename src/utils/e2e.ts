@@ -1,5 +1,6 @@
 import type Phaser from "phaser";
 import clientSocket from "@/utils/socket";
+import { TEXTURE_SOURCES_KEY } from "@/utils/texturePacks";
 
 // Read-only test hook for the E2E suite (Bomberman-2.0-E2E). main.tsx installs
 // it only when VITE_E2E is "true", so other builds drop this module.
@@ -40,6 +41,7 @@ export interface E2EHook {
   listenerCounts(events?: string[]): Record<string, number>;
   scenes(): string[];
   state(): E2EState | null;
+  textures(): Record<string, string | null>;
 }
 
 type NamedSprite = Phaser.GameObjects.Sprite & {
@@ -92,6 +94,13 @@ const hook: E2EHook = {
       enemies: enemies.map(toPlayer),
       bombs: view.bombs?.countActive() ?? 0,
     };
+  },
+
+  textures() {
+    const sources = currentGame?.registry.get(TEXTURE_SOURCES_KEY) as
+      | Record<string, string | null>
+      | undefined;
+    return { ...sources };
   },
 };
 

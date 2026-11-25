@@ -2,6 +2,30 @@
   "ignoreCommand": "case \"$VERCEL_GIT_COMMIT_REF\" in release-please--*) exit 0 ;; esac; git log -1 --pretty=%B | grep -qE \"release-please--branches--main|^chore\\(main\\): release \" && exit 0; exit 1",
   "rewrites": [
     {
+      "source": "/assets/maps/tileset.png",
+      "destination": "/assets/packs/classic/tileset.png"
+    },
+    {
+      "source": "/assets/images/game/:file",
+      "destination": "/assets/packs/classic/:file"
+    },
+    {
+      "source": "/assets/speed_icon.png",
+      "destination": "/assets/packs/classic/speed_icon.png"
+    },
+    {
+      "source": "/assets/power_icon.png",
+      "destination": "/assets/packs/classic/power_icon.png"
+    },
+    {
+      "source": "/assets/bomb_icon.png",
+      "destination": "/assets/packs/classic/bomb_icon.png"
+    },
+    {
+      "source": "/assets/delay_icon.png",
+      "destination": "/assets/packs/classic/delay_icon.png"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

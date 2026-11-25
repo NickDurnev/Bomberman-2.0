@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { PackImage } from "@/components/index";
 import type { Info } from "@/routes/game/hooks/usePlayerInfo";
 
 type Props = {
@@ -20,8 +21,8 @@ const PlayerStats = ({ info, lastInfo, hidden, isDead, compact }: Props) => (
         )}
       >
         <div className="rounded-full">
-          <img
-            src={`/assets/${title.toLowerCase()}_icon.png`}
+          <PackImage
+            file={`${title.toLowerCase()}_icon.png`}
             alt={title}
             className={clsx(
               "rounded-full object-contain",

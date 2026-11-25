@@ -2,10 +2,13 @@ export { AuthCheck } from "@/components/AuthCheck";
 export { Button } from "@/components/Button";
 export { GameSlots } from "@/components/GameSlots";
 export { Loader } from "@/components/Loader";
+export { MapPreview } from "@/components/MapPreview";
+export { PackImage } from "@/components/PackImage";
 export { PaddingContainer } from "@/components/PaddingContainer";
 export { PlayersSlots } from "@/components/PlayersSlots";
 export { SettingsBtn } from "@/components/SettingsBtn";
 export { Socket } from "@/components/Socket";
+export { TexturePackPicker } from "@/components/TexturePackPicker";
 export { ThemeBtn } from "@/components/themeBtn";
 export { UserBar } from "@/components/UserBar";
 export {

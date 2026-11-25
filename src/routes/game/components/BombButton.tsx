@@ -1,5 +1,6 @@
 import type { PointerEvent } from "react";
 import { useEffect, useRef, useState } from "react";
+import { PackImage } from "@/components/index";
 import { setBomb } from "@/game/touchInput";
 
 const BombButton = () => {
@@ -71,18 +72,13 @@ const BombButton = () => {
       onLostPointerCapture={release}
       onContextMenu={e => e.preventDefault()}
     >
-      <span
+      <PackImage
+        file="bombs.png"
+        alt=""
         aria-hidden="true"
-        className="pointer-events-none block"
-        style={{
-          width: 52,
-          height: 52,
-          backgroundImage: "url(/assets/images/game/bombs.png)",
-          backgroundSize: "100% auto",
-          backgroundPosition: "0 0",
-          backgroundRepeat: "no-repeat",
-          imageRendering: "pixelated",
-        }}
+        draggable={false}
+        className="pointer-events-none object-cover object-top"
+        style={{ width: 52, height: 52, imageRendering: "pixelated" }}
       />
     </button>
   );
