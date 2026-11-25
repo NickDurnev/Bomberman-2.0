@@ -119,11 +119,7 @@
           "options": {
             "patterns": [
               {
-                "group": [
-                  "./**",
-                  "../**",
-                  "!../../../public/assets/maps/*.json"
-                ],
+                "group": ["./**", "../**", "!../../public/assets/maps/*.json"],
                 "message": "Import from src with the @/ alias (tsconfig paths) instead of a relative path."
               }
             ]

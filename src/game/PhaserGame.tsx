@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { config } from "@/game/main";
 import { setCurrentGame } from "@/utils/e2e";
 import clientSocket from "@/utils/socket";
+import { setActiveTexturePack } from "@/utils/texturePacks";
 import { GameData } from "@/utils/types";
 
 export interface IRefPhaserGame {
@@ -27,6 +28,8 @@ export function PhaserGame({ gameId }: Readonly<IProps>) {
       if (cancelled || !gameData) {
         return;
       }
+      // The room's pack for the React HUD (Preload reads it from gameData)
+      setActiveTexturePack(gameData.texturePack);
       game.current?.destroy(true);
       game.current = new Phaser.Game(config);
       setCurrentGame(game.current);

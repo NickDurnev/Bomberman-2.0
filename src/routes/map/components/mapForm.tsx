@@ -10,27 +10,33 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  MapPreview,
   ShadButton,
   Switch,
+  TexturePackPicker,
 } from "@/components/index";
+import { DEFAULT_TEXTURE_PACK_ID } from "@/utils/texturePacks";
 import { MapData } from "@/utils/types";
 
 const FormSchema = z.object({
   isPortalsEnabled: z.boolean(),
   isDelaySpoilEnabled: z.boolean(),
+  texturePack: z.string(),
 });
 
 type Props = {
   mapName: string;
+  title: string;
   onSelect: (data: MapData) => void;
 };
 
-export default function MapForm({ mapName, onSelect }: Props) {
+export default function MapForm({ mapName, title, onSelect }: Props) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       isPortalsEnabled: false,
       isDelaySpoilEnabled: false,
+      texturePack: DEFAULT_TEXTURE_PACK_ID,
     },
   });
 
@@ -38,6 +44,7 @@ export default function MapForm({ mapName, onSelect }: Props) {
     const mapData = {
       isPortalsEnabled: data.isPortalsEnabled,
       isDelaySpoilEnabled: data.isDelaySpoilEnabled,
+      texturePack: data.texturePack,
       mapName,
     };
     onSelect(mapData);
@@ -46,6 +53,32 @@ export default function MapForm({ mapName, onSelect }: Props) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
+        <FormField
+          control={form.control}
+          name="texturePack"
+          render={({ field }) => (
+            <FormItem className="space-y-3 rounded-lg border p-3 shadow-xs">
+              <div>
+                <FormLabel>Texture pack</FormLabel>
+                <FormDescription className="mt-0.5">
+                  How the map, bombs, blasts and spoils look for every player in
+                  this room.
+                </FormDescription>
+              </div>
+              {/* Redraws with the pack the host picks below */}
+              <MapPreview
+                mapName={mapName}
+                title={title}
+                packId={field.value}
+                className="mx-auto h-auto w-full max-w-2xl rounded-md"
+              />
+              <TexturePackPicker
+                value={field.value}
+                onChange={field.onChange}
+              />
+            </FormItem>
+          )}
+        />
         <div>
           <h3 className="mb-4 text-lg font-medium">Additional features</h3>
           <div className="space-y-4">

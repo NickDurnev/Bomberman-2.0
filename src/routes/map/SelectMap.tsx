@@ -3,32 +3,32 @@ import { useNavigate } from "react-router";
 import { Card, Carousel, UserBar } from "@/components/index";
 import { useGameStore } from "@/hooks/stores";
 import MapForm from "@/routes/map/components/mapForm";
-import { AVAILABLE_MAPS } from "@/utils/constants";
+import { AVAILABLE_MAPS, MAPS } from "@/utils/constants";
 import clientSocket from "@/utils/socket";
 import { GameStore, MapCard, MapData } from "@/utils/types";
-import big_map_data from "../../../public/assets/maps/big_map.json";
-import default_map_data from "../../../public/assets/maps/default_map.json";
-import small_map_data from "../../../public/assets/maps/small_map.json";
 
 const data = [
   {
     title: "Default map",
-    src: "./assets/images/menu/default_map_preview.png",
-    maxPlayers: default_map_data.layers[0].properties.max_players,
+    maxPlayers: MAPS.arena_map.layers[0].properties.max_players,
+    description:
+      "A tight arena of brick mazes and crate fields. Blast your way through the crates, grab power-ups and corner your rivals before they corner you. Be the last one standing!",
+  },
+  {
+    title: "Classic map",
+    maxPlayers: MAPS.default_map.layers[0].properties.max_players,
     description:
       "A balanced battlefield with walls and destructible boxes. Collect power-ups like speed boosts, extra bombs, and fire blasts to gain the upper hand. Strategize your moves and outlast your opponents in explosive combat!",
   },
   {
     title: "Small map",
-    src: "./assets/images/menu/small_map_preview.png",
-    maxPlayers: small_map_data.layers[0].properties.max_players,
+    maxPlayers: MAPS.small_map.layers[0].properties.max_players,
     description:
       "A compact and intense arena where every move counts. With limited space, action is fast-paced, and bombs explode closer than ever. Use power-ups wisely and dominate your rivals before they get you first!",
   },
   {
     title: "Big map",
-    src: "./assets/images/menu/big_map_preview.png",
-    maxPlayers: big_map_data.layers[0].properties.max_players,
+    maxPlayers: MAPS.big_map.layers[0].properties.max_players,
     description:
       "A wide arena for up to 20 players. The view follows you across long lanes, wall mazes and box fields, so watch every corner. Grab power-ups, find the portals and be the last one standing!",
   },
@@ -60,7 +60,7 @@ const SelectMap: React.FC = () => {
           <p className="max-w-3xl font-sans text-base text-neutral-600 md:text-2xl dark:text-neutral-400">
             {card.description}
           </p>
-          <MapForm mapName={mapName} onSelect={onSelect} />
+          <MapForm mapName={mapName} title={card.title} onSelect={onSelect} />
         </div>
       </div>
     );
@@ -68,7 +68,7 @@ const SelectMap: React.FC = () => {
 
   const cards = data.map((card, index) => (
     <Card
-      key={card.src ?? index}
+      key={AVAILABLE_MAPS[index]}
       card={card}
       index={index}
       mapName={AVAILABLE_MAPS[index]}

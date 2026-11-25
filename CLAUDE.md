@@ -18,7 +18,7 @@ Stack: React 19, Phaser 4, TypeScript, Vite, Tailwind, Biome.
 
 ## Imports
 
-Import from `src` with the `@/` alias (`@/components/ui/button`, `@/utils/types`), never with a relative path. `@/` maps to `src/` (`tsconfig.json` `paths`; Vite reads it through `resolve.tsconfigPaths`). Biome `noRestrictedImports` fails on a relative import. The only exception is the map JSON from `public/assets/maps/` in `src/routes/map/SelectMap.tsx`, which is outside `src`.
+Import from `src` with the `@/` alias (`@/components/ui/button`, `@/utils/types`), never with a relative path. `@/` maps to `src/` (`tsconfig.json` `paths`; Vite reads it through `resolve.tsconfigPaths`). Biome `noRestrictedImports` fails on a relative import. The only exception is the map JSON from `public/assets/maps/` in `src/utils/constants.ts` (`MAPS`), which is outside `src`.
 
 ## Checks before a commit
 

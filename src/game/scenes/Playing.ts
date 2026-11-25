@@ -82,12 +82,8 @@ class Playing extends Phaser.Scene {
   create() {
     this.createMap();
     this.createPlayers();
-    this.cameras.main.setBounds(
-      0,
-      0,
-      this.map.widthInPixels,
-      this.map.heightInPixels,
-    );
+    this.fitCameraToMap();
+    this.scale.on(Phaser.Scale.Events.RESIZE, this.fitCameraToMap, this);
     if (this.player) {
       this.cameras.main.startFollow(this.player, true);
     }
@@ -512,11 +508,23 @@ class Playing extends Phaser.Scene {
 
   shutdown() {
     this.isShutDown = true;
+    this.scale.off(Phaser.Scale.Events.RESIZE, this.fitCameraToMap, this);
     for (const [event, handler] of this.socketHandlers) {
       clientSocket.off(event, handler);
     }
     this.socketHandlers = [];
     resetTouchInput();
+  }
+
+  // Phaser clamps the scroll to the camera bounds, so a map smaller than the
+  // view would sit in the top-left corner. Grow the bounds to the view with
+  // the map in the middle; a bigger map keeps its own bounds and scrolls.
+  private fitCameraToMap() {
+    const camera = this.cameras.main;
+    const { widthInPixels: width, heightInPixels: height } = this.map;
+    const padX = Math.max(0, camera.width - width) / 2;
+    const padY = Math.max(0, camera.height - height) / 2;
+    camera.setBounds(-padX, -padY, width + 2 * padX, height + 2 * padY);
   }
 
   // Only remove the enemy sprite. The server decides whether the match

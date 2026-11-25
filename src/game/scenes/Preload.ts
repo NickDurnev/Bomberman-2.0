@@ -1,5 +1,12 @@
 import Phaser from "phaser";
 import { PARTICLE_KEY } from "@/game/effects";
+import { AVAILABLE_MAPS } from "@/utils/constants";
+import {
+  DEFAULT_TEXTURE_PACK_ID,
+  getTexturePack,
+  TEXTURE_SOURCES_KEY,
+  type TexturePack,
+} from "@/utils/texturePacks";
 import { GameData, Player } from "@/utils/types";
 
 // One sprite sheet and one blast animation per BlastedCell.type
@@ -13,8 +20,30 @@ const BLAST_TYPES = [
   "explosion_left",
 ];
 
+// Every texture a texture pack provides, under the keys the entities use.
+// All but the map tileset are 35 x 35 sprite sheets.
+const PACK_TEXTURES: { key: string; file: string; sheet: boolean }[] = [
+  { key: "tiles", file: "tileset.png", sheet: false },
+  ...BLAST_TYPES.map(type => ({ key: type, file: `${type}.png`, sheet: true })),
+  { key: "spoil_tileset", file: "spoil_tileset.png", sheet: true },
+  { key: "tombstone", file: "tombstone.png", sheet: true },
+  { key: "bomb_tileset", file: "bombs.png", sheet: true },
+  { key: "portal_tileset", file: "portal.png", sheet: true },
+];
+
+// Animations hold the frames of the textures they were made from, so every
+// Preload run rebuilds them with the pack textures.
+const PACK_ANIMATIONS = [
+  "bomb",
+  "portal",
+  ...BLAST_TYPES.map(type => `blast_${type}`),
+];
+
 class Preload extends Phaser.Scene {
   private currentGame: GameData;
+  private pack: TexturePack;
+  // Keys that the room's pack lacks, loaded from the default pack
+  private fallbackKeys = new Set<string>();
 
   constructor() {
     super("Preload");
@@ -79,36 +108,15 @@ class Preload extends Phaser.Scene {
     // Set the base path for loading assets
     this.load.baseURL = "/";
 
-    // Load map assets
-    this.load.image("tiles", "assets/maps/tileset.png");
-    this.load.tilemapTiledJSON("default_map", "assets/maps/default_map.json");
-    this.load.tilemapTiledJSON("small_map", "assets/maps/small_map.json");
-    this.load.tilemapTiledJSON("big_map", "assets/maps/big_map.json");
+    // Textures of the room's texture pack, the same for every player
+    this.pack = getTexturePack(this.currentGame.texturePack);
+    this.clearPackTextures();
+    this.loadPackTextures(this.pack, PACK_TEXTURES);
 
-    // Load game spritesheets
-    for (const type of BLAST_TYPES) {
-      this.load.spritesheet(type, `assets/images/game/${type}.png`, {
-        frameWidth: 35,
-        frameHeight: 35,
-      });
+    // Load map assets
+    for (const name of AVAILABLE_MAPS) {
+      this.load.tilemapTiledJSON(name, `assets/maps/${name}.json`);
     }
-    this.load.spritesheet(
-      "spoil_tileset",
-      "assets/images/game/spoil_tileset.png",
-      { frameWidth: 35, frameHeight: 35 },
-    );
-    this.load.spritesheet("tombstone", "assets/images/game/tombstone.png", {
-      frameWidth: 35,
-      frameHeight: 35,
-    });
-    this.load.spritesheet("bomb_tileset", "assets/images/game/bombs.png", {
-      frameWidth: 35,
-      frameHeight: 35,
-    });
-    this.load.spritesheet("portal_tileset", "assets/images/game/portal.png", {
-      frameWidth: 35,
-      frameHeight: 35,
-    });
 
     //Default avatars
     this.load.image("avatar-1", "assets/images/avatars/avatar-1.png");
@@ -130,9 +138,70 @@ class Preload extends Phaser.Scene {
   }
 
   create() {
+    // A pack file that is missing or does not decode (a 404 can come back as
+    // index.html, which emits no loaderror) leaves its key empty: load that
+    // key from the default pack in a second pass.
+    const missing = PACK_TEXTURES.filter(
+      ({ key }) => !this.textures.exists(key),
+    );
+    this.fallbackKeys = new Set();
+    if (missing.length > 0 && this.pack.id !== DEFAULT_TEXTURE_PACK_ID) {
+      this.fallbackKeys = new Set(missing.map(({ key }) => key));
+      const keys = missing.map(({ key }) => key).join(", ");
+      console.warn(
+        `Texture pack "${this.pack.id}" lacks ${keys}: using default`,
+      );
+      this.loadPackTextures(getTexturePack(DEFAULT_TEXTURE_PACK_ID), missing);
+      this.load.once(Phaser.Loader.Events.COMPLETE, () => this.startMatch());
+      this.load.start();
+      return;
+    }
+    this.startMatch();
+  }
+
+  private startMatch() {
+    // The pack each texture came from (null: missing). The E2E hook reads it.
+    const sources: Record<string, string | null> = {};
+    for (const { key } of PACK_TEXTURES) {
+      if (!this.textures.exists(key)) {
+        console.error("Texture missing from the default pack:", key);
+        sources[key] = null;
+      } else {
+        sources[key] = this.fallbackKeys.has(key)
+          ? DEFAULT_TEXTURE_PACK_ID
+          : this.pack.id;
+      }
+    }
+    this.registry.set(TEXTURE_SOURCES_KEY, sources);
     this.createAnimations();
     this.createParticleTexture();
     this.scene.start("Playing", this.currentGame);
+  }
+
+  // Textures and animations live on the Phaser.Game, not the scene, and the
+  // loader skips a key that exists. Drop an earlier run's pack textures so a
+  // pack change between matches on the same game loads the new files.
+  private clearPackTextures() {
+    for (const { key } of PACK_TEXTURES) {
+      if (this.textures.exists(key)) {
+        this.textures.remove(key);
+      }
+    }
+    for (const key of PACK_ANIMATIONS) {
+      this.anims.remove(key);
+    }
+  }
+
+  private loadPackTextures(pack: TexturePack, textures: typeof PACK_TEXTURES) {
+    for (const { key, file, sheet } of textures) {
+      // No leading slash: load.baseURL is already "/"
+      const path = `${pack.basePath}/${file}`;
+      if (sheet) {
+        this.load.spritesheet(key, path, { frameWidth: 35, frameHeight: 35 });
+      } else {
+        this.load.image(key, path);
+      }
+    }
   }
 
   private createParticleTexture() {
