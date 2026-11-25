@@ -1,3 +1,4 @@
+import arena_map from "../../public/assets/maps/arena_map.json";
 import big_map from "../../public/assets/maps/big_map.json";
 import default_map from "../../public/assets/maps/default_map.json";
 import small_map from "../../public/assets/maps/small_map.json";
@@ -9,7 +10,11 @@ export const GOOGLE_USER_STORAGE_KEY = "google_user";
 
 // The Tiled JSON of each map, in menu order: the menu reads the max players
 // and draws the live preview from it (Phaser loads its own copy by URL).
+// The key is the map id on the wire: never give an id a new layout, a client
+// one deploy behind would draw another grid. "Default map" in the menu is
+// arena_map; default_map is the "Classic map".
 export const MAPS: Record<string, typeof default_map> = {
+  arena_map,
   default_map,
   small_map,
   big_map,

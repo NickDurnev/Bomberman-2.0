@@ -10,6 +10,12 @@ import { GameStore, MapCard, MapData } from "@/utils/types";
 const data = [
   {
     title: "Default map",
+    maxPlayers: MAPS.arena_map.layers[0].properties.max_players,
+    description:
+      "A tight arena of brick mazes and crate fields. Blast your way through the crates, grab power-ups and corner your rivals before they corner you. Be the last one standing!",
+  },
+  {
+    title: "Classic map",
     maxPlayers: MAPS.default_map.layers[0].properties.max_players,
     description:
       "A balanced battlefield with walls and destructible boxes. Collect power-ups like speed boosts, extra bombs, and fire blasts to gain the upper hand. Strategize your moves and outlast your opponents in explosive combat!",

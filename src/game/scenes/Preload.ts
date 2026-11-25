@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { PARTICLE_KEY } from "@/game/effects";
+import { AVAILABLE_MAPS } from "@/utils/constants";
 import {
   DEFAULT_TEXTURE_PACK_ID,
   getTexturePack,
@@ -113,9 +114,9 @@ class Preload extends Phaser.Scene {
     this.loadPackTextures(this.pack, PACK_TEXTURES);
 
     // Load map assets
-    this.load.tilemapTiledJSON("default_map", "assets/maps/default_map.json");
-    this.load.tilemapTiledJSON("small_map", "assets/maps/small_map.json");
-    this.load.tilemapTiledJSON("big_map", "assets/maps/big_map.json");
+    for (const name of AVAILABLE_MAPS) {
+      this.load.tilemapTiledJSON(name, `assets/maps/${name}.json`);
+    }
 
     //Default avatars
     this.load.image("avatar-1", "assets/images/avatars/avatar-1.png");
