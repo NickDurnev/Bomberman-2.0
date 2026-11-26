@@ -11,6 +11,7 @@ import {
   TUTORIAL,
 } from "@/utils/constants";
 import clientSocket from "@/utils/socket";
+import { setActiveTexturePack } from "@/utils/texturePacks";
 import { GameData as Game } from "@/utils/types";
 
 interface GameData {
@@ -50,6 +51,9 @@ const PendingGame = () => {
 
   const handleUpdateGame = (data: GameData) => {
     setGameInfo(data.current_game);
+    // The HUD draws the room's pack from its first frame, not the previous
+    // match's (or the default) until the get current game ack.
+    setActiveTexturePack(data.current_game.texturePack);
   };
 
   const handleLaunchGame = () => {
