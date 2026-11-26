@@ -39,17 +39,10 @@ const Menu = () => {
     addUserToDB();
   }, [user]);
 
+  // The server sends the whole list of open rooms every time (the enter
+  // lobby ack and each "display pending games"): show it as it is.
   const handleDisplayPendingGames = (availableGames: GameData[]) => {
-    if (availableGames.length) {
-      setSlotsWithGame(prev => [
-        ...prev.filter(game => {
-          return !availableGames.some(g => g?.id === game?.id);
-        }),
-        availableGames[availableGames.length - 1],
-      ]);
-    } else {
-      setSlotsWithGame([]);
-    }
+    setSlotsWithGame(availableGames.filter(Boolean));
   };
 
   const handleJoinGame = (game_id: string) => {
