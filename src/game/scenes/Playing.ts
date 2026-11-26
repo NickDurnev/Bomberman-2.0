@@ -296,6 +296,11 @@ class Playing extends Phaser.Scene {
   }
 
   private onPlayerVsBlast(player: Player, killerId: string) {
+    // One overlap check calls this for every blast cell the player touches:
+    // die once (becomesDead keeps the body enabled).
+    if (!player.active) {
+      return;
+    }
     clientSocket.emit("player died", {
       col: player.currentCol(),
       row: player.currentRow(),
