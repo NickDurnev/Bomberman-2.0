@@ -3,13 +3,14 @@ import { Emoji } from "react-apple-emojis";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { IoIosAlert } from "react-icons/io";
 import { useNavigate, useParams } from "react-router";
-import { Button, PlayersSlots, UserBar } from "@/components/index";
+import { Button, MapPreview, PlayersSlots, UserBar } from "@/components/index";
 import {
   POINTS_PER_KILL,
   POINTS_PER_TOP3,
   POINTS_PER_WIN,
   TUTORIAL,
 } from "@/utils/constants";
+import { mapTitle, roomDetails } from "@/utils/room";
 import clientSocket from "@/utils/socket";
 import { GameData as Game } from "@/utils/types";
 
@@ -82,6 +83,19 @@ const PendingGame = () => {
             {gameInfo?.name ?? "Game"}
           </h1>
         </div>
+        {gameInfo && (
+          <div className="mx-auto flex w-full max-w-sm flex-col items-center gap-y-2 px-4">
+            <MapPreview
+              mapName={gameInfo.mapName}
+              title={mapTitle(gameInfo.mapName)}
+              packId={gameInfo.texturePack}
+              className="w-full rounded-lg"
+            />
+            <p className="text-center text-sm text-neutral-600 dark:text-neutral-300">
+              {roomDetails(gameInfo).join(" · ")}
+            </p>
+          </div>
+        )}
         {isTimerRunning ? (
           <div className="flex flex-col gap-y-8">
             <h3 className="motion-preset-expand motion-loop-once text-center text-3xl font-bold tracking-wider">
