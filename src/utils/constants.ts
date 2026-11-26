@@ -20,6 +20,13 @@ export const MAPS: Record<string, typeof default_map> = {
   big_map,
 };
 export const AVAILABLE_MAPS = Object.keys(MAPS);
+// The name a player sees for each map id, in the map menu and the lobby
+export const MAP_TITLES: Record<string, string> = {
+  arena_map: "Default map",
+  default_map: "Classic map",
+  small_map: "Small map",
+  big_map: "Big map",
+};
 export const TILESET = "tiles";
 export const LAYER = "Blocks";
 

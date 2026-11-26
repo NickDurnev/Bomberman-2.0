@@ -20,10 +20,13 @@ type Props = {
 // any pack or asset change without a prebuilt image.
 export const MapPreview = ({ mapName, title, packId, className }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const map = MAPS[mapName];
+  const map = MAPS[mapName] as (typeof MAPS)[string] | undefined;
   const pack = getTexturePack(packId);
 
   useEffect(() => {
+    if (!map) {
+      return;
+    }
     // A load that ends after the map or pack changed must not draw.
     let current = true;
     const fallback = packAssetUrl(
@@ -73,6 +76,12 @@ export const MapPreview = ({ mapName, title, packId, className }: Props) => {
       current = false;
     };
   }, [map, pack]);
+
+  // A map this client does not know (the lobby lists rooms of a server that
+  // deployed first): no preview rather than a crash.
+  if (!map) {
+    return null;
+  }
 
   return (
     <canvas
