@@ -35,6 +35,8 @@ interface E2EState {
   me: (E2EPlayer & { alive: boolean }) | null;
   enemies: E2EPlayer[];
   bombs: number;
+  // The name of the player the camera follows after the local death
+  spectating: string | null;
 }
 
 export interface E2EHook {
@@ -53,6 +55,7 @@ interface PlayingView {
   player?: NamedSprite;
   enemies?: Phaser.GameObjects.Group;
   bombs?: Phaser.GameObjects.Group;
+  spectator?: { targetName: string | null } | null;
 }
 
 let currentGame: Phaser.Game | null = null;
@@ -93,6 +96,7 @@ const hook: E2EHook = {
         : null,
       enemies: enemies.map(toPlayer),
       bombs: view.bombs?.countActive() ?? 0,
+      spectating: view.spectator?.targetName ?? null,
     };
   },
 
