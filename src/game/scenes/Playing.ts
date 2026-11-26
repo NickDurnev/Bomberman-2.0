@@ -17,6 +17,7 @@ import {
   Spoil,
   Tombstone,
 } from "@/game/entities";
+import { Spectator } from "@/game/spectator";
 import { resetTouchInput } from "@/game/touchInput";
 import {
   EXPLOSION_TIME,
@@ -65,6 +66,8 @@ class Playing extends Phaser.Scene {
   // One end sequence per match: the first of "player win" / "end game"
   // starts it, the other one reuses the same promise.
   private endSequence: Promise<void> | null = null;
+  // Set when the local player dies: the camera follows a living player.
+  private spectator: Spectator | null = null;
   // Set once shutdown() ran. After an await, the scene may be gone
   // (end game teardown or Phaser.Game destroyed on a route change).
   private isShutDown = false;
@@ -77,6 +80,7 @@ class Playing extends Phaser.Scene {
     this.currentGame = game;
     this.endSequence = null;
     this.isShutDown = false;
+    this.spectator = null;
   }
 
   create() {
@@ -114,6 +118,7 @@ class Playing extends Phaser.Scene {
     if (this.player) {
       this.player.update();
     }
+    this.spectator?.update();
 
     // Set up overlaps only if the player exists and is active
     if (this.player && this.player.active) {
@@ -310,6 +315,7 @@ class Playing extends Phaser.Scene {
     });
     player.becomesDead();
     deathEffect(this);
+    this.spectator = new Spectator(this, this.enemies, killerId);
   }
 
   private onBombVsBlast(bomb: Bomb) {
@@ -490,6 +496,9 @@ class Playing extends Phaser.Scene {
 
     clientSocket.emit("leave game");
 
+    // Before the enemies: their destroy must not move the camera
+    this.stopSpectating();
+
     if (this.player) {
       this.player.resetProperties();
       this.player.removeKeyboard();
@@ -513,12 +522,18 @@ class Playing extends Phaser.Scene {
 
   shutdown() {
     this.isShutDown = true;
+    this.stopSpectating();
     this.scale.off(Phaser.Scale.Events.RESIZE, this.fitCameraToMap, this);
     for (const [event, handler] of this.socketHandlers) {
       clientSocket.off(event, handler);
     }
     this.socketHandlers = [];
     resetTouchInput();
+  }
+
+  private stopSpectating() {
+    this.spectator?.destroy();
+    this.spectator = null;
   }
 
   // Phaser clamps the scroll to the camera bounds, so a map smaller than the
