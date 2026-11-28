@@ -21,6 +21,11 @@ export interface PlayerPositionData extends Coordinates {
   player_id: PlayerId;
 }
 
+export interface TeleportData extends PlayerPositionData {
+  /** Server tick when the transit ends. */
+  until: number;
+}
+
 export interface PlayerConfig {
   game: Playing;
   id: PlayerId;

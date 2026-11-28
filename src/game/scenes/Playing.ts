@@ -22,8 +22,6 @@ import { resetTouchInput } from "@/game/touchInput";
 import {
   EXPLOSION_TIME,
   LAYER,
-  PORTAL_DELAY,
-  PORTAL_DELAY_STEP,
   SOCKET_ID_KEY,
   TICK_MS,
   TILE_SIZE,
@@ -36,16 +34,15 @@ import {
   ICell,
   ITombStone,
   PlayerConfig,
-  PlayerPositionData,
   pickedSpoilSocketData,
   ShowBombData,
   StateSnapshot,
+  TeleportData,
 } from "@/utils/types";
 import {
   findAndDestroyByCoordinates,
   findAndDestroyById,
   findById,
-  getIntersectionArea,
 } from "@/utils/utils";
 
 type PlayerData = Pick<PlayerConfig, "id" | "name" | "spawn" | "skin"> & {
@@ -71,6 +68,8 @@ class Playing extends Phaser.Scene {
   private snapshots: StateSnapshot[] = [];
   private latestArrival = 0;
   private byIdx = new Map<number, Player | EnemyPlayer>();
+  // Players in portal transit (by id): shown again once a snapshot reaches `until`.
+  private hiddenUntil = new Map<string, number>();
   private portals: Phaser.GameObjects.Group;
   private tombstones: Phaser.GameObjects.Group;
   private bombs: Phaser.GameObjects.Group;
@@ -108,6 +107,7 @@ class Playing extends Phaser.Scene {
     this.snapshots = [];
     this.latestArrival = 0;
     this.byIdx = new Map();
+    this.hiddenUntil = new Map();
     this.playerIdx = undefined;
   }
 
@@ -146,73 +146,6 @@ class Playing extends Phaser.Scene {
     }
 
     this.renderRemotePlayers();
-
-    // Set up overlaps only if the player exists and is active
-    if (this.player && this.player.active) {
-      this.physics.overlap(
-        this.player,
-        this.spoils,
-        (obj1, obj2) => {
-          if (obj1 instanceof Player && obj2 instanceof Spoil) {
-            this.onPlayerVsSpoil(obj1, obj2);
-          }
-        },
-        undefined,
-        this,
-      );
-
-      this.physics.overlap(
-        this.player,
-        this.portals,
-        (obj1, obj2) => {
-          if (obj1 instanceof Player && obj2 instanceof Portal) {
-            this.onPlayerVsPortal(obj1, obj2);
-          }
-        },
-        undefined,
-        this,
-      );
-
-      this.physics.overlap(
-        this.player,
-        this.blasts,
-        (obj1, obj2) => {
-          if (obj1 instanceof Player && obj2 instanceof FireBlast) {
-            const intersectionArea = getIntersectionArea(
-              obj1 as Parameters<typeof getIntersectionArea>[0],
-              obj2 as Parameters<typeof getIntersectionArea>[1],
-            );
-
-            if (obj1.body && "width" in obj1.body && "height" in obj1.body) {
-              const playerArea = obj1.body.width * obj1.body.height;
-
-              // Only trigger if at least 10% of the player is overlapping
-              if (intersectionArea >= playerArea / 10) {
-                const playerId = obj2.getPlayerId();
-                this.onPlayerVsBlast(obj1, playerId);
-              }
-            }
-          }
-        },
-        undefined,
-        this,
-      );
-    }
-
-    // Set up bomb-blast overlap if both groups exist
-    if (this.bombs && this.blasts) {
-      this.physics.overlap(
-        this.bombs,
-        this.blasts,
-        (obj1, obj2) => {
-          if (obj1 instanceof Bomb && obj2 instanceof FireBlast) {
-            this.onBombVsBlast(obj1);
-          }
-        },
-        undefined,
-        this,
-      );
-    }
   }
 
   public getGameId() {
@@ -307,73 +240,13 @@ class Playing extends Phaser.Scene {
     }
   }
 
-  private onPlayerVsPortal(player: Player, portal: Portal) {
-    const now = this.time.now;
-
-    if (now - player.lastTeleportTime < PORTAL_DELAY) {
-      return;
-    }
-
-    player.lastTeleportTime = now; // Update the last teleport time
-    clientSocket.emit("use portal", {
-      portal_id: portal.id,
-      playerId: player.id,
-      gameId: player.gameId,
-    });
-
-    // Make player and their text invisible and disable physics interactions
-    player.setVisible(false);
-    player.playerText.setVisible(false); // <-- Hide the player text
-    player.getBody().enable = false;
-    player.setActive(false);
-
-    // Set a timer to re-enable visibility and physics after teleportation
-    this.time.delayedCall(PORTAL_DELAY_STEP, () => {
-      player.setVisible(true);
-      player.playerText.setVisible(true); // <-- Show the player text
-      player.getBody().enable = true;
-      player.setActive(true);
-    });
-  }
-
-  private onPlayerVsSpoil(player: Player, spoil: Spoil) {
-    clientSocket.emit("pick up spoil", {
-      spoil_id: spoil.id,
-      playerId: player.id,
-      gameId: player.gameId,
-    });
-    // The spoil leaves this.spoils on destroy, so the "spoil was picked" echo
-    // finds nothing and does not burst a second time.
-    pickupBurst(this, spoil.x, spoil.y);
-    spoil.destroy();
-  }
-
-  private onPlayerVsBlast(player: Player, killerId: string) {
-    clientSocket.emit("player died", {
-      col: player.currentCol(),
-      row: player.currentRow(),
-      playerId: player.id,
-      killerId,
-      gameId: player.gameId,
-    });
-    player.becomesDead();
-    deathEffect(this);
-  }
-
-  private onBombVsBlast(bomb: Bomb) {
-    clientSocket.emit("detonate bomb by blast", {
-      bomb_id: bomb.id,
-      gameId: this.currentGame.id,
-      playerId: bomb.getPlayerId(),
-    });
-  }
-
   private onState(snapshot: StateSnapshot) {
     this.snapshots.push(snapshot);
     if (this.snapshots.length > MAX_SNAPSHOTS) {
       this.snapshots.shift();
     }
     this.latestArrival = this.time.now;
+    this.revealAfterTransit(snapshot.t);
 
     if (this.player && this.playerIdx !== undefined) {
       const own = snapshot.p.find(([idx]) => idx === this.playerIdx);
@@ -433,13 +306,42 @@ class Playing extends Phaser.Scene {
     }
   }
 
-  private onTeleportPlayer({ player_id, x, y }: PlayerPositionData) {
-    if (this.player && this.player.id === player_id) {
-      this.player.teleportTo(x, y);
-    } else {
-      const enemy = findById(player_id, this.enemies);
-      if (enemy instanceof EnemyPlayer) {
-        enemy.showAt(x, y);
+  private onTeleportPlayer({ player_id, x, y, until }: TeleportData) {
+    const target =
+      this.player && this.player.id === player_id
+        ? this.player
+        : findById(player_id, this.enemies);
+    if (!(target instanceof Player || target instanceof EnemyPlayer)) {
+      return;
+    }
+    if (target instanceof Player) {
+      target.teleportTo(x, y);
+    }
+    // Enemies move with the snapshots, which carry the new position.
+    this.hiddenUntil.set(player_id, until);
+    target.setVisible(false);
+    target.playerText.setVisible(false);
+    if (target instanceof Player) {
+      // Inactive: fixedUpdate sends no input during transit.
+      target.setActive(false);
+    }
+  }
+
+  /** Show the players whose transit ended at snapshot tick `t`. */
+  private revealAfterTransit(t: number) {
+    for (const [playerId, until] of this.hiddenUntil) {
+      if (t < until) {
+        continue;
+      }
+      this.hiddenUntil.delete(playerId);
+      const target =
+        this.player && this.player.id === playerId
+          ? this.player
+          : findById(playerId, this.enemies);
+      if (target instanceof Player || target instanceof EnemyPlayer) {
+        target.setVisible(true);
+        target.playerText.setVisible(true);
+        target.setActive(true);
       }
     }
   }
@@ -537,8 +439,6 @@ class Playing extends Phaser.Scene {
       this.player.pickSpoil(spoil_type);
     }
 
-    // Only a remote pickup still finds the spoil here; the local pickup burst
-    // runs in onPlayerVsSpoil.
     const spoil = findById(spoil_id, this.spoils);
     if (spoil) {
       pickupBurst(this, spoil.x, spoil.y);
@@ -547,6 +447,11 @@ class Playing extends Phaser.Scene {
   }
 
   private onShowTombstone(tombstone: ITombStone) {
+    this.hiddenUntil.delete(tombstone.player_id);
+    if (this.player && tombstone.player_id === this.player.id) {
+      this.player.becomesDead();
+      deathEffect(this);
+    }
     this.tombstones.add(new Tombstone(this, tombstone));
     findAndDestroyById(tombstone.player_id, this.enemies);
   }

@@ -52,7 +52,6 @@ export class Player extends Phaser.GameObjects.Sprite {
   private spaceKey: Phaser.Input.Keyboard.Key;
   readonly sprite: Phaser.GameObjects.Sprite;
   playerText: Text;
-  lastTeleportTime: number = 0;
 
   /** Predicted state after the last fixed step. */
   sim: SimPlayerState;
@@ -223,6 +222,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   /** Snaps the prediction to a teleport target (no smoothing). */
   teleportTo(x: number, y: number) {
     this.sim = { ...this.sim, x, y };
+    this.history = [];
     this.prevSim = { x, y };
     this.errorX = 0;
     this.errorY = 0;

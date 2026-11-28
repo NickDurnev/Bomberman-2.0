@@ -16,7 +16,7 @@ export const E2E_SOCKET_EVENTS = [
   "launch game",
   "end game",
   "player win",
-  "move player",
+  "state",
   "teleport player",
   "show bomb",
   "detonate bomb",
