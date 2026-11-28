@@ -17,6 +17,7 @@ import {
   Spoil,
   Tombstone,
 } from "@/game/entities";
+import { SimBomb, SimWorld } from "@/game/sim/step";
 import { resetTouchInput } from "@/game/touchInput";
 import {
   EXPLOSION_TIME,
@@ -24,6 +25,7 @@ import {
   PORTAL_DELAY,
   PORTAL_DELAY_STEP,
   SOCKET_ID_KEY,
+  TICK_MS,
   TILE_SIZE,
   TILESET,
 } from "@/utils/constants";
@@ -41,16 +43,24 @@ import {
 import {
   findAndDestroyByCoordinates,
   findAndDestroyById,
-  findByCoordinates,
   findById,
   getIntersectionArea,
 } from "@/utils/utils";
 
-type PlayerData = Pick<PlayerConfig, "id" | "name" | "spawn" | "skin">;
+type PlayerData = Pick<PlayerConfig, "id" | "name" | "spawn" | "skin"> & {
+  idx: number;
+};
+
+// At most this many fixed steps per frame; a longer stall drops the rest.
+const MAX_STEPS_PER_FRAME = 3;
 
 class Playing extends Phaser.Scene {
   private currentGame: GameData;
   private player?: Player;
+  // Index of the local player in the room (`exempt` in `show bomb`).
+  private playerIdx?: number;
+  // Time (ms) not yet consumed by fixed 30 Hz steps.
+  private stepAccumulator = 0;
   private portals: Phaser.GameObjects.Group;
   private tombstones: Phaser.GameObjects.Group;
   private bombs: Phaser.GameObjects.Group;
@@ -68,6 +78,13 @@ class Playing extends Phaser.Scene {
   // Set once shutdown() ran. After an await, the scene may be gone
   // (end game teardown or Phaser.Game destroyed on a route change).
   private isShutDown = false;
+  // A hidden tab stops the Phaser loop: release every key on the server.
+  private readonly onWindowBlur = () => this.player?.releaseKeys();
+  private readonly onVisibilityChange = () => {
+    if (document.visibilityState === "hidden") {
+      this.player?.releaseKeys();
+    }
+  };
 
   constructor() {
     super("Playing");
@@ -77,6 +94,8 @@ class Playing extends Phaser.Scene {
     this.currentGame = game;
     this.endSequence = null;
     this.isShutDown = false;
+    this.stepAccumulator = 0;
+    this.playerIdx = undefined;
   }
 
   create() {
@@ -88,6 +107,8 @@ class Playing extends Phaser.Scene {
       this.cameras.main.startFollow(this.player, true);
     }
     this.setEventHandlers();
+    window.addEventListener("blur", this.onWindowBlur);
+    document.addEventListener("visibilitychange", this.onVisibilityChange);
 
     // Guarantee socket listeners are removed on every teardown path —
     // including scene.remove() (GameOver.launchGame) which does not call
@@ -103,16 +124,19 @@ class Playing extends Phaser.Scene {
     });
   }
 
-  update() {
-    // Only set up collisions if the player exists and is active
-    if (this.player && this.player.active) {
-      this.physics.collide(this.player, this.blockLayer);
-      this.physics.collide(this.player, this.bombs);
-    }
-
-    // Update player if it exists
+  update(_time: number, delta: number) {
     if (this.player) {
-      this.player.update();
+      this.stepAccumulator += delta;
+      let steps = 0;
+      while (this.stepAccumulator >= TICK_MS && steps < MAX_STEPS_PER_FRAME) {
+        this.player.fixedUpdate();
+        this.stepAccumulator -= TICK_MS;
+        steps++;
+      }
+      if (this.stepAccumulator >= TICK_MS) {
+        this.stepAccumulator %= TICK_MS;
+      }
+      this.player.render(this.stepAccumulator / TICK_MS, delta);
     }
 
     // Set up overlaps only if the player exists and is active
@@ -187,8 +211,25 @@ class Playing extends Phaser.Scene {
     return this.currentGame.id;
   }
 
-  public checkBombByColumnAndRow(column: number, row: number) {
-    return findByCoordinates(column, row, this.bombs);
+  /** The map and bombs as the prediction step sees them. */
+  public getSimWorld(): SimWorld {
+    const bombs: SimBomb[] = [];
+    for (const child of this.bombs.getChildren()) {
+      const bomb = child as Bomb;
+      bombs.push({
+        id: String(bomb.id),
+        col: Math.floor(bomb.x / TILE_SIZE),
+        row: Math.floor(bomb.y / TILE_SIZE),
+      });
+    }
+    return {
+      isSolidTile: (col, row) => {
+        const tile = this.blockLayer.getTileAt(col, row, true);
+        // Outside the map is solid, as on the server.
+        return !tile || (tile.index >= 1 && tile.index <= 5);
+      },
+      bombs,
+    };
   }
 
   private createMap() {
@@ -228,6 +269,7 @@ class Playing extends Phaser.Scene {
       const storedSocketId = getDataFromLocalStorage(SOCKET_ID_KEY);
       if (player.id === storedSocketId) {
         this.player = new Player(setup);
+        this.playerIdx = player.idx;
       } else {
         this.enemies.add(new EnemyPlayer(setup));
       }
@@ -324,7 +366,7 @@ class Playing extends Phaser.Scene {
 
   private onTeleportPlayer({ player_id, x, y }: PlayerPositionData) {
     if (this.player && this.player.id === player_id) {
-      this.player.goTo({ x, y });
+      this.player.teleportTo(x, y);
     } else {
       this.onMovePlayer({ player_id, x, y });
     }
@@ -345,10 +387,8 @@ class Playing extends Phaser.Scene {
     col,
     row,
     delay = EXPLOSION_TIME,
+    exempt,
   }: ShowBombData) {
-    if (this.player && this.player.id === playerId) {
-      this.player.increaseActiveBombs();
-    }
     const bomb = new Bomb({
       scene: this,
       id: bomb_id,
@@ -358,6 +398,13 @@ class Playing extends Phaser.Scene {
       delay,
     });
     this.bombs.add(bomb);
+    if (
+      this.player &&
+      this.playerIdx !== undefined &&
+      exempt?.includes(this.playerIdx)
+    ) {
+      this.player.addWalkOff(String(bomb_id));
+    }
     startFuseWarning(bomb, delay);
   }
 
@@ -370,9 +417,6 @@ class Playing extends Phaser.Scene {
     playerId: string;
     blastedCells: ICell[];
   }) {
-    if (this.player && this.player.id === playerId) {
-      this.player.decreaseActiveBombs();
-    }
     // Remove Bomb:
     findAndDestroyById(bomb_id, this.bombs);
 
@@ -508,6 +552,8 @@ class Playing extends Phaser.Scene {
 
   shutdown() {
     this.isShutDown = true;
+    window.removeEventListener("blur", this.onWindowBlur);
+    document.removeEventListener("visibilitychange", this.onVisibilityChange);
     this.scale.off(Phaser.Scale.Events.RESIZE, this.fitCameraToMap, this);
     for (const [event, handler] of this.socketHandlers) {
       clientSocket.off(event, handler);
