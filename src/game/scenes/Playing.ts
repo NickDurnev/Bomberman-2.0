@@ -39,6 +39,7 @@ import {
   PlayerPositionData,
   pickedSpoilSocketData,
   ShowBombData,
+  StateSnapshot,
 } from "@/utils/types";
 import {
   findAndDestroyByCoordinates,
@@ -51,6 +52,11 @@ type PlayerData = Pick<PlayerConfig, "id" | "name" | "spawn" | "skin"> & {
   idx: number;
 };
 
+// Snapshots kept for interpolation.
+const MAX_SNAPSHOTS = 10;
+// The remote players are drawn this many ticks behind the newest snapshot.
+const RENDER_DELAY_TICKS = 2;
+
 // At most this many fixed steps per frame; a longer stall drops the rest.
 const MAX_STEPS_PER_FRAME = 3;
 
@@ -61,6 +67,10 @@ class Playing extends Phaser.Scene {
   private playerIdx?: number;
   // Time (ms) not yet consumed by fixed 30 Hz steps.
   private stepAccumulator = 0;
+  // Last snapshots, oldest first, and when the newest one arrived (scene clock).
+  private snapshots: StateSnapshot[] = [];
+  private latestArrival = 0;
+  private byIdx = new Map<number, Player | EnemyPlayer>();
   private portals: Phaser.GameObjects.Group;
   private tombstones: Phaser.GameObjects.Group;
   private bombs: Phaser.GameObjects.Group;
@@ -95,6 +105,9 @@ class Playing extends Phaser.Scene {
     this.endSequence = null;
     this.isShutDown = false;
     this.stepAccumulator = 0;
+    this.snapshots = [];
+    this.latestArrival = 0;
+    this.byIdx = new Map();
     this.playerIdx = undefined;
   }
 
@@ -115,13 +128,6 @@ class Playing extends Phaser.Scene {
     // onEndGame(). Without this, listeners leak across rounds.
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.shutdown, this);
     this.events.once(Phaser.Scenes.Events.DESTROY, this.shutdown, this);
-
-    this.time.addEvent({
-      delay: 400,
-      callback: this.stopAnimationLoop,
-      callbackScope: this,
-      loop: true,
-    });
   }
 
   update(_time: number, delta: number) {
@@ -138,6 +144,8 @@ class Playing extends Phaser.Scene {
       }
       this.player.render(this.stepAccumulator / TICK_MS, delta);
     }
+
+    this.renderRemotePlayers();
 
     // Set up overlaps only if the player exists and is active
     if (this.player && this.player.active) {
@@ -270,8 +278,11 @@ class Playing extends Phaser.Scene {
       if (player.id === storedSocketId) {
         this.player = new Player(setup);
         this.playerIdx = player.idx;
+        this.byIdx.set(player.idx, this.player);
       } else {
-        this.enemies.add(new EnemyPlayer(setup));
+        const enemy = new EnemyPlayer(setup);
+        this.enemies.add(enemy);
+        this.byIdx.set(player.idx, enemy);
       }
     }
   }
@@ -280,7 +291,7 @@ class Playing extends Phaser.Scene {
     // Bind once and keep the references, so shutdown() can remove the
     // exact same function objects (socket.off matches by reference).
     this.socketHandlers = [
-      ["move player", this.onMovePlayer.bind(this)],
+      ["state", this.onState.bind(this)],
       ["teleport player", this.onTeleportPlayer.bind(this)],
       ["player win", this.onPlayerWin.bind(this)],
       ["end game", this.onEndGame.bind(this)],
@@ -357,10 +368,68 @@ class Playing extends Phaser.Scene {
     });
   }
 
-  private onMovePlayer({ player_id, x, y }: PlayerPositionData) {
-    const enemy = findById(player_id, this.enemies);
-    if (enemy) {
-      enemy.goTo({ x, y });
+  private onState(snapshot: StateSnapshot) {
+    this.snapshots.push(snapshot);
+    if (this.snapshots.length > MAX_SNAPSHOTS) {
+      this.snapshots.shift();
+    }
+    this.latestArrival = this.time.now;
+
+    if (this.player && this.playerIdx !== undefined) {
+      const own = snapshot.p.find(([idx]) => idx === this.playerIdx);
+      if (own) {
+        this.player.reconcile(own[1], own[2], own[3]);
+      }
+    }
+  }
+
+  /** Place every remote player between the two snapshots around the render tick. */
+  private renderRemotePlayers() {
+    const latest = this.snapshots[this.snapshots.length - 1];
+    if (!latest) {
+      return;
+    }
+    const renderT = Math.min(
+      latest.t,
+      latest.t -
+        RENDER_DELAY_TICKS +
+        (this.time.now - this.latestArrival) / TICK_MS,
+    );
+
+    for (const [idx, entity] of this.byIdx) {
+      if (!(entity instanceof EnemyPlayer) || !entity.active) {
+        continue;
+      }
+      let before: [number, number, number, number] | undefined;
+      let beforeT = 0;
+      let after: [number, number, number, number] | undefined;
+      let afterT = 0;
+      for (const snap of this.snapshots) {
+        const entry = snap.p.find(([i]) => i === idx);
+        if (!entry) {
+          continue;
+        }
+        if (snap.t <= renderT) {
+          before = entry;
+          beforeT = snap.t;
+        } else if (!after) {
+          after = entry;
+          afterT = snap.t;
+        }
+      }
+      if (before && after) {
+        const k = (renderT - beforeT) / (afterT - beforeT);
+        entity.showAt(
+          before[1] + (after[1] - before[1]) * k,
+          before[2] + (after[2] - before[2]) * k,
+        );
+      } else if (before ?? after) {
+        // Past the newest snapshot with this player: hold its last position.
+        const held = (before ?? after) as [number, number, number, number];
+        entity.showAt(held[1], held[2]);
+      } else {
+        entity.showAt(entity.x, entity.y);
+      }
     }
   }
 
@@ -368,15 +437,9 @@ class Playing extends Phaser.Scene {
     if (this.player && this.player.id === player_id) {
       this.player.teleportTo(x, y);
     } else {
-      this.onMovePlayer({ player_id, x, y });
-    }
-  }
-
-  private stopAnimationLoop() {
-    for (const enemy of this.enemies.getChildren()) {
-      const enemyPlayer = enemy as EnemyPlayer;
-      if (enemyPlayer.lastMoveAt < this.time.now - 200) {
-        enemyPlayer.anims.stop();
+      const enemy = findById(player_id, this.enemies);
+      if (enemy instanceof EnemyPlayer) {
+        enemy.showAt(x, y);
       }
     }
   }

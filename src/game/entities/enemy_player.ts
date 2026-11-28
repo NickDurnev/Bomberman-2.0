@@ -1,7 +1,7 @@
 import Phaser, { Physics } from "phaser";
 import Playing from "@/game/scenes/Playing";
 import { Text } from "@/helpers/elements";
-import { PING, TILE_SIZE } from "@/utils/constants";
+import { TILE_SIZE } from "@/utils/constants";
 import { Coordinates, PlayerConfig } from "@/utils/types";
 import { setPlayerAvatar } from "@/utils/utils";
 export class EnemyPlayer extends Phaser.GameObjects.Sprite {
@@ -46,26 +46,20 @@ export class EnemyPlayer extends Phaser.GameObjects.Sprite {
     return this.body as Physics.Arcade.Body;
   }
 
-  goTo(newPosition: Coordinates) {
-    this.lastMoveAt = this.game.time.now;
-    this.currentPosition = newPosition;
-
-    this.game.add.tween({
-      targets: this,
-      x: newPosition.x,
-      y: newPosition.y,
-      duration: PING,
-      ease: Phaser.Math.Easing.Linear,
-    });
-
-    if (this.playerText) {
-      this.game.add.tween({
-        targets: this.playerText,
-        x: newPosition.x - this.playerText.width / 2,
-        y: newPosition.y - TILE_SIZE * 1.2,
-        duration: PING,
-        ease: Phaser.Math.Easing.Linear,
-      });
+  /** Show the player at a position taken from the snapshots. */
+  showAt(x: number, y: number) {
+    if (x !== this.x || y !== this.y) {
+      this.lastMoveAt = this.game.time.now;
+      this.currentPosition = { x, y };
+      this.setPosition(x, y);
+      this.playerText?.setPosition(
+        x - this.playerText.width / 2,
+        y - TILE_SIZE * 1.2,
+      );
+    }
+    // Stop the walk animation after 200 ms without a change of position.
+    if (this.lastMoveAt < this.game.time.now - 200) {
+      this.anims.stop();
     }
   }
 
