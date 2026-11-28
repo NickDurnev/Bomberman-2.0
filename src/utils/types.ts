@@ -108,6 +108,8 @@ export type pickedSpoilSocketData = {
   player_id: PlayerId;
   spoil_id: number;
   spoil_type: ISpoilType;
+  /** Server tick of the pick-up. */
+  t: number;
 };
 
 export interface ITombStone {
@@ -115,6 +117,8 @@ export interface ITombStone {
   tombId: string;
   col: number;
   row: number;
+  /** Server tick of the death. */
+  t: number;
 }
 
 export interface ISpoil {
@@ -173,11 +177,15 @@ export interface EndGame {
   new_game_id: GameId;
   prevGameInfo: GameData;
   reason: EndReason;
+  /** Server tick of the end. Null when the game had no simulation left. */
+  t: number | null;
 }
 
 export interface PlayerWin {
   winner: Player;
   prevGameInfo: GameData;
+  /** Server tick of the deciding death. */
+  t: number;
 }
 
 export interface UserStats {
