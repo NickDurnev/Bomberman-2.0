@@ -10,6 +10,7 @@ import {
   AuthCheck,
   BackgroundLines,
   PaddingContainer,
+  ProtocolGate,
   Socket,
 } from "@/components/index";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -84,6 +85,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             </EmojiProvider>
           </PaddingContainer>
         </Socket>
+        <ProtocolGate />
       </AuthProvider>
     </GoogleOAuthProvider>
     <Toaster

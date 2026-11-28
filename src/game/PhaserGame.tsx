@@ -1,8 +1,9 @@
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
 import { config } from "@/game/main";
+import { PROTOCOL_VERSION } from "@/utils/constants";
 import { setCurrentGame } from "@/utils/e2e";
-import clientSocket from "@/utils/socket";
+import clientSocket, { markServerProtocol } from "@/utils/socket";
 import { setActiveTexturePack } from "@/utils/texturePacks";
 import { GameData } from "@/utils/types";
 
@@ -26,6 +27,10 @@ export function PhaserGame({ gameId }: Readonly<IProps>) {
 
     clientSocket.emit("get current game", gameId, (gameData: GameData) => {
       if (cancelled || !gameData) {
+        return;
+      }
+      markServerProtocol(gameData.protocol);
+      if (gameData.protocol !== PROTOCOL_VERSION) {
         return;
       }
       // The room's pack for the React HUD (Preload reads it from gameData)

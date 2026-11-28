@@ -61,6 +61,8 @@ export interface GameData {
   isDelaySpoilEnabled: boolean;
   isPortalsEnabled: boolean;
   texturePack: string;
+  /** Protocol version of the server. Absent on an older server. */
+  protocol?: number;
 }
 
 export interface GameSlotsProps {
@@ -70,6 +72,8 @@ export interface GameSlotsProps {
 
 export interface Player {
   id: PlayerId;
+  /** Index of the player in the room; the key of a state snapshot entry. */
+  idx: number;
   skin: string;
   name: string;
   spawn: {
@@ -142,6 +146,24 @@ export interface ShowBombData {
   row: number;
   /** Fuse time in ms. Optional: an older server does not send it. */
   delay?: number;
+  /** Server tick of the placement. */
+  t: number;
+  /** Player ids that stand on the bomb cell and may walk off it. */
+  exempt: number[];
+}
+
+/** One 30 Hz snapshot: `p` entries are [idx, x, y, seq]. */
+export interface StateSnapshot {
+  t: number;
+  p: [idx: number, x: number, y: number, seq: number][];
+}
+
+export interface TeleportData {
+  player_id: PlayerId;
+  x: number;
+  y: number;
+  t: number;
+  until: number;
 }
 
 export type EndReason = "win" | "draw" | "timeout" | "disconnect";
