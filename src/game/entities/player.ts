@@ -60,6 +60,9 @@ export class Player extends Phaser.GameObjects.Sprite {
   private prevSim: { x: number; y: number };
   private seq = 0;
   private lastSentKeys = 0;
+  // Set after "player win": the match is decided, so the player stops
+  // predicting and sending input during the end delay.
+  private isInputStopped = false;
   private errorX = 0;
   private errorY = 0;
 
@@ -170,7 +173,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   /** One 30 Hz step: sample, send, predict. */
   fixedUpdate() {
     this.prevSim = { x: this.sim.x, y: this.sim.y };
-    if (!this.active) {
+    if (!this.active || this.isInputStopped) {
       return;
     }
 
@@ -212,6 +215,11 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.errorX -= dx;
       this.errorY -= dy;
     }
+  }
+
+  /** Stops prediction and input for the rest of the match. */
+  stopInput() {
+    this.isInputStopped = true;
   }
 
   /** Sends an all-up input, e.g. when the tab loses focus. */

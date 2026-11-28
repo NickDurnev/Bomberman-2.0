@@ -457,6 +457,9 @@ class Playing extends Phaser.Scene {
   }
 
   private onPlayerWin() {
+    // The server decided the match: the winner's prediction must not drift
+    // away from its last server position during the end delay.
+    this.player?.stopInput();
     void this.startEndSequence();
   }
 
