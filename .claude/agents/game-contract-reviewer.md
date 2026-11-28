@@ -112,7 +112,7 @@ The client socket (`clientSocket` from `Bomberman-2.0/src/utils/socket.ts`) is a
 - Every `on` has a matching `off` with the same stored reference. Phaser scenes: bound in `create()`, removed in a handler on `this.events.once` for `Phaser.Scenes.Events.SHUTDOWN` and `DESTROY` (pattern: the `socketHandlers` table in `Playing.ts`, `boundLaunchGame` in `GameOver.ts`). React: registered in `useEffect`, removed in that effect's cleanup with the same `const`.
 - `on` registered inside a `setTimeout`, a promise, or after an `await` in a `useEffect` can run after cleanup and leak.
 - A listener must be registered before the emit that triggers the reply.
-- Server side: per-connection `setInterval`/`setTimeout` (for example a timer started in the `Play` constructor) is cleared on `disconnect` (invariant 7).
+- Server side: a `setInterval`/`setTimeout` that can outlive its connection or game (for example the per-game match time-limit `setTimeout` in `play.ts` `onStartGame`) is cleared, or its callback does nothing once the game ended (invariant 7).
 
 ### C. Server authority
 
