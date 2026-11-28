@@ -17,13 +17,13 @@ import {
   Spoil,
   Tombstone,
 } from "@/game/entities";
+import { SimBomb, SimWorld } from "@/game/sim/step";
 import { resetTouchInput } from "@/game/touchInput";
 import {
   EXPLOSION_TIME,
   LAYER,
-  PORTAL_DELAY,
-  PORTAL_DELAY_STEP,
   SOCKET_ID_KEY,
+  TICK_MS,
   TILE_SIZE,
   TILESET,
 } from "@/utils/constants";
@@ -34,23 +34,42 @@ import {
   ICell,
   ITombStone,
   PlayerConfig,
-  PlayerPositionData,
   pickedSpoilSocketData,
   ShowBombData,
+  StateSnapshot,
+  TeleportData,
 } from "@/utils/types";
 import {
   findAndDestroyByCoordinates,
   findAndDestroyById,
-  findByCoordinates,
   findById,
-  getIntersectionArea,
 } from "@/utils/utils";
 
-type PlayerData = Pick<PlayerConfig, "id" | "name" | "spawn" | "skin">;
+type PlayerData = Pick<PlayerConfig, "id" | "name" | "spawn" | "skin"> & {
+  idx: number;
+};
+
+// Snapshots kept for interpolation.
+const MAX_SNAPSHOTS = 10;
+// The remote players are drawn this many ticks behind the newest snapshot.
+const RENDER_DELAY_TICKS = 2;
+
+// At most this many fixed steps per frame; a longer stall drops the rest.
+const MAX_STEPS_PER_FRAME = 3;
 
 class Playing extends Phaser.Scene {
   private currentGame: GameData;
   private player?: Player;
+  // Index of the local player in the room (`exempt` in `show bomb`).
+  private playerIdx?: number;
+  // Time (ms) not yet consumed by fixed 30 Hz steps.
+  private stepAccumulator = 0;
+  // Last snapshots, oldest first, and when the newest one arrived (scene clock).
+  private snapshots: StateSnapshot[] = [];
+  private latestArrival = 0;
+  private byIdx = new Map<number, Player | EnemyPlayer>();
+  // Players in portal transit (by id): shown again once a snapshot reaches `until`.
+  private hiddenUntil = new Map<string, number>();
   private portals: Phaser.GameObjects.Group;
   private tombstones: Phaser.GameObjects.Group;
   private bombs: Phaser.GameObjects.Group;
@@ -68,6 +87,13 @@ class Playing extends Phaser.Scene {
   // Set once shutdown() ran. After an await, the scene may be gone
   // (end game teardown or Phaser.Game destroyed on a route change).
   private isShutDown = false;
+  // A hidden tab stops the Phaser loop: release every key on the server.
+  private readonly onWindowBlur = () => this.player?.releaseKeys();
+  private readonly onVisibilityChange = () => {
+    if (document.visibilityState === "hidden") {
+      this.player?.releaseKeys();
+    }
+  };
 
   constructor() {
     super("Playing");
@@ -77,6 +103,12 @@ class Playing extends Phaser.Scene {
     this.currentGame = game;
     this.endSequence = null;
     this.isShutDown = false;
+    this.stepAccumulator = 0;
+    this.snapshots = [];
+    this.latestArrival = 0;
+    this.byIdx = new Map();
+    this.hiddenUntil = new Map();
+    this.playerIdx = undefined;
   }
 
   create() {
@@ -88,107 +120,57 @@ class Playing extends Phaser.Scene {
       this.cameras.main.startFollow(this.player, true);
     }
     this.setEventHandlers();
+    window.addEventListener("blur", this.onWindowBlur);
+    document.addEventListener("visibilitychange", this.onVisibilityChange);
 
     // Guarantee socket listeners are removed on every teardown path —
     // including scene.remove() (GameOver.launchGame) which does not call
     // onEndGame(). Without this, listeners leak across rounds.
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.shutdown, this);
     this.events.once(Phaser.Scenes.Events.DESTROY, this.shutdown, this);
-
-    this.time.addEvent({
-      delay: 400,
-      callback: this.stopAnimationLoop,
-      callbackScope: this,
-      loop: true,
-    });
   }
 
-  update() {
-    // Only set up collisions if the player exists and is active
-    if (this.player && this.player.active) {
-      this.physics.collide(this.player, this.blockLayer);
-      this.physics.collide(this.player, this.bombs);
-    }
-
-    // Update player if it exists
+  update(_time: number, delta: number) {
     if (this.player) {
-      this.player.update();
+      this.stepAccumulator += delta;
+      let steps = 0;
+      while (this.stepAccumulator >= TICK_MS && steps < MAX_STEPS_PER_FRAME) {
+        this.player.fixedUpdate();
+        this.stepAccumulator -= TICK_MS;
+        steps++;
+      }
+      if (this.stepAccumulator >= TICK_MS) {
+        this.stepAccumulator %= TICK_MS;
+      }
+      this.player.render(this.stepAccumulator / TICK_MS, delta);
     }
 
-    // Set up overlaps only if the player exists and is active
-    if (this.player && this.player.active) {
-      this.physics.overlap(
-        this.player,
-        this.spoils,
-        (obj1, obj2) => {
-          if (obj1 instanceof Player && obj2 instanceof Spoil) {
-            this.onPlayerVsSpoil(obj1, obj2);
-          }
-        },
-        undefined,
-        this,
-      );
-
-      this.physics.overlap(
-        this.player,
-        this.portals,
-        (obj1, obj2) => {
-          if (obj1 instanceof Player && obj2 instanceof Portal) {
-            this.onPlayerVsPortal(obj1, obj2);
-          }
-        },
-        undefined,
-        this,
-      );
-
-      this.physics.overlap(
-        this.player,
-        this.blasts,
-        (obj1, obj2) => {
-          if (obj1 instanceof Player && obj2 instanceof FireBlast) {
-            const intersectionArea = getIntersectionArea(
-              obj1 as Parameters<typeof getIntersectionArea>[0],
-              obj2 as Parameters<typeof getIntersectionArea>[1],
-            );
-
-            if (obj1.body && "width" in obj1.body && "height" in obj1.body) {
-              const playerArea = obj1.body.width * obj1.body.height;
-
-              // Only trigger if at least 10% of the player is overlapping
-              if (intersectionArea >= playerArea / 10) {
-                const playerId = obj2.getPlayerId();
-                this.onPlayerVsBlast(obj1, playerId);
-              }
-            }
-          }
-        },
-        undefined,
-        this,
-      );
-    }
-
-    // Set up bomb-blast overlap if both groups exist
-    if (this.bombs && this.blasts) {
-      this.physics.overlap(
-        this.bombs,
-        this.blasts,
-        (obj1, obj2) => {
-          if (obj1 instanceof Bomb && obj2 instanceof FireBlast) {
-            this.onBombVsBlast(obj1);
-          }
-        },
-        undefined,
-        this,
-      );
-    }
+    this.renderRemotePlayers();
   }
 
   public getGameId() {
     return this.currentGame.id;
   }
 
-  public checkBombByColumnAndRow(column: number, row: number) {
-    return findByCoordinates(column, row, this.bombs);
+  /** The map and bombs as the prediction step sees them. */
+  public getSimWorld(): SimWorld {
+    const bombs: SimBomb[] = [];
+    for (const child of this.bombs.getChildren()) {
+      const bomb = child as Bomb;
+      bombs.push({
+        id: String(bomb.id),
+        col: Math.floor(bomb.x / TILE_SIZE),
+        row: Math.floor(bomb.y / TILE_SIZE),
+      });
+    }
+    return {
+      isSolidTile: (col, row) => {
+        const tile = this.blockLayer.getTileAt(col, row, true);
+        // Outside the map is solid, as on the server.
+        return !tile || (tile.index >= 1 && tile.index <= 5);
+      },
+      bombs,
+    };
   }
 
   private createMap() {
@@ -228,8 +210,12 @@ class Playing extends Phaser.Scene {
       const storedSocketId = getDataFromLocalStorage(SOCKET_ID_KEY);
       if (player.id === storedSocketId) {
         this.player = new Player(setup);
+        this.playerIdx = player.idx;
+        this.byIdx.set(player.idx, this.player);
       } else {
-        this.enemies.add(new EnemyPlayer(setup));
+        const enemy = new EnemyPlayer(setup);
+        this.enemies.add(enemy);
+        this.byIdx.set(player.idx, enemy);
       }
     }
   }
@@ -238,7 +224,7 @@ class Playing extends Phaser.Scene {
     // Bind once and keep the references, so shutdown() can remove the
     // exact same function objects (socket.off matches by reference).
     this.socketHandlers = [
-      ["move player", this.onMovePlayer.bind(this)],
+      ["state", this.onState.bind(this)],
       ["teleport player", this.onTeleportPlayer.bind(this)],
       ["player win", this.onPlayerWin.bind(this)],
       ["end game", this.onEndGame.bind(this)],
@@ -254,87 +240,108 @@ class Playing extends Phaser.Scene {
     }
   }
 
-  private onPlayerVsPortal(player: Player, portal: Portal) {
-    const now = this.time.now;
+  private onState(snapshot: StateSnapshot) {
+    this.snapshots.push(snapshot);
+    if (this.snapshots.length > MAX_SNAPSHOTS) {
+      this.snapshots.shift();
+    }
+    this.latestArrival = this.time.now;
+    this.revealAfterTransit(snapshot.t);
 
-    if (now - player.lastTeleportTime < PORTAL_DELAY) {
+    if (this.player && this.playerIdx !== undefined) {
+      const own = snapshot.p.find(([idx]) => idx === this.playerIdx);
+      if (own) {
+        this.player.reconcile(own[1], own[2], own[3]);
+      }
+    }
+  }
+
+  /** Place every remote player between the two snapshots around the render tick. */
+  private renderRemotePlayers() {
+    const latest = this.snapshots[this.snapshots.length - 1];
+    if (!latest) {
       return;
     }
+    const renderT = Math.min(
+      latest.t,
+      latest.t -
+        RENDER_DELAY_TICKS +
+        (this.time.now - this.latestArrival) / TICK_MS,
+    );
 
-    player.lastTeleportTime = now; // Update the last teleport time
-    clientSocket.emit("use portal", {
-      portal_id: portal.id,
-      playerId: player.id,
-      gameId: player.gameId,
-    });
-
-    // Make player and their text invisible and disable physics interactions
-    player.setVisible(false);
-    player.playerText.setVisible(false); // <-- Hide the player text
-    player.getBody().enable = false;
-    player.setActive(false);
-
-    // Set a timer to re-enable visibility and physics after teleportation
-    this.time.delayedCall(PORTAL_DELAY_STEP, () => {
-      player.setVisible(true);
-      player.playerText.setVisible(true); // <-- Show the player text
-      player.getBody().enable = true;
-      player.setActive(true);
-    });
-  }
-
-  private onPlayerVsSpoil(player: Player, spoil: Spoil) {
-    clientSocket.emit("pick up spoil", {
-      spoil_id: spoil.id,
-      playerId: player.id,
-      gameId: player.gameId,
-    });
-    // The spoil leaves this.spoils on destroy, so the "spoil was picked" echo
-    // finds nothing and does not burst a second time.
-    pickupBurst(this, spoil.x, spoil.y);
-    spoil.destroy();
-  }
-
-  private onPlayerVsBlast(player: Player, killerId: string) {
-    clientSocket.emit("player died", {
-      col: player.currentCol(),
-      row: player.currentRow(),
-      playerId: player.id,
-      killerId,
-      gameId: player.gameId,
-    });
-    player.becomesDead();
-    deathEffect(this);
-  }
-
-  private onBombVsBlast(bomb: Bomb) {
-    clientSocket.emit("detonate bomb by blast", {
-      bomb_id: bomb.id,
-      gameId: this.currentGame.id,
-      playerId: bomb.getPlayerId(),
-    });
-  }
-
-  private onMovePlayer({ player_id, x, y }: PlayerPositionData) {
-    const enemy = findById(player_id, this.enemies);
-    if (enemy) {
-      enemy.goTo({ x, y });
+    for (const [idx, entity] of this.byIdx) {
+      if (!(entity instanceof EnemyPlayer) || !entity.active) {
+        continue;
+      }
+      let before: [number, number, number, number] | undefined;
+      let beforeT = 0;
+      let after: [number, number, number, number] | undefined;
+      let afterT = 0;
+      for (const snap of this.snapshots) {
+        const entry = snap.p.find(([i]) => i === idx);
+        if (!entry) {
+          continue;
+        }
+        if (snap.t <= renderT) {
+          before = entry;
+          beforeT = snap.t;
+        } else if (!after) {
+          after = entry;
+          afterT = snap.t;
+        }
+      }
+      if (before && after) {
+        const k = (renderT - beforeT) / (afterT - beforeT);
+        entity.showAt(
+          before[1] + (after[1] - before[1]) * k,
+          before[2] + (after[2] - before[2]) * k,
+        );
+      } else if (before ?? after) {
+        // Past the newest snapshot with this player: hold its last position.
+        const held = (before ?? after) as [number, number, number, number];
+        entity.showAt(held[1], held[2]);
+      } else {
+        entity.showAt(entity.x, entity.y);
+      }
     }
   }
 
-  private onTeleportPlayer({ player_id, x, y }: PlayerPositionData) {
-    if (this.player && this.player.id === player_id) {
-      this.player.goTo({ x, y });
-    } else {
-      this.onMovePlayer({ player_id, x, y });
+  private onTeleportPlayer({ player_id, x, y, until }: TeleportData) {
+    const target =
+      this.player && this.player.id === player_id
+        ? this.player
+        : findById(player_id, this.enemies);
+    if (!(target instanceof Player || target instanceof EnemyPlayer)) {
+      return;
+    }
+    if (target instanceof Player) {
+      target.teleportTo(x, y);
+    }
+    // Enemies move with the snapshots, which carry the new position.
+    this.hiddenUntil.set(player_id, until);
+    target.setVisible(false);
+    target.playerText.setVisible(false);
+    if (target instanceof Player) {
+      // Inactive: fixedUpdate sends no input during transit.
+      target.setActive(false);
     }
   }
 
-  private stopAnimationLoop() {
-    for (const enemy of this.enemies.getChildren()) {
-      const enemyPlayer = enemy as EnemyPlayer;
-      if (enemyPlayer.lastMoveAt < this.time.now - 200) {
-        enemyPlayer.anims.stop();
+  /** Show the players whose transit ended at snapshot tick `t`. */
+  private revealAfterTransit(t: number) {
+    for (const [playerId, until] of this.hiddenUntil) {
+      if (t < until) {
+        continue;
+      }
+      this.hiddenUntil.delete(playerId);
+      const target =
+        this.player && this.player.id === playerId
+          ? this.player
+          : findById(playerId, this.enemies);
+      if (target instanceof Player || target instanceof EnemyPlayer) {
+        target.setVisible(true);
+        target.playerText.setVisible(true);
+        target.setActive(true);
       }
     }
   }
@@ -345,10 +352,8 @@ class Playing extends Phaser.Scene {
     col,
     row,
     delay = EXPLOSION_TIME,
+    exempt,
   }: ShowBombData) {
-    if (this.player && this.player.id === playerId) {
-      this.player.increaseActiveBombs();
-    }
     const bomb = new Bomb({
       scene: this,
       id: bomb_id,
@@ -358,6 +363,13 @@ class Playing extends Phaser.Scene {
       delay,
     });
     this.bombs.add(bomb);
+    if (
+      this.player &&
+      this.playerIdx !== undefined &&
+      exempt?.includes(this.playerIdx)
+    ) {
+      this.player.addWalkOff(String(bomb_id));
+    }
     startFuseWarning(bomb, delay);
   }
 
@@ -370,9 +382,6 @@ class Playing extends Phaser.Scene {
     playerId: string;
     blastedCells: ICell[];
   }) {
-    if (this.player && this.player.id === playerId) {
-      this.player.decreaseActiveBombs();
-    }
     // Remove Bomb:
     findAndDestroyById(bomb_id, this.bombs);
 
@@ -430,8 +439,6 @@ class Playing extends Phaser.Scene {
       this.player.pickSpoil(spoil_type);
     }
 
-    // Only a remote pickup still finds the spoil here; the local pickup burst
-    // runs in onPlayerVsSpoil.
     const spoil = findById(spoil_id, this.spoils);
     if (spoil) {
       pickupBurst(this, spoil.x, spoil.y);
@@ -440,11 +447,19 @@ class Playing extends Phaser.Scene {
   }
 
   private onShowTombstone(tombstone: ITombStone) {
+    this.hiddenUntil.delete(tombstone.player_id);
+    if (this.player && tombstone.player_id === this.player.id) {
+      this.player.becomesDead();
+      deathEffect(this);
+    }
     this.tombstones.add(new Tombstone(this, tombstone));
     findAndDestroyById(tombstone.player_id, this.enemies);
   }
 
   private onPlayerWin() {
+    // The server decided the match: the winner's prediction must not drift
+    // away from its last server position during the end delay.
+    this.player?.stopInput();
     void this.startEndSequence();
   }
 
@@ -508,6 +523,8 @@ class Playing extends Phaser.Scene {
 
   shutdown() {
     this.isShutDown = true;
+    window.removeEventListener("blur", this.onWindowBlur);
+    document.removeEventListener("visibilitychange", this.onVisibilityChange);
     this.scale.off(Phaser.Scale.Events.RESIZE, this.fitCameraToMap, this);
     for (const [event, handler] of this.socketHandlers) {
       clientSocket.off(event, handler);

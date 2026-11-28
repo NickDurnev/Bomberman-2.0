@@ -1,6 +1,11 @@
+import { useSyncExternalStore } from "react";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
-import { GOOGLE_USER_STORAGE_KEY, SOCKET_ID_KEY } from "@/utils/constants";
+import {
+  GOOGLE_USER_STORAGE_KEY,
+  PROTOCOL_VERSION,
+  SOCKET_ID_KEY,
+} from "@/utils/constants";
 import {
   addToLocalStorage,
   getDataFromLocalStorage,
@@ -36,7 +41,60 @@ const clientSocket = io(BASE_URL!, {
     email: storedUser?.email,
     name: storedUser?.name,
     picture: storedUser?.picture,
+    protocol: PROTOCOL_VERSION,
   },
 });
+
+export type ProtocolStatus = "ok" | "client-old" | "server-old";
+
+let protocolStatus: ProtocolStatus = "ok";
+const protocolListeners = new Set<() => void>();
+
+function setProtocolStatus(next: ProtocolStatus): void {
+  if (next === protocolStatus) {
+    return;
+  }
+  protocolStatus = next;
+  for (const listener of protocolListeners) {
+    listener();
+  }
+}
+
+// The server rejects an old client with connect_error "protocol". Stop the
+// reconnect loop: a retry gets the same answer.
+const onConnectError = (error: Error) => {
+  if (error.message !== "protocol") {
+    return;
+  }
+  clientSocket.io.opts.reconnection = false;
+  clientSocket.disconnect();
+  setProtocolStatus("client-old");
+};
+clientSocket.on("connect_error", onConnectError);
+
+// The `get current game` ack carries the server protocol. An older server
+// sends none.
+export function markServerProtocol(protocol: number | undefined): void {
+  if (protocol !== PROTOCOL_VERSION) {
+    setProtocolStatus("server-old");
+  }
+}
+
+const subscribeProtocol = (onChange: () => void) => {
+  protocolListeners.add(onChange);
+  return () => {
+    protocolListeners.delete(onChange);
+  };
+};
+
+const getProtocolStatus = () => protocolStatus;
+
+export function useProtocolStatus(): ProtocolStatus {
+  return useSyncExternalStore(
+    subscribeProtocol,
+    getProtocolStatus,
+    getProtocolStatus,
+  );
+}
 
 export default clientSocket;

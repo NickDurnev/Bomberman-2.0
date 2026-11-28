@@ -6,6 +6,7 @@ export { MapPreview } from "@/components/MapPreview";
 export { PackImage } from "@/components/PackImage";
 export { PaddingContainer } from "@/components/PaddingContainer";
 export { PlayersSlots } from "@/components/PlayersSlots";
+export { ProtocolGate } from "@/components/ProtocolGate";
 export { SettingsBtn } from "@/components/SettingsBtn";
 export { Socket } from "@/components/Socket";
 export { TexturePackPicker } from "@/components/TexturePackPicker";

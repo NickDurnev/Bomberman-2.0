@@ -42,6 +42,17 @@ export const STEP_POWER = 1;
 export const INITIAL_BOMBS = 1;
 export const STEP_BOMBS = 1;
 
+// Tick netcode: keep equal to Bomberman-2.0-Backend src/constants.ts.
+export const TICK_RATE = 30;
+export const TICK_MS = 1000 / TICK_RATE;
+export const DT = 1 / TICK_RATE;
+export const msToTicks = (ms: number): number =>
+  Math.ceil((ms * TICK_RATE) / 1000);
+export const FIRE_TICKS = msToTicks(250);
+export const INPUT_HOLD_TICKS = 10;
+export const INPUT_QUEUE_CAP = 6;
+export const PROTOCOL_VERSION = 2;
+
 export const PORTAL_DELAY = 3000;
 export const PORTAL_DELAY_STEP = 500;
 export const GAME_DURATION = 180; // 3 minutes

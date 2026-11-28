@@ -9,6 +9,7 @@ import { TEXTURE_SOURCES_KEY } from "@/utils/texturePacks";
 // Every event the client registers on clientSocket.
 export const E2E_SOCKET_EVENTS = [
   "connect",
+  "connect_error",
   "disconnect",
   "display pending games",
   "update game",
@@ -16,7 +17,7 @@ export const E2E_SOCKET_EVENTS = [
   "launch game",
   "end game",
   "player win",
-  "move player",
+  "state",
   "teleport player",
   "show bomb",
   "detonate bomb",
