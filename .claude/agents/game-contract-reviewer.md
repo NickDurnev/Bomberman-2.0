@@ -112,16 +112,16 @@ The client socket (`clientSocket` from `Bomberman-2.0/src/utils/socket.ts`) is a
 - Every `on` has a matching `off` with the same stored reference. Phaser scenes: bound in `create()`, removed in a handler on `this.events.once` for `Phaser.Scenes.Events.SHUTDOWN` and `DESTROY` (pattern: the `socketHandlers` table in `Playing.ts`, `boundLaunchGame` in `GameOver.ts`). React: registered in `useEffect`, removed in that effect's cleanup with the same `const`.
 - `on` registered inside a `setTimeout`, a promise, or after an `await` in a `useEffect` can run after cleanup and leak.
 - A listener must be registered before the emit that triggers the reply.
-- Server side: per-connection `setInterval`/`setTimeout` (for example the `Play` bomb queue) is cleared on `disconnect` (invariant 7).
+- Server side: per-connection `setInterval`/`setTimeout` (for example a timer started in the `Play` constructor) is cleared on `disconnect` (invariant 7).
 
 ### C. Server authority
 
-The server owns shared state; the client owns only its own avatar and reports what it sees (`docs/socket-contract.md` "Authority rule").
+The server decides every outcome of a running match (positions, collisions, bombs, chains, deaths, pick-ups, portals). The client sends only `input` and renders server events and `state` snapshots (`docs/socket-contract.md` "Authority rule").
 
-- The client must not decide a shared outcome (a kill, a score, a spoil effect on other players, a box destroyed, a game end) and render it before or without a server event. Existing exceptions are listed in the doc; anything new is a finding.
+- The client must not decide a shared outcome (a kill, a score, a spoil effect, a box destroyed, a detonation, a game end) or send a report that the server would apply. It renders only server events. The only exceptions are listed in the doc (prediction of the local avatar, and hiding itself on its own `show tombstone`); anything new is a finding.
 - Ids of new shared entities are created on the server and sent in the payload. A client-made id for a shared entity is a finding.
-- The server does not check that `playerId` in a payload is the sender. A new feature that relies on that being safe is a finding.
-- Do not report the chain reaction by blast (`detonate bomb by blast`) as a bug. It is intended (invariant 5). A change that "fixes" it is a finding.
+- Identity comes only from the socket (`client.customId`, `client.socket_game_id`). A payload that carries a player or game id, or a handler that trusts one, is a finding.
+- A chain reaction is decided by the server in the tick of the detonation. Do not report it as a bug; it is intended (invariant 5). A change that removes it is a finding, and so is any client path that detonates a bomb.
 
 ### D. Client/server entity and constant drift
 
